@@ -2,12 +2,13 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
 
-interface ProtectedRouteProps {
+export interface ProtectedRouteProps {
   children: React.ReactNode;
   requireAdmin?: boolean;
+  requireApproved?: boolean;
 }
 
-export function ProtectedRoute({ children, requireAdmin = false }: ProtectedRouteProps) {
+export function ProtectedRoute({ children, requireAdmin = false, requireApproved = false }: ProtectedRouteProps) {
   const { user, isAdmin, isLoading, profile } = useAuth();
   const location = useLocation();
 
@@ -27,8 +28,8 @@ export function ProtectedRoute({ children, requireAdmin = false }: ProtectedRout
     return <Navigate to="/painel" replace />;
   }
 
-  // Check if profile is pending approval
-  if (profile?.status === 'pendente' && !requireAdmin) {
+  // Check if profile is pending approval (only when requireApproved is true)
+  if (requireApproved && profile?.status === 'pendente' && !isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center max-w-md">

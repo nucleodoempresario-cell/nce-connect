@@ -15,7 +15,7 @@ const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/sobre', label: 'O NCE' },
   { href: '/empresas', label: 'Empresas' },
-  { href: '/nucleados', label: 'Nucleados' },
+  { href: '/membros', label: 'Membros' },
   { href: '/noticias', label: 'Notícias' },
 ];
 

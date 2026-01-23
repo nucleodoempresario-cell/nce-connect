@@ -13,6 +13,32 @@ interface RequisitosContent {
   requisitos: string[];
 }
 
+interface HomeContent {
+  heroTitle: string;
+  heroSubtitle: string;
+}
+
+export function useSiteContent() {
+  const query = useQuery({
+    queryKey: ['site_content'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('site_content')
+        .select('*');
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const getContent = (tipo: string) => {
+    const item = query.data?.find((c) => c.tipo === tipo);
+    return item?.conteudo as Record<string, unknown> | null;
+  };
+
+  return { ...query, getContent };
+}
+
 export function useInstitucionalContent() {
   return useQuery({
     queryKey: ['site_content', 'institucional'],

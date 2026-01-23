@@ -89,7 +89,7 @@ export default function Companies() {
               {selectedCompany.dono && (
                 <div className="border-t pt-4">
                   <h4 className="font-semibold mb-3">Proprietário</h4>
-                  <Link to={`/nucleados`} className="flex items-center gap-3 p-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors">
+                  <Link to="/membros" className="flex items-center gap-3 p-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors">
                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                       {selectedCompany.dono.foto_url ? (
                         <img src={selectedCompany.dono.foto_url} alt={selectedCompany.dono.nome} className="w-full h-full rounded-full object-cover" />

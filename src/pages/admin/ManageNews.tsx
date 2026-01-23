@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { Routes, Route, Link, useNavigate } from 'react-router-dom';
-import { Plus, Edit, Trash2, Loader2, Eye, EyeOff } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Plus, Edit, Trash2, Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -14,7 +14,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 
-function NewsList() {
+export default function ManageNews() {
   const { data: news, isLoading } = useAllNews();
   const deleteNews = useDeleteNews();
   const { toast } = useToast();
@@ -66,24 +66,24 @@ function NewsList() {
   );
 }
 
-function NewsForm({ newsId }: { newsId?: string }) {
+export function NewsForm({ newsId }: { newsId?: string }) {
   const navigate = useNavigate();
   const { profile } = useAuth();
-  const { data: existingNews } = useNewsItem(newsId || '');
+  const { data: existingNews, isLoading: loadingNews } = useNewsItem(newsId || '');
   const createNews = useCreateNews();
   const updateNews = useUpdateNews();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    titulo: existingNews?.titulo || '',
-    resumo: existingNews?.resumo || '',
-    conteudo: existingNews?.conteudo || '',
-    imagem_capa: existingNews?.imagem_capa || '',
-    publicado: existingNews?.publicado || false,
+    titulo: '',
+    resumo: '',
+    conteudo: '',
+    imagem_capa: '',
+    publicado: false,
   });
 
-  useState(() => {
+  useEffect(() => {
     if (existingNews) {
       setFormData({
         titulo: existingNews.titulo,
@@ -93,7 +93,7 @@ function NewsForm({ newsId }: { newsId?: string }) {
         publicado: existingNews.publicado,
       });
     }
-  });
+  }, [existingNews]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,9 +113,14 @@ function NewsForm({ newsId }: { newsId?: string }) {
     setIsLoading(false);
   };
 
+  if (newsId && loadingNews) return <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin" /></div>;
+
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">{newsId ? 'Editar Notícia' : 'Nova Notícia'}</h1>
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="sm" onClick={() => navigate('/admin/noticias')}><ArrowLeft className="h-4 w-4 mr-2" /> Voltar</Button>
+        <h1 className="text-3xl font-bold">{newsId ? 'Editar Notícia' : 'Nova Notícia'}</h1>
+      </div>
 
       <Card>
         <CardContent className="pt-6">
@@ -136,17 +141,7 @@ function NewsForm({ newsId }: { newsId?: string }) {
   );
 }
 
-export default function ManageNews() {
-  return (
-    <Routes>
-      <Route index element={<NewsList />} />
-      <Route path="nova" element={<NewsForm />} />
-      <Route path="editar/:id" element={<NewsFormWrapper />} />
-    </Routes>
-  );
-}
-
-function NewsFormWrapper() {
-  const { id } = require('react-router-dom').useParams();
+export function NewsFormPage() {
+  const { id } = useParams();
   return <NewsForm newsId={id} />;
 }
