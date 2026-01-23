@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, LogIn, User, LogOut, LayoutDashboard } from 'lucide-react';
+import { Menu, X, LogIn, User, LogOut, LayoutDashboard, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { cn } from '@/lib/utils';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -21,38 +22,72 @@ const navLinks = [
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const { user, profile, isAdmin, signOut } = useAuth();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/';
     return location.pathname.startsWith(path);
   };
 
+  const isHomePage = location.pathname === '/';
+  const showTransparent = isHomePage && !isScrolled && !isMenuOpen;
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
+    <header 
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        showTransparent 
+          ? "bg-transparent" 
+          : "bg-background/95 backdrop-blur-xl border-b shadow-sm"
+      )}
+    >
+      <div className="container flex h-20 items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground font-bold text-lg">
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className={cn(
+            "flex items-center justify-center w-11 h-11 rounded-xl font-bold text-lg transition-all duration-300",
+            showTransparent 
+              ? "bg-white/10 backdrop-blur-sm text-white border border-white/20" 
+              : "bg-primary text-primary-foreground"
+          )}>
             NCE
           </div>
-          <span className="hidden sm:block font-semibold text-lg">
-            Núcleo do Empresário
-          </span>
+          <div className="hidden sm:block">
+            <span className={cn(
+              "font-bold text-lg transition-colors duration-300",
+              showTransparent ? "text-white" : "text-foreground"
+            )}>
+              Núcleo do Empresário
+            </span>
+          </div>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden lg:flex items-center gap-1">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               to={link.href}
-              className={`text-sm font-medium transition-colors hover:text-primary ${
+              className={cn(
+                "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                 isActive(link.href)
-                  ? 'text-primary'
-                  : 'text-muted-foreground'
-              }`}
+                  ? showTransparent
+                    ? "bg-white/10 text-white"
+                    : "bg-primary/10 text-primary"
+                  : showTransparent
+                    ? "text-white/80 hover:text-white hover:bg-white/10"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              )}
             >
               {link.label}
             </Link>
@@ -60,32 +95,42 @@ export function Header() {
         </nav>
 
         {/* Desktop Actions */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-3">
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <User className="h-4 w-4" />
-                  {profile?.nome || 'Minha Conta'}
+                <Button 
+                  variant={showTransparent ? "outline" : "outline"} 
+                  size="sm" 
+                  className={cn(
+                    "gap-2 h-10 px-4",
+                    showTransparent && "border-white/20 text-white hover:bg-white/10"
+                  )}
+                >
+                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
+                    <User className="h-3.5 w-3.5" />
+                  </div>
+                  <span className="max-w-[100px] truncate">{profile?.nome?.split(' ')[0] || 'Conta'}</span>
+                  <ChevronDown className="h-4 w-4 opacity-50" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuContent align="end" className="w-52">
                 <DropdownMenuItem asChild>
-                  <Link to="/painel" className="flex items-center gap-2">
+                  <Link to="/painel" className="flex items-center gap-2 cursor-pointer">
                     <LayoutDashboard className="h-4 w-4" />
                     Meu Painel
                   </Link>
                 </DropdownMenuItem>
                 {isAdmin && (
                   <DropdownMenuItem asChild>
-                    <Link to="/admin" className="flex items-center gap-2">
+                    <Link to="/admin" className="flex items-center gap-2 cursor-pointer">
                       <LayoutDashboard className="h-4 w-4" />
                       Painel Admin
                     </Link>
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={signOut} className="text-destructive">
+                <DropdownMenuItem onClick={signOut} className="text-destructive cursor-pointer">
                   <LogOut className="h-4 w-4 mr-2" />
                   Sair
                 </DropdownMenuItem>
@@ -93,13 +138,25 @@ export function Header() {
             </DropdownMenu>
           ) : (
             <>
-              <Button variant="ghost" size="sm" asChild>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className={cn(
+                  "h-10",
+                  showTransparent && "text-white hover:bg-white/10"
+                )}
+                asChild
+              >
                 <Link to="/auth">
                   <LogIn className="h-4 w-4 mr-2" />
                   Entrar
                 </Link>
               </Button>
-              <Button size="sm" asChild>
+              <Button 
+                size="sm" 
+                className="h-10 px-6 bg-gradient-to-r from-primary to-emerald-500 hover:from-primary/90 hover:to-emerald-500/90 shadow-lg shadow-primary/25"
+                asChild
+              >
                 <Link to="/seja-nucleado">Seja Nucleado</Link>
               </Button>
             </>
@@ -108,7 +165,10 @@ export function Header() {
 
         {/* Mobile Menu Toggle */}
         <button
-          className="md:hidden p-2"
+          className={cn(
+            "lg:hidden p-2 rounded-lg transition-colors",
+            showTransparent ? "text-white hover:bg-white/10" : "hover:bg-muted"
+          )}
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-label="Toggle menu"
         >
@@ -118,33 +178,34 @@ export function Header() {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden border-t bg-background">
-          <nav className="container py-4 flex flex-col gap-3">
+        <div className="lg:hidden bg-background border-t">
+          <nav className="container py-6 flex flex-col gap-2">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
                 onClick={() => setIsMenuOpen(false)}
-                className={`text-sm font-medium py-2 transition-colors hover:text-primary ${
+                className={cn(
+                  "px-4 py-3 rounded-lg text-sm font-medium transition-colors",
                   isActive(link.href)
-                    ? 'text-primary'
-                    : 'text-muted-foreground'
-                }`}
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:bg-muted"
+                )}
               >
                 {link.label}
               </Link>
             ))}
-            <div className="border-t pt-3 mt-2 flex flex-col gap-2">
+            <div className="border-t pt-4 mt-2 flex flex-col gap-2">
               {user ? (
                 <>
-                  <Button variant="outline" size="sm" asChild className="justify-start">
+                  <Button variant="outline" size="sm" asChild className="justify-start h-11">
                     <Link to="/painel" onClick={() => setIsMenuOpen(false)}>
                       <LayoutDashboard className="h-4 w-4 mr-2" />
                       Meu Painel
                     </Link>
                   </Button>
                   {isAdmin && (
-                    <Button variant="outline" size="sm" asChild className="justify-start">
+                    <Button variant="outline" size="sm" asChild className="justify-start h-11">
                       <Link to="/admin" onClick={() => setIsMenuOpen(false)}>
                         <LayoutDashboard className="h-4 w-4 mr-2" />
                         Painel Admin
@@ -158,7 +219,7 @@ export function Header() {
                       signOut();
                       setIsMenuOpen(false);
                     }}
-                    className="justify-start text-destructive"
+                    className="justify-start h-11 text-destructive"
                   >
                     <LogOut className="h-4 w-4 mr-2" />
                     Sair
@@ -166,13 +227,17 @@ export function Header() {
                 </>
               ) : (
                 <>
-                  <Button variant="ghost" size="sm" asChild className="justify-start">
+                  <Button variant="ghost" size="sm" asChild className="justify-start h-11">
                     <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
                       <LogIn className="h-4 w-4 mr-2" />
                       Entrar
                     </Link>
                   </Button>
-                  <Button size="sm" asChild className="justify-start">
+                  <Button 
+                    size="sm" 
+                    className="h-11 bg-gradient-to-r from-primary to-emerald-500"
+                    asChild
+                  >
                     <Link to="/seja-nucleado" onClick={() => setIsMenuOpen(false)}>
                       Seja Nucleado
                     </Link>
