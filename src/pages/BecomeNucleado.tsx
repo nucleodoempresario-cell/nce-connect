@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { CheckCircle, Send, Loader2, Star, Users, Shield, Award, ArrowRight } from 'lucide-react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { Button } from '@/components/ui/button';
@@ -9,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { FadeIn, StaggerContainer, StaggerItem } from '@/components/animations';
 import { useToast } from '@/hooks/use-toast';
 import { useRequisitosContent } from '@/hooks/useSiteContent';
 import { useFormQuestions } from '@/hooks/useFormQuestions';
@@ -51,10 +53,15 @@ export default function BecomeNucleado() {
     return (
       <PageLayout>
         <div className="min-h-[80vh] flex items-center justify-center px-4">
-          <div className="text-center max-w-lg">
-            <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
+          <FadeIn className="text-center max-w-lg">
+            <motion.div 
+              className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", duration: 0.6 }}
+            >
               <CheckCircle className="h-10 w-10 text-primary" />
-            </div>
+            </motion.div>
             <h1 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">Candidatura Enviada!</h1>
             <p className="text-lg text-muted-foreground mb-8">
               Obrigado pelo interesse em fazer parte do NCE. 
@@ -66,7 +73,7 @@ export default function BecomeNucleado() {
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
-          </div>
+          </FadeIn>
         </div>
       </PageLayout>
     );
@@ -83,45 +90,70 @@ export default function BecomeNucleado() {
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" />
-        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl" />
+        <motion.div 
+          className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/20 rounded-full blur-3xl"
+          animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.3, 0.2] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div 
+          className="absolute bottom-1/4 -right-32 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"
+          animate={{ scale: [1.2, 1, 1.2], opacity: [0.1, 0.2, 0.1] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        />
         
         <div className="container relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-6">
+          <motion.div 
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
             <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
             <span className="text-sm text-white/80">Processo Seletivo</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 max-w-3xl">
+          </motion.div>
+          <motion.h1 
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 max-w-3xl"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
             Seja um{' '}
             <span className="bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">
               Nucleado
             </span>
-          </h1>
-          <p className="text-xl text-white/70 max-w-2xl leading-relaxed">
+          </motion.h1>
+          <motion.p 
+            className="text-xl text-white/70 max-w-2xl leading-relaxed"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
             Faça parte de uma comunidade exclusiva de empresários de alto nível. 
             Candidate-se e descubra o que podemos construir juntos.
-          </p>
+          </motion.p>
         </div>
       </section>
 
       {/* Benefits Cards */}
       <section className="relative -mt-10 z-20 pb-12">
         <div className="container">
-          <div className="grid md:grid-cols-3 gap-4">
+          <StaggerContainer className="grid md:grid-cols-3 gap-4" staggerDelay={0.1}>
             {benefits.map(({ icon: Icon, title, description }, i) => (
-              <Card key={i} className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-0 shadow-xl">
-                <CardContent className="p-6 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">{title}</h3>
-                    <p className="text-sm text-muted-foreground">{description}</p>
-                  </div>
-                </CardContent>
-              </Card>
+              <StaggerItem key={i}>
+                <Card className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-0 shadow-xl">
+                  <CardContent className="p-6 flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Icon className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground">{title}</h3>
+                      <p className="text-sm text-muted-foreground">{description}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
       </section>
 
@@ -130,7 +162,7 @@ export default function BecomeNucleado() {
         <div className="container max-w-5xl">
           <div className="grid lg:grid-cols-5 gap-8">
             {/* Requirements */}
-            <div className="lg:col-span-2">
+            <FadeIn direction="right" className="lg:col-span-2">
               <Card className="sticky top-28 border-0 shadow-lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-foreground">
@@ -164,10 +196,10 @@ export default function BecomeNucleado() {
                   </div>
                 </CardContent>
               </Card>
-            </div>
+            </FadeIn>
 
             {/* Form */}
-            <div className="lg:col-span-3">
+            <FadeIn direction="left" delay={0.2} className="lg:col-span-3">
               <Card className="border-0 shadow-lg">
                 <CardHeader>
                   <CardTitle className="text-foreground">Formulário de Candidatura</CardTitle>
@@ -285,7 +317,7 @@ export default function BecomeNucleado() {
                   </form>
                 </CardContent>
               </Card>
-            </div>
+            </FadeIn>
           </div>
         </div>
       </section>
