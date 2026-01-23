@@ -2,14 +2,14 @@ import { Link, useLocation } from 'react-router-dom';
 import { User, Building2, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import EditProfile from './member/EditProfile';
+import EditCompany from './member/EditCompany';
 
 const navItems = [
   { href: '/painel', label: 'Meu Perfil', icon: User },
   { href: '/painel/empresa', label: 'Minha Empresa', icon: Building2 },
 ];
 
-export default function MemberPanel() {
+export default function MemberCompanyPage() {
   const location = useLocation();
 
   return (
@@ -34,7 +34,7 @@ export default function MemberPanel() {
           ))}
         </nav>
 
-        <EditProfile />
+        <EditCompany />
       </div>
     </div>
   );

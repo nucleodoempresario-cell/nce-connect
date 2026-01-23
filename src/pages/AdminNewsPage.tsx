@@ -1,10 +1,10 @@
 import { AdminLayout } from '@/components/layout/AdminLayout';
-import AdminDashboard from './admin/Dashboard';
+import ManageNews from './admin/ManageNews';
 
-export default function AdminPanel() {
+export default function AdminNewsPage() {
   return (
     <AdminLayout>
-      <AdminDashboard />
+      <ManageNews />
     </AdminLayout>
   );
 }

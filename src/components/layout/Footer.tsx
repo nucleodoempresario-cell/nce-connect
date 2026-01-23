@@ -67,10 +67,10 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  to="/nucleados"
+                  to="/membros"
                   className="text-secondary-foreground/80 hover:text-secondary-foreground transition-colors"
                 >
-                  Nucleados
+                  Membros
                 </Link>
               </li>
               <li>

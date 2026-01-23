@@ -1,10 +1,10 @@
 import { AdminLayout } from '@/components/layout/AdminLayout';
-import AdminDashboard from './admin/Dashboard';
+import ManageForm from './admin/ManageForm';
 
-export default function AdminPanel() {
+export default function AdminFormPage() {
   return (
     <AdminLayout>
-      <AdminDashboard />
+      <ManageForm />
     </AdminLayout>
   );
 }
