@@ -39,14 +39,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setProfile(profileData);
     }
 
-    const { data: roleData } = await supabase
+    // Buscar todas as roles do usuário e verificar se é admin
+    const { data: rolesData } = await supabase
       .from('user_roles')
       .select('role')
-      .eq('user_id', userId)
-      .maybeSingle();
+      .eq('user_id', userId);
 
-    if (roleData) {
-      setRole(roleData.role);
+    if (rolesData && rolesData.length > 0) {
+      // Se tem role de admin, usa admin; senão usa a primeira role
+      const hasAdmin = rolesData.some(r => r.role === 'admin');
+      setRole(hasAdmin ? 'admin' : rolesData[0].role);
     }
   };
 
