@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Users, Search } from 'lucide-react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { MemberCard } from '@/components/MemberCard';
@@ -6,6 +7,7 @@ import { SocialLinks } from '@/components/SocialLinks';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
+import { FadeIn, StaggerContainer, StaggerItem } from '@/components/animations';
 import { useProfiles } from '@/hooks/useProfiles';
 import type { Database } from '@/integrations/supabase/types';
 
@@ -26,27 +28,55 @@ export default function Members() {
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" />
-        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl" />
+        <motion.div 
+          className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/20 rounded-full blur-3xl"
+          animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.3, 0.2] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div 
+          className="absolute bottom-1/4 -right-32 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"
+          animate={{ scale: [1.2, 1, 1.2], opacity: [0.1, 0.2, 0.1] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        />
         
         <div className="container relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-6">
+          <motion.div 
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
             <Users className="h-4 w-4 text-primary" />
             <span className="text-sm text-white/80">Nossa Comunidade</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 max-w-3xl">
+          </motion.div>
+          <motion.h1 
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 max-w-3xl"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
             Nossos{' '}
             <span className="bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">
               Nucleados
             </span>
-          </h1>
-          <p className="text-xl text-white/70 max-w-2xl leading-relaxed mb-8">
+          </motion.h1>
+          <motion.p 
+            className="text-xl text-white/70 max-w-2xl leading-relaxed mb-8"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
             Conheça os empresários de alto nível que fazem parte do NCE. 
             Líderes comprometidos com a excelência e o crescimento mútuo.
-          </p>
+          </motion.p>
           
           {/* Search */}
-          <div className="max-w-md">
+          <motion.div 
+            className="max-w-md"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+          >
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
               <Input 
@@ -56,7 +86,7 @@ export default function Members() {
                 className="pl-12 h-12 bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-primary"
               />
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -74,22 +104,25 @@ export default function Members() {
             </div>
           ) : filteredMembers && filteredMembers.length > 0 ? (
             <>
-              <p className="text-muted-foreground mb-8">
-                {filteredMembers.length} {filteredMembers.length === 1 ? 'membro encontrado' : 'membros encontrados'}
-              </p>
-              <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+              <FadeIn>
+                <p className="text-muted-foreground mb-8">
+                  {filteredMembers.length} {filteredMembers.length === 1 ? 'membro encontrado' : 'membros encontrados'}
+                </p>
+              </FadeIn>
+              <StaggerContainer className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6" staggerDelay={0.05}>
                 {filteredMembers.map((member) => (
-                  <MemberCard
-                    key={member.id}
-                    nome={member.nome}
-                    fotoUrl={member.foto_url}
-                    onClick={() => setSelectedMember(member)}
-                  />
+                  <StaggerItem key={member.id}>
+                    <MemberCard
+                      nome={member.nome}
+                      fotoUrl={member.foto_url}
+                      onClick={() => setSelectedMember(member)}
+                    />
+                  </StaggerItem>
                 ))}
-              </div>
+              </StaggerContainer>
             </>
           ) : (
-            <div className="text-center py-20">
+            <FadeIn className="text-center py-20">
               <div className="w-20 h-20 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-6">
                 <Users className="h-10 w-10 text-muted-foreground/50" />
               </div>
@@ -101,7 +134,7 @@ export default function Members() {
                   ? 'Tente buscar por outro termo ou limpe a busca para ver todos os membros.'
                   : 'Os membros aparecerão aqui quando forem aprovados pelo administrador.'}
               </p>
-            </div>
+            </FadeIn>
           )}
         </div>
       </section>
