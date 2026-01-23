@@ -1,0 +1,57 @@
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Users, Building2, FileText, ClipboardList, Newspaper, ArrowLeft, LayoutDashboard } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import AdminDashboard from './admin/Dashboard';
+import ManageUsers from './admin/ManageUsers';
+import ManageCompanies from './admin/ManageCompanies';
+import ManageNews from './admin/ManageNews';
+import ManageForm from './admin/ManageForm';
+import ViewApplications from './admin/ViewApplications';
+
+const navItems = [
+  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/usuarios', label: 'Usuários', icon: Users },
+  { href: '/admin/empresas', label: 'Empresas', icon: Building2 },
+  { href: '/admin/noticias', label: 'Notícias', icon: Newspaper },
+  { href: '/admin/formulario', label: 'Formulário', icon: FileText },
+  { href: '/admin/inscricoes', label: 'Inscrições', icon: ClipboardList },
+];
+
+export default function AdminPanel() {
+  const location = useLocation();
+
+  return (
+    <div className="min-h-screen bg-muted">
+      <header className="bg-secondary text-secondary-foreground sticky top-0 z-40">
+        <div className="container flex items-center justify-between h-16">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="sm" className="text-secondary-foreground hover:text-secondary-foreground/80" asChild>
+              <Link to="/"><ArrowLeft className="h-4 w-4 mr-2" /> Voltar</Link>
+            </Button>
+            <span className="font-semibold">Painel Administrativo</span>
+          </div>
+        </div>
+      </header>
+
+      <div className="container py-8">
+        <nav className="flex gap-2 mb-8 overflow-x-auto pb-2">
+          {navItems.map(({ href, label, icon: Icon }) => (
+            <Button key={href} variant={location.pathname === href ? 'default' : 'outline'} size="sm" asChild className={cn(location.pathname === href && 'pointer-events-none')}>
+              <Link to={href}><Icon className="h-4 w-4 mr-2" />{label}</Link>
+            </Button>
+          ))}
+        </nav>
+
+        <Routes>
+          <Route index element={<AdminDashboard />} />
+          <Route path="usuarios" element={<ManageUsers />} />
+          <Route path="empresas" element={<ManageCompanies />} />
+          <Route path="noticias/*" element={<ManageNews />} />
+          <Route path="formulario" element={<ManageForm />} />
+          <Route path="inscricoes" element={<ViewApplications />} />
+        </Routes>
+      </div>
+    </div>
+  );
+}
