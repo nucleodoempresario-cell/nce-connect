@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import logoNce from '@/assets/logo-nce.png';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -54,22 +55,14 @@ export function Header() {
       <div className="container flex h-20 items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3 group">
-          <div className={cn(
-            "flex items-center justify-center w-11 h-11 rounded-xl font-bold text-lg transition-all duration-300",
-            showTransparent 
-              ? "bg-white/10 backdrop-blur-sm text-white border border-white/20" 
-              : "bg-primary text-primary-foreground"
-          )}>
-            NCE
-          </div>
-          <div className="hidden sm:block">
-            <span className={cn(
-              "font-bold text-lg transition-colors duration-300",
-              showTransparent ? "text-white" : "text-foreground"
-            )}>
-              Núcleo do Empresário
-            </span>
-          </div>
+          <img 
+            src={logoNce} 
+            alt="NCE - Núcleo do Empresário" 
+            className={cn(
+              "h-12 w-auto transition-all duration-300",
+              showTransparent && "brightness-0 invert"
+            )}
+          />
         </Link>
 
         {/* Desktop Navigation */}
@@ -100,7 +93,7 @@ export function Header() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button 
-                  variant={showTransparent ? "outline" : "outline"} 
+                  variant="outline" 
                   size="sm" 
                   className={cn(
                     "gap-2 h-10 px-4",
@@ -154,7 +147,7 @@ export function Header() {
               </Button>
               <Button 
                 size="sm" 
-                className="h-10 px-6 bg-gradient-to-r from-primary to-emerald-500 hover:from-primary/90 hover:to-emerald-500/90 shadow-lg shadow-primary/25"
+                className="h-10 px-6 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
                 asChild
               >
                 <Link to="/seja-nucleado">Seja Nucleado</Link>
@@ -235,7 +228,7 @@ export function Header() {
                   </Button>
                   <Button 
                     size="sm" 
-                    className="h-11 bg-gradient-to-r from-primary to-emerald-500"
+                    className="h-11 bg-primary hover:bg-primary/90"
                     asChild
                   >
                     <Link to="/seja-nucleado" onClick={() => setIsMenuOpen(false)}>

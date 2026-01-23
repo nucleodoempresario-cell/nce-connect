@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Linkedin, Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import logoNce from '@/assets/logo-nce.png';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -17,7 +18,7 @@ export function Footer() {
             </div>
             <Button 
               size="lg" 
-              className="bg-gradient-to-r from-primary to-emerald-500 hover:from-primary/90 hover:to-emerald-500/90 shadow-lg"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
               asChild
             >
               <Link to="/seja-nucleado">
@@ -34,13 +35,11 @@ export function Footer() {
           {/* Logo and Description */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-6">
-              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-emerald-500 text-white font-bold text-lg">
-                NCE
-              </div>
-              <div>
-                <span className="font-bold text-xl">Núcleo do Empresário</span>
-                <p className="text-sm text-white/50">Onde líderes se conectam</p>
-              </div>
+              <img 
+                src={logoNce} 
+                alt="NCE - Núcleo do Empresário" 
+                className="h-14 w-auto brightness-0 invert"
+              />
             </div>
             <p className="text-white/60 mb-6 max-w-md leading-relaxed">
               Uma comunidade exclusiva de empresários de alto nível, unidos pelo compromisso 
