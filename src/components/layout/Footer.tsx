@@ -7,18 +7,18 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-slate-950 text-white">
+    <footer className="bg-primary text-white">
       {/* Pre-footer CTA */}
       <div className="border-b border-white/10">
         <div className="container py-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <h3 className="text-2xl font-bold mb-2">Pronto para fazer parte?</h3>
-              <p className="text-white/60">Junte-se aos empresários mais influentes da região.</p>
+              <p className="text-white/70">Junte-se aos empresários mais influentes da região.</p>
             </div>
             <Button 
               size="lg" 
-              className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
+              className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-lg"
               asChild
             >
               <Link to="/seja-nucleado">
@@ -41,7 +41,7 @@ export function Footer() {
                 className="h-14 w-auto brightness-0 invert"
               />
             </div>
-            <p className="text-white/60 mb-6 max-w-md leading-relaxed">
+            <p className="text-white/70 mb-6 max-w-md leading-relaxed">
               Uma comunidade exclusiva de empresários de alto nível, unidos pelo compromisso 
               com a excelência e o crescimento mútuo. Networking estratégico que gera resultados reais.
             </p>
@@ -54,7 +54,7 @@ export function Footer() {
                 <a
                   key={i}
                   href={href}
-                  className="w-10 h-10 rounded-lg bg-white/5 hover:bg-primary/20 flex items-center justify-center transition-colors"
+                  className="w-10 h-10 rounded-lg bg-white/10 hover:bg-accent/90 hover:text-accent-foreground flex items-center justify-center transition-colors"
                   aria-label="Social link"
                 >
                   <Icon className="h-5 w-5" />
@@ -77,9 +77,9 @@ export function Footer() {
                 <li key={href}>
                   <Link
                     to={href}
-                    className="text-white/60 hover:text-white transition-colors flex items-center gap-2 group"
+                    className="text-white/70 hover:text-accent transition-colors flex items-center gap-2 group"
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary/50 group-hover:bg-primary transition-colors" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent/50 group-hover:bg-accent transition-colors" />
                     {label}
                   </Link>
                 </li>
@@ -91,20 +91,20 @@ export function Footer() {
           <div>
             <h4 className="font-semibold text-lg mb-6">Contato</h4>
             <ul className="space-y-4">
-              <li className="flex items-center gap-3 text-white/60">
-                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
+              <li className="flex items-center gap-3 text-white/70">
+                <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
                   <Mail className="h-4 w-4" />
                 </div>
                 <span>contato@nce.com.br</span>
               </li>
-              <li className="flex items-center gap-3 text-white/60">
-                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
+              <li className="flex items-center gap-3 text-white/70">
+                <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
                   <Phone className="h-4 w-4" />
                 </div>
                 <span>(00) 00000-0000</span>
               </li>
-              <li className="flex items-start gap-3 text-white/60">
-                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
+              <li className="flex items-start gap-3 text-white/70">
+                <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
                   <MapPin className="h-4 w-4" />
                 </div>
                 <span>Cidade, Estado<br />Brasil</span>
@@ -115,11 +115,11 @@ export function Footer() {
       </div>
       
       <div className="border-t border-white/10">
-        <div className="container py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/40">
+        <div className="container py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/50">
           <p>© {currentYear} NCE - Núcleo do Empresário. Todos os direitos reservados.</p>
           <div className="flex gap-6">
-            <Link to="#" className="hover:text-white transition-colors">Privacidade</Link>
-            <Link to="#" className="hover:text-white transition-colors">Termos</Link>
+            <Link to="#" className="hover:text-accent transition-colors">Privacidade</Link>
+            <Link to="#" className="hover:text-accent transition-colors">Termos</Link>
           </div>
         </div>
       </div>

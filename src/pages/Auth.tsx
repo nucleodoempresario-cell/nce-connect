@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useAuth } from '@/contexts/AuthContext';
@@ -97,7 +97,7 @@ export default function Auth() {
 
   return (
     <PageLayout showFooter={false}>
-      <div className="min-h-screen pt-20 flex items-center justify-center p-4 bg-muted/30">
+      <div className="min-h-screen pt-20 flex items-center justify-center p-4 bg-secondary">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <Link to="/">
@@ -111,7 +111,7 @@ export default function Auth() {
             <p className="text-muted-foreground">Acesse sua conta ou cadastre-se</p>
           </div>
 
-          <Card className="border-0 shadow-xl">
+          <Card className="border-0 shadow-xl bg-white">
             <CardContent className="pt-6">
               <Tabs defaultValue="login">
                 <TabsList className="grid w-full grid-cols-2 mb-6">
@@ -148,7 +148,7 @@ export default function Auth() {
                           </FormItem>
                         )}
                       />
-                      <Button type="submit" size="lg" className="w-full h-12" disabled={isLoading}>
+                      <Button type="submit" size="lg" className="w-full h-12 bg-primary hover:bg-primary/90" disabled={isLoading}>
                         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Entrar
                       </Button>
@@ -211,7 +211,7 @@ export default function Auth() {
                           </FormItem>
                         )}
                       />
-                      <Button type="submit" size="lg" className="w-full h-12" disabled={isLoading}>
+                      <Button type="submit" size="lg" className="w-full h-12 bg-primary hover:bg-primary/90" disabled={isLoading}>
                         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Cadastrar
                       </Button>

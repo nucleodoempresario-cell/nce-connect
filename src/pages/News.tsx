@@ -23,27 +23,27 @@ export default function News() {
     <PageLayout>
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" />
-        <motion.div 
-          className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/20 rounded-full blur-3xl"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.3, 0.2] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=2070&auto=format&fit=crop')" }}
         />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/90 to-primary/80" />
+        
         <motion.div 
-          className="absolute bottom-1/4 -right-32 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"
-          animate={{ scale: [1.2, 1, 1.2], opacity: [0.1, 0.2, 0.1] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute top-1/4 -left-32 w-64 h-64 bg-accent/30 rounded-full blur-3xl"
+          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.4, 0.3] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         />
         
         <div className="container relative z-10">
           <motion.div 
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-accent-foreground text-sm font-semibold mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <Newspaper className="h-4 w-4 text-primary" />
-            <span className="text-sm text-white/80">Fique Atualizado</span>
+            <Newspaper className="h-4 w-4" />
+            Fique Atualizado
           </motion.div>
           <motion.h1 
             className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 max-w-3xl"
@@ -51,13 +51,10 @@ export default function News() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            Notícias e{' '}
-            <span className="bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">
-              Novidades
-            </span>
+            Notícias e Novidades
           </motion.h1>
           <motion.p 
-            className="text-xl text-white/70 max-w-2xl leading-relaxed mb-8"
+            className="text-xl text-white/90 max-w-2xl leading-relaxed mb-8"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
@@ -74,12 +71,12 @@ export default function News() {
             transition={{ duration: 0.5, delay: 0.5 }}
           >
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/50" />
               <Input 
                 placeholder="Buscar notícia..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-12 h-12 bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-primary"
+                className="pl-12 h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-accent focus:ring-accent"
               />
             </div>
           </motion.div>
@@ -87,7 +84,7 @@ export default function News() {
       </section>
 
       {/* News Grid */}
-      <section className="py-20">
+      <section className="py-20 bg-secondary">
         <div className="container">
           {isLoading ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -123,8 +120,8 @@ export default function News() {
             </>
           ) : (
             <FadeIn className="text-center py-20">
-              <div className="w-20 h-20 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-6">
-                <Newspaper className="h-10 w-10 text-muted-foreground/50" />
+              <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                <Newspaper className="h-10 w-10 text-primary/50" />
               </div>
               <h3 className="text-2xl font-bold mb-3 text-foreground">
                 {searchTerm ? 'Nenhuma notícia encontrada' : 'Nenhuma notícia publicada'}
