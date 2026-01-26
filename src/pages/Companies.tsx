@@ -26,27 +26,27 @@ export default function Companies() {
     <PageLayout>
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" />
-        <motion.div 
-          className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/20 rounded-full blur-3xl"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.3, 0.2] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop')" }}
         />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/90 to-primary/80" />
+        
         <motion.div 
-          className="absolute bottom-1/4 -right-32 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"
-          animate={{ scale: [1.2, 1, 1.2], opacity: [0.1, 0.2, 0.1] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute top-1/4 -left-32 w-64 h-64 bg-accent/30 rounded-full blur-3xl"
+          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.4, 0.3] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         />
         
         <div className="container relative z-10">
           <motion.div 
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-accent-foreground text-sm font-semibold mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <Building2 className="h-4 w-4 text-primary" />
-            <span className="text-sm text-white/80">Nossos Parceiros</span>
+            <Building2 className="h-4 w-4" />
+            Nossos Parceiros
           </motion.div>
           <motion.h1 
             className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 max-w-3xl"
@@ -54,13 +54,10 @@ export default function Companies() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            Empresas{' '}
-            <span className="bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">
-              de Excelência
-            </span>
+            Empresas de Excelência
           </motion.h1>
           <motion.p 
-            className="text-xl text-white/70 max-w-2xl leading-relaxed mb-8"
+            className="text-xl text-white/90 max-w-2xl leading-relaxed mb-8"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
@@ -77,12 +74,12 @@ export default function Companies() {
             transition={{ duration: 0.5, delay: 0.5 }}
           >
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/50" />
               <Input 
                 placeholder="Buscar empresa..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-12 h-12 bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-primary"
+                className="pl-12 h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-accent focus:ring-accent"
               />
             </div>
           </motion.div>
@@ -90,7 +87,7 @@ export default function Companies() {
       </section>
 
       {/* Companies Grid */}
-      <section className="py-20">
+      <section className="py-20 bg-secondary">
         <div className="container">
           {isLoading ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -124,8 +121,8 @@ export default function Companies() {
             </>
           ) : (
             <FadeIn className="text-center py-20">
-              <div className="w-20 h-20 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-6">
-                <Building2 className="h-10 w-10 text-muted-foreground/50" />
+              <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                <Building2 className="h-10 w-10 text-primary/50" />
               </div>
               <h3 className="text-2xl font-bold mb-3 text-foreground">
                 {searchTerm ? 'Nenhuma empresa encontrada' : 'Nenhuma empresa cadastrada'}
@@ -149,7 +146,7 @@ export default function Companies() {
           {selectedCompany && (
             <div className="space-y-6">
               {selectedCompany.logo_url && (
-                <div className="h-40 flex items-center justify-center bg-muted rounded-xl p-6">
+                <div className="h-40 flex items-center justify-center bg-secondary rounded-xl p-6">
                   <img 
                     src={selectedCompany.logo_url} 
                     alt={selectedCompany.nome} 
@@ -164,7 +161,7 @@ export default function Companies() {
 
               <div className="flex flex-wrap gap-4">
                 {selectedCompany.site_url && (
-                  <Button asChild>
+                  <Button asChild className="bg-primary hover:bg-primary/90">
                     <a href={selectedCompany.site_url} target="_blank" rel="noopener noreferrer">
                       <Globe className="h-4 w-4 mr-2" /> Visitar Site
                     </a>
@@ -178,9 +175,9 @@ export default function Companies() {
                   <h4 className="font-semibold mb-4 text-foreground">Proprietário</h4>
                   <Link 
                     to="/membros" 
-                    className="flex items-center gap-4 p-4 rounded-xl bg-muted hover:bg-muted/80 transition-colors"
+                    className="flex items-center gap-4 p-4 rounded-xl bg-secondary hover:bg-secondary/80 transition-colors"
                   >
-                    <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
+                    <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center overflow-hidden">
                       {selectedCompany.dono.foto_url ? (
                         <img 
                           src={selectedCompany.dono.foto_url} 
@@ -188,7 +185,7 @@ export default function Companies() {
                           className="w-full h-full object-cover" 
                         />
                       ) : (
-                        <span className="text-primary font-bold text-lg">
+                        <span className="text-white font-bold text-lg">
                           {selectedCompany.dono.nome?.charAt(0)}
                         </span>
                       )}

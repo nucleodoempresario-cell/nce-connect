@@ -16,7 +16,7 @@ export default function NewsDetail() {
   if (isLoading) {
     return (
       <PageLayout>
-        <div className="pt-24">
+        <div className="pt-24 bg-secondary min-h-screen">
           <div className="container max-w-4xl py-8">
             <Skeleton className="h-10 w-32 mb-8" />
             <Skeleton className="h-14 w-3/4 mb-4" />
@@ -36,11 +36,11 @@ export default function NewsDetail() {
   if (!news) {
     return (
       <PageLayout>
-        <div className="pt-24">
+        <div className="pt-24 bg-secondary min-h-screen">
           <FadeIn className="container py-20 text-center">
             <h1 className="text-3xl font-bold mb-4 text-foreground">Notícia não encontrada</h1>
             <p className="text-muted-foreground mb-8">A notícia que você procura não existe ou foi removida.</p>
-            <Button asChild size="lg">
+            <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
               <Link to="/noticias">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Voltar para notícias
@@ -56,14 +56,14 @@ export default function NewsDetail() {
 
   return (
     <PageLayout>
-      <article className="pt-24">
+      <article className="pt-24 bg-secondary min-h-screen">
         <div className="container max-w-4xl py-8">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <Button variant="ghost" asChild className="mb-8 -ml-4">
+            <Button variant="ghost" asChild className="mb-8 -ml-4 text-muted-foreground hover:text-foreground">
               <Link to="/noticias">
                 <ArrowLeft className="h-4 w-4 mr-2" /> Voltar para notícias
               </Link>
@@ -77,18 +77,18 @@ export default function NewsDetail() {
               </h1>
               <div className="flex flex-wrap items-center gap-6 text-muted-foreground">
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
-                    <Calendar className="h-5 w-5" />
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Calendar className="h-5 w-5 text-primary" />
                   </div>
                   <span>{formattedDate}</span>
                 </div>
                 {news.autor && (
                   <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center overflow-hidden">
+                    <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center overflow-hidden">
                       {news.autor.foto_url ? (
                         <img src={news.autor.foto_url} alt={news.autor.nome} className="w-full h-full object-cover" />
                       ) : (
-                        <User className="h-5 w-5" />
+                        <User className="h-5 w-5 text-white" />
                       )}
                     </div>
                     <span>{news.autor.nome}</span>
@@ -100,7 +100,7 @@ export default function NewsDetail() {
 
           {news.imagem_capa && (
             <FadeIn delay={0.1}>
-              <div className="aspect-video mb-10 rounded-2xl overflow-hidden bg-muted shadow-lg">
+              <div className="aspect-video mb-10 rounded-2xl overflow-hidden bg-white shadow-lg">
                 <img 
                   src={news.imagem_capa} 
                   alt={news.titulo} 
@@ -112,13 +112,13 @@ export default function NewsDetail() {
 
           <FadeIn delay={0.2}>
             {news.resumo && (
-              <p className="text-xl text-muted-foreground mb-8 leading-relaxed border-l-4 border-primary pl-6">
+              <p className="text-xl text-muted-foreground mb-8 leading-relaxed border-l-4 border-accent pl-6 bg-white p-6 rounded-r-lg">
                 {news.resumo}
               </p>
             )}
 
             <div 
-              className="news-content prose prose-lg max-w-none text-foreground"
+              className="news-content prose prose-lg max-w-none text-foreground bg-white p-8 rounded-xl shadow-sm"
               dangerouslySetInnerHTML={{ __html: news.conteudo }}
             />
           </FadeIn>

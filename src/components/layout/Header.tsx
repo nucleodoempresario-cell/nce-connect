@@ -49,7 +49,7 @@ export function Header() {
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
         showTransparent 
           ? "bg-transparent" 
-          : "bg-background/95 backdrop-blur-xl border-b shadow-sm"
+          : "bg-white shadow-md"
       )}
     >
       <div className="container flex h-20 items-center justify-between">
@@ -75,11 +75,11 @@ export function Header() {
                 "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                 isActive(link.href)
                   ? showTransparent
-                    ? "bg-white/10 text-white"
-                    : "bg-primary/10 text-primary"
+                    ? "bg-white/15 text-white"
+                    : "text-primary font-semibold"
                   : showTransparent
-                    ? "text-white/80 hover:text-white hover:bg-white/10"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    ? "text-white/90 hover:text-white hover:bg-white/10"
+                    : "text-slate-700 hover:text-primary"
               )}
             >
               {link.label}
@@ -97,11 +97,16 @@ export function Header() {
                   size="sm" 
                   className={cn(
                     "gap-2 h-10 px-4",
-                    showTransparent && "border-white/20 text-white hover:bg-white/10"
+                    showTransparent 
+                      ? "border-white/30 text-white hover:bg-white/10 bg-white/10" 
+                      : "border-slate-200 hover:border-primary"
                   )}
                 >
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
-                    <User className="h-3.5 w-3.5" />
+                  <div className={cn(
+                    "w-6 h-6 rounded-full flex items-center justify-center",
+                    showTransparent ? "bg-white/20" : "bg-primary/10"
+                  )}>
+                    <User className={cn("h-3.5 w-3.5", showTransparent ? "text-white" : "text-primary")} />
                   </div>
                   <span className="max-w-[100px] truncate">{profile?.nome?.split(' ')[0] || 'Conta'}</span>
                   <ChevronDown className="h-4 w-4 opacity-50" />
@@ -136,7 +141,9 @@ export function Header() {
                 size="sm" 
                 className={cn(
                   "h-10",
-                  showTransparent && "text-white hover:bg-white/10"
+                  showTransparent 
+                    ? "text-white hover:bg-white/10" 
+                    : "text-slate-700 hover:text-primary"
                 )}
                 asChild
               >
@@ -147,7 +154,7 @@ export function Header() {
               </Button>
               <Button 
                 size="sm" 
-                className="h-10 px-6 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
+                className="h-10 px-6 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-lg"
                 asChild
               >
                 <Link to="/seja-nucleado">Seja Nucleado</Link>
@@ -160,7 +167,7 @@ export function Header() {
         <button
           className={cn(
             "lg:hidden p-2 rounded-lg transition-colors",
-            showTransparent ? "text-white hover:bg-white/10" : "hover:bg-muted"
+            showTransparent ? "text-white hover:bg-white/10" : "text-slate-700 hover:bg-slate-100"
           )}
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-label="Toggle menu"
@@ -171,7 +178,7 @@ export function Header() {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="lg:hidden bg-background border-t">
+        <div className="lg:hidden bg-white border-t shadow-lg">
           <nav className="container py-6 flex flex-col gap-2">
             {navLinks.map((link) => (
               <Link
@@ -181,8 +188,8 @@ export function Header() {
                 className={cn(
                   "px-4 py-3 rounded-lg text-sm font-medium transition-colors",
                   isActive(link.href)
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-muted"
+                    ? "bg-primary/10 text-primary font-semibold"
+                    : "text-slate-700 hover:bg-slate-100"
                 )}
               >
                 {link.label}
@@ -220,7 +227,7 @@ export function Header() {
                 </>
               ) : (
                 <>
-                  <Button variant="ghost" size="sm" asChild className="justify-start h-11">
+                  <Button variant="ghost" size="sm" asChild className="justify-start h-11 text-slate-700">
                     <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
                       <LogIn className="h-4 w-4 mr-2" />
                       Entrar
@@ -228,7 +235,7 @@ export function Header() {
                   </Button>
                   <Button 
                     size="sm" 
-                    className="h-11 bg-primary hover:bg-primary/90"
+                    className="h-11 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold"
                     asChild
                   >
                     <Link to="/seja-nucleado" onClick={() => setIsMenuOpen(false)}>

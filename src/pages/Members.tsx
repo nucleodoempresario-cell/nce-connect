@@ -27,27 +27,27 @@ export default function Members() {
     <PageLayout>
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" />
-        <motion.div 
-          className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/20 rounded-full blur-3xl"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.3, 0.2] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop')" }}
         />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/90 to-primary/80" />
+        
         <motion.div 
-          className="absolute bottom-1/4 -right-32 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"
-          animate={{ scale: [1.2, 1, 1.2], opacity: [0.1, 0.2, 0.1] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute top-1/4 -left-32 w-64 h-64 bg-accent/30 rounded-full blur-3xl"
+          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.4, 0.3] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         />
         
         <div className="container relative z-10">
           <motion.div 
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-accent-foreground text-sm font-semibold mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <Users className="h-4 w-4 text-primary" />
-            <span className="text-sm text-white/80">Nossa Comunidade</span>
+            <Users className="h-4 w-4" />
+            Nossa Comunidade
           </motion.div>
           <motion.h1 
             className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 max-w-3xl"
@@ -55,13 +55,10 @@ export default function Members() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            Nossos{' '}
-            <span className="bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">
-              Nucleados
-            </span>
+            Nossos Nucleados
           </motion.h1>
           <motion.p 
-            className="text-xl text-white/70 max-w-2xl leading-relaxed mb-8"
+            className="text-xl text-white/90 max-w-2xl leading-relaxed mb-8"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
@@ -78,12 +75,12 @@ export default function Members() {
             transition={{ duration: 0.5, delay: 0.5 }}
           >
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/50" />
               <Input 
                 placeholder="Buscar membro..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-12 h-12 bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-primary"
+                className="pl-12 h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-accent focus:ring-accent"
               />
             </div>
           </motion.div>
@@ -91,7 +88,7 @@ export default function Members() {
       </section>
 
       {/* Members Grid */}
-      <section className="py-20">
+      <section className="py-20 bg-secondary">
         <div className="container">
           {isLoading ? (
             <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
@@ -123,8 +120,8 @@ export default function Members() {
             </>
           ) : (
             <FadeIn className="text-center py-20">
-              <div className="w-20 h-20 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-6">
-                <Users className="h-10 w-10 text-muted-foreground/50" />
+              <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                <Users className="h-10 w-10 text-primary/50" />
               </div>
               <h3 className="text-2xl font-bold mb-3 text-foreground">
                 {searchTerm ? 'Nenhum membro encontrado' : 'Nenhum nucleado cadastrado'}
@@ -148,7 +145,7 @@ export default function Members() {
           {selectedMember && (
             <div className="space-y-6">
               <div className="flex justify-center">
-                <div className="w-36 h-36 rounded-2xl bg-muted overflow-hidden shadow-lg">
+                <div className="w-36 h-36 rounded-full bg-secondary overflow-hidden shadow-lg border-4 border-accent">
                   {selectedMember.foto_url ? (
                     <img 
                       src={selectedMember.foto_url} 
@@ -156,7 +153,7 @@ export default function Members() {
                       className="w-full h-full object-cover" 
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary to-emerald-500">
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary to-primary/80">
                       <span className="text-white text-4xl font-bold">
                         {selectedMember.nome.charAt(0)}
                       </span>

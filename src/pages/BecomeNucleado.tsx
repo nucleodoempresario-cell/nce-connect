@@ -52,22 +52,22 @@ export default function BecomeNucleado() {
   if (submitted) {
     return (
       <PageLayout>
-        <div className="min-h-[80vh] flex items-center justify-center px-4">
+        <div className="min-h-[80vh] flex items-center justify-center px-4 bg-secondary">
           <FadeIn className="text-center max-w-lg">
             <motion.div 
-              className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6"
+              className="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-6"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", duration: 0.6 }}
             >
-              <CheckCircle className="h-10 w-10 text-primary" />
+              <CheckCircle className="h-10 w-10 text-accent" />
             </motion.div>
             <h1 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">Candidatura Enviada!</h1>
             <p className="text-lg text-muted-foreground mb-8">
               Obrigado pelo interesse em fazer parte do NCE. 
               Nossa equipe analisará sua candidatura e entraremos em contato em breve.
             </p>
-            <Button asChild size="lg">
+            <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
               <Link to="/">
                 Voltar para Home
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -89,27 +89,27 @@ export default function BecomeNucleado() {
     <PageLayout>
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" />
-        <motion.div 
-          className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/20 rounded-full blur-3xl"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.3, 0.2] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=2070&auto=format&fit=crop')" }}
         />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/90 to-primary/80" />
+        
         <motion.div 
-          className="absolute bottom-1/4 -right-32 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"
-          animate={{ scale: [1.2, 1, 1.2], opacity: [0.1, 0.2, 0.1] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute top-1/4 -left-32 w-64 h-64 bg-accent/30 rounded-full blur-3xl"
+          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.4, 0.3] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         />
         
         <div className="container relative z-10">
           <motion.div 
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-accent-foreground text-sm font-semibold mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
-            <span className="text-sm text-white/80">Processo Seletivo</span>
+            <Star className="h-4 w-4" />
+            Processo Seletivo
           </motion.div>
           <motion.h1 
             className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 max-w-3xl"
@@ -117,13 +117,10 @@ export default function BecomeNucleado() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            Seja um{' '}
-            <span className="bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">
-              Nucleado
-            </span>
+            Seja um Nucleado
           </motion.h1>
           <motion.p 
-            className="text-xl text-white/70 max-w-2xl leading-relaxed"
+            className="text-xl text-white/90 max-w-2xl leading-relaxed"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
@@ -140,9 +137,9 @@ export default function BecomeNucleado() {
           <StaggerContainer className="grid md:grid-cols-3 gap-4" staggerDelay={0.1}>
             {benefits.map(({ icon: Icon, title, description }, i) => (
               <StaggerItem key={i}>
-                <Card className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-0 shadow-xl">
+                <Card className="bg-white shadow-xl border-0">
                   <CardContent className="p-6 flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                       <Icon className="h-6 w-6 text-primary" />
                     </div>
                     <div>
@@ -158,15 +155,15 @@ export default function BecomeNucleado() {
       </section>
 
       {/* Form Section */}
-      <section className="py-16">
+      <section className="py-16 bg-secondary">
         <div className="container max-w-5xl">
           <div className="grid lg:grid-cols-5 gap-8">
             {/* Requirements */}
             <FadeIn direction="right" className="lg:col-span-2">
-              <Card className="sticky top-28 border-0 shadow-lg">
+              <Card className="sticky top-28 border-0 shadow-lg bg-white">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-foreground">
-                    <CheckCircle className="h-5 w-5 text-primary" />
+                    <CheckCircle className="h-5 w-5 text-accent" />
                     {requisitos?.titulo || 'Requisitos para Participar'}
                   </CardTitle>
                 </CardHeader>
@@ -180,15 +177,15 @@ export default function BecomeNucleado() {
                       'Postura ética e colaborativa'
                     ]).map((req, i) => (
                       <li key={i} className="flex items-start gap-3">
-                        <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <CheckCircle className="h-4 w-4 text-primary" />
+                        <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <CheckCircle className="h-4 w-4 text-accent" />
                         </div>
                         <span className="text-foreground">{req}</span>
                       </li>
                     ))}
                   </ul>
                   
-                  <div className="mt-8 p-4 rounded-xl bg-muted">
+                  <div className="mt-8 p-4 rounded-xl bg-secondary">
                     <p className="text-sm text-muted-foreground">
                       <strong className="text-foreground">Processo seletivo:</strong> Após o envio, 
                       sua candidatura será analisada pela nossa equipe. Retornaremos em até 7 dias úteis.
@@ -200,7 +197,7 @@ export default function BecomeNucleado() {
 
             {/* Form */}
             <FadeIn direction="left" delay={0.2} className="lg:col-span-3">
-              <Card className="border-0 shadow-lg">
+              <Card className="border-0 shadow-lg bg-white">
                 <CardHeader>
                   <CardTitle className="text-foreground">Formulário de Candidatura</CardTitle>
                 </CardHeader>
@@ -304,7 +301,7 @@ export default function BecomeNucleado() {
                     <Button 
                       type="submit" 
                       size="lg"
-                      className="w-full h-14 text-lg bg-primary hover:bg-primary/90" 
+                      className="w-full h-14 text-lg bg-accent hover:bg-accent/90 text-accent-foreground font-semibold" 
                       disabled={createApplication.isPending}
                     >
                       {createApplication.isPending ? (
