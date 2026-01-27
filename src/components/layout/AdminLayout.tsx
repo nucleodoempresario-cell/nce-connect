@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Users, Building2, FileText, ClipboardList, Newspaper, ArrowLeft, LayoutDashboard } from 'lucide-react';
+import { Users, Building2, FileText, ClipboardList, Newspaper, ArrowLeft, LayoutDashboard, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ReactNode } from 'react';
@@ -11,6 +11,7 @@ const navItems = [
   { href: '/admin/noticias', label: 'Notícias', icon: Newspaper },
   { href: '/admin/formulario', label: 'Formulário', icon: FileText },
   { href: '/admin/inscricoes', label: 'Inscrições', icon: ClipboardList },
+  { href: '/admin/relatorios', label: 'Relatórios', icon: BarChart3 },
 ];
 
 interface AdminLayoutProps {

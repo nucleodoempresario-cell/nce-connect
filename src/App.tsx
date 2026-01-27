@@ -30,6 +30,7 @@ import AdminCompaniesPage from "./pages/AdminCompaniesPage";
 import AdminNewsPage from "./pages/AdminNewsPage";
 import AdminFormPage from "./pages/AdminFormPage";
 import AdminApplicationsPage from "./pages/AdminApplicationsPage";
+import AdminReportsPage from "./pages/AdminReportsPage";
 
 const queryClient = new QueryClient();
 
@@ -66,6 +67,7 @@ const App = () => (
             <Route path="/admin/noticias" element={<ProtectedRoute requireAdmin><AdminNewsPage /></ProtectedRoute>} />
             <Route path="/admin/formulario" element={<ProtectedRoute requireAdmin><AdminFormPage /></ProtectedRoute>} />
             <Route path="/admin/inscricoes" element={<ProtectedRoute requireAdmin><AdminApplicationsPage /></ProtectedRoute>} />
+            <Route path="/admin/relatorios" element={<ProtectedRoute requireAdmin><AdminReportsPage /></ProtectedRoute>} />
 
             {/* 404 */}
             <Route path="*" element={<NotFound />} />
