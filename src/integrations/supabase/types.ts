@@ -56,6 +56,7 @@ export type Database = {
       companies: {
         Row: {
           ano_fundacao: number | null
+          campos_visiveis: Json | null
           cep: string | null
           cidade: string | null
           contato: Json | null
@@ -70,6 +71,7 @@ export type Database = {
           logo_url: string | null
           nome: string
           numero_funcionarios: string | null
+          produtos_servicos: string | null
           redes_sociais: Json | null
           segmento: string | null
           site_url: string | null
@@ -79,6 +81,7 @@ export type Database = {
         }
         Insert: {
           ano_fundacao?: number | null
+          campos_visiveis?: Json | null
           cep?: string | null
           cidade?: string | null
           contato?: Json | null
@@ -93,6 +96,7 @@ export type Database = {
           logo_url?: string | null
           nome: string
           numero_funcionarios?: string | null
+          produtos_servicos?: string | null
           redes_sociais?: Json | null
           segmento?: string | null
           site_url?: string | null
@@ -102,6 +106,7 @@ export type Database = {
         }
         Update: {
           ano_fundacao?: number | null
+          campos_visiveis?: Json | null
           cep?: string | null
           cidade?: string | null
           contato?: Json | null
@@ -116,6 +121,7 @@ export type Database = {
           logo_url?: string | null
           nome?: string
           numero_funcionarios?: string | null
+          produtos_servicos?: string | null
           redes_sociais?: Json | null
           segmento?: string | null
           site_url?: string | null
@@ -216,6 +222,7 @@ export type Database = {
       profiles: {
         Row: {
           bio: string | null
+          campos_visiveis: Json | null
           cargo: string | null
           cidade: string | null
           created_at: string
@@ -235,6 +242,7 @@ export type Database = {
         }
         Insert: {
           bio?: string | null
+          campos_visiveis?: Json | null
           cargo?: string | null
           cidade?: string | null
           created_at?: string
@@ -254,6 +262,7 @@ export type Database = {
         }
         Update: {
           bio?: string | null
+          campos_visiveis?: Json | null
           cargo?: string | null
           cidade?: string | null
           created_at?: string

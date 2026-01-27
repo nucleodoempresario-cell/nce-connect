@@ -1,8 +1,9 @@
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Building2, Globe, MapPin, Phone, Mail, ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
+import { Building2, Globe, MapPin, Phone, Mail, ArrowLeft, ArrowRight, Loader2, Calendar, Users, Package, Briefcase } from 'lucide-react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { SocialLinks } from '@/components/SocialLinks';
+import { GoogleMap } from '@/components/GoogleMap';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/animations';
@@ -40,7 +41,15 @@ export default function CompanyDetail() {
   }
 
   const redes = (company.redes_sociais as Record<string, string>) || {};
-  const contato = (company.contato as Record<string, string>) || {};
+  const companyAny = company as Record<string, unknown>;
+  const visibility = (companyAny.campos_visiveis as Record<string, boolean>) || {};
+  
+  // Helper to check visibility (default to true if not set)
+  const isVisible = (field: string) => visibility[field] !== false;
+  
+  const hasAddress = company.endereco || company.cidade;
+  const hasContact = company.telefone || company.email;
+  const produtosServicos = companyAny.produtos_servicos as string;
 
   return (
     <PageLayout>
@@ -92,23 +101,47 @@ export default function CompanyDetail() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-6">
-                <Building2 className="h-4 w-4" />
-                Empresa Nucleada
+              <div className="flex flex-wrap items-center gap-3 mb-6">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold">
+                  <Building2 className="h-4 w-4" />
+                  Empresa Nucleada
+                </div>
+                {isVisible('segmento') && companyAny.segmento && (
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent-foreground text-sm font-medium">
+                    <Briefcase className="h-4 w-4" />
+                    {companyAny.segmento as string}
+                  </div>
+                )}
               </div>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
                 {company.nome}
               </h1>
               
-              {company.descricao_curta && (
-                <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+              {isVisible('descricao_curta') && company.descricao_curta && (
+                <p className="text-xl text-muted-foreground mb-6 leading-relaxed">
                   {company.descricao_curta}
                 </p>
               )}
 
+              {/* Quick Stats */}
+              <div className="flex flex-wrap gap-4 mb-8">
+                {isVisible('ano_fundacao') && companyAny.ano_fundacao && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Calendar className="h-4 w-4 text-primary" />
+                    <span>Desde {companyAny.ano_fundacao as number}</span>
+                  </div>
+                )}
+                {isVisible('numero_funcionarios') && companyAny.numero_funcionarios && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Users className="h-4 w-4 text-primary" />
+                    <span>{companyAny.numero_funcionarios as string}</span>
+                  </div>
+                )}
+              </div>
+
               <div className="flex flex-wrap gap-4">
-                {company.site_url && (
+                {isVisible('site_url') && company.site_url && (
                   <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
                     <a href={company.site_url} target="_blank" rel="noopener noreferrer">
                       <Globe className="h-5 w-5 mr-2" />
@@ -116,7 +149,7 @@ export default function CompanyDetail() {
                     </a>
                   </Button>
                 )}
-                <SocialLinks links={redes} />
+                {isVisible('redes_sociais') && <SocialLinks links={redes} />}
               </div>
             </motion.div>
           </div>
@@ -124,7 +157,7 @@ export default function CompanyDetail() {
       </section>
 
       {/* About Section */}
-      {company.descricao_completa && (
+      {isVisible('descricao_completa') && company.descricao_completa && (
         <section className="py-24 bg-secondary relative">
           <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-border to-transparent" />
           
@@ -136,7 +169,29 @@ export default function CompanyDetail() {
                   Sobre a Empresa
                 </h2>
                 <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed">
-                  <p className="text-lg">{company.descricao_completa}</p>
+                  <p className="text-lg whitespace-pre-line">{company.descricao_completa}</p>
+                </div>
+              </div>
+            </FadeIn>
+          </div>
+        </section>
+      )}
+
+      {/* Products and Services Section */}
+      {isVisible('produtos_servicos') && produtosServicos && (
+        <section className="py-24 bg-background relative">
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
+          
+          <div className="container relative">
+            <FadeIn>
+              <div className="max-w-4xl mx-auto">
+                <div className="w-16 h-1 bg-accent rounded-full mb-6" />
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8 flex items-center gap-3">
+                  <Package className="h-8 w-8 text-primary" />
+                  Produtos e Serviços
+                </h2>
+                <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed">
+                  <p className="text-lg whitespace-pre-line">{produtosServicos}</p>
                 </div>
               </div>
             </FadeIn>
@@ -145,8 +200,8 @@ export default function CompanyDetail() {
       )}
 
       {/* Contact Section */}
-      {(contato.telefone || contato.email || contato.endereco) && (
-        <section className="py-24 bg-background">
+      {isVisible('telefone') && isVisible('email') && hasContact && (
+        <section className="py-24 bg-secondary">
           <div className="container">
             <FadeIn>
               <div className="text-center mb-12">
@@ -157,8 +212,8 @@ export default function CompanyDetail() {
               </div>
             </FadeIn>
 
-            <StaggerContainer className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              {contato.telefone && (
+            <StaggerContainer className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+              {isVisible('telefone') && company.telefone && (
                 <StaggerItem>
                   <Card className="text-center shadow-elevated hover:shadow-card-hover transition-all duration-300">
                     <CardContent className="p-8">
@@ -166,13 +221,13 @@ export default function CompanyDetail() {
                         <Phone className="h-6 w-6 text-primary" />
                       </div>
                       <h3 className="font-semibold text-foreground mb-2">Telefone</h3>
-                      <p className="text-muted-foreground">{contato.telefone}</p>
+                      <p className="text-muted-foreground">{company.telefone}</p>
                     </CardContent>
                   </Card>
                 </StaggerItem>
               )}
               
-              {contato.email && (
+              {isVisible('email') && company.email && (
                 <StaggerItem>
                   <Card className="text-center shadow-elevated hover:shadow-card-hover transition-all duration-300">
                     <CardContent className="p-8">
@@ -180,26 +235,63 @@ export default function CompanyDetail() {
                         <Mail className="h-6 w-6 text-primary" />
                       </div>
                       <h3 className="font-semibold text-foreground mb-2">E-mail</h3>
-                      <p className="text-muted-foreground">{contato.email}</p>
-                    </CardContent>
-                  </Card>
-                </StaggerItem>
-              )}
-              
-              {contato.endereco && (
-                <StaggerItem>
-                  <Card className="text-center shadow-elevated hover:shadow-card-hover transition-all duration-300">
-                    <CardContent className="p-8">
-                      <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                        <MapPin className="h-6 w-6 text-primary" />
-                      </div>
-                      <h3 className="font-semibold text-foreground mb-2">Endereço</h3>
-                      <p className="text-muted-foreground">{contato.endereco}</p>
+                      <p className="text-muted-foreground">{company.email}</p>
                     </CardContent>
                   </Card>
                 </StaggerItem>
               )}
             </StaggerContainer>
+          </div>
+        </section>
+      )}
+
+      {/* Address and Map Section */}
+      {isVisible('endereco') && hasAddress && (
+        <section className="py-24 bg-background relative">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
+          
+          <div className="container relative">
+            <FadeIn>
+              <div className="text-center mb-12">
+                <div className="w-16 h-1 bg-accent rounded-full mx-auto mb-6" />
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+                  Localização
+                </h2>
+              </div>
+            </FadeIn>
+
+            <div className="max-w-4xl mx-auto">
+              <FadeIn delay={0.2}>
+                <Card className="shadow-elevated overflow-hidden">
+                  <CardContent className="p-0">
+                    <div className="grid md:grid-cols-2">
+                      <div className="p-8 flex flex-col justify-center">
+                        <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
+                          <MapPin className="h-6 w-6 text-primary" />
+                        </div>
+                        <h3 className="text-xl font-bold text-foreground mb-3">Endereço</h3>
+                        <div className="text-muted-foreground space-y-1">
+                          {company.endereco && <p>{company.endereco}</p>}
+                          <p>
+                            {[company.cidade, company.estado].filter(Boolean).join(' - ')}
+                            {company.cep && ` | CEP: ${company.cep}`}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="min-h-[300px]">
+                        <GoogleMap 
+                          address={company.endereco || ''}
+                          city={company.cidade || ''}
+                          state={company.estado || ''}
+                          cep={company.cep || ''}
+                          className="h-full rounded-none"
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </FadeIn>
+            </div>
           </div>
         </section>
       )}
@@ -244,7 +336,7 @@ export default function CompanyDetail() {
                         <p className="text-muted-foreground line-clamp-2 mb-3">{company.dono.bio}</p>
                       )}
                       <Link 
-                        to="/membros" 
+                        to={`/membros/${company.dono.id}`}
                         className="inline-flex items-center text-primary font-semibold hover:gap-3 transition-all"
                       >
                         Ver Perfil

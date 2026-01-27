@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Building2, ArrowLeft, ArrowRight, Loader2, MapPin, Mail, Phone } from 'lucide-react';
+import { User, Building2, ArrowLeft, ArrowRight, Loader2, Mail, Phone, Globe, Briefcase } from 'lucide-react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { SocialLinks } from '@/components/SocialLinks';
 import { Button } from '@/components/ui/button';
@@ -41,7 +41,12 @@ export default function MemberDetail() {
     );
   }
 
+  const memberAny = member as Record<string, unknown>;
   const redes = (member.redes_sociais as Record<string, string>) || {};
+  const visibility = (memberAny.campos_visiveis as Record<string, boolean>) || {};
+  
+  // Helper to check visibility (default to true if not set)
+  const isVisible = (field: string) => visibility[field] !== false;
 
   return (
     <PageLayout>
@@ -97,23 +102,39 @@ export default function MemberDetail() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-6">
-                <User className="h-4 w-4" />
-                Nucleado NCE
+              <div className="flex flex-wrap items-center gap-3 mb-6">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold">
+                  <User className="h-4 w-4" />
+                  Nucleado NCE
+                </div>
+                {isVisible('cargo') && memberAny.cargo && (
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent-foreground text-sm font-medium">
+                    <Briefcase className="h-4 w-4" />
+                    {memberAny.cargo as string}
+                  </div>
+                )}
               </div>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
                 {member.nome}
               </h1>
               
-              {member.bio && (
+              {isVisible('bio') && member.bio && (
                 <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
                   {member.bio}
                 </p>
               )}
 
               <div className="flex flex-wrap gap-4">
-                <SocialLinks links={redes} />
+                {isVisible('website') && memberAny.website && (
+                  <Button asChild size="lg" variant="outline">
+                    <a href={memberAny.website as string} target="_blank" rel="noopener noreferrer">
+                      <Globe className="h-5 w-5 mr-2" />
+                      Website
+                    </a>
+                  </Button>
+                )}
+                {isVisible('redes_sociais') && <SocialLinks links={redes} />}
               </div>
             </motion.div>
           </div>
@@ -121,7 +142,7 @@ export default function MemberDetail() {
       </section>
 
       {/* Contact Info Section */}
-      {(member.telefone || member.email) && (
+      {((isVisible('telefone') && member.telefone) || (isVisible('email') && member.email)) && (
         <section className="py-24 bg-secondary relative">
           <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-border to-transparent" />
           
@@ -136,7 +157,7 @@ export default function MemberDetail() {
             </FadeIn>
 
             <StaggerContainer className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-              {member.telefone && (
+              {isVisible('telefone') && member.telefone && (
                 <StaggerItem>
                   <Card className="text-center shadow-elevated hover:shadow-card-hover transition-all duration-300">
                     <CardContent className="p-8">
@@ -150,7 +171,7 @@ export default function MemberDetail() {
                 </StaggerItem>
               )}
               
-              {member.email && (
+              {isVisible('email') && member.email && (
                 <StaggerItem>
                   <Card className="text-center shadow-elevated hover:shadow-card-hover transition-all duration-300">
                     <CardContent className="p-8">
