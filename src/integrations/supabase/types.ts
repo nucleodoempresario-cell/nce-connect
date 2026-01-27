@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_permissions: {
+        Row: {
+          created_at: string
+          granted_by: string | null
+          id: string
+          permission: Database["public"]["Enums"]["admin_permission"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          granted_by?: string | null
+          id?: string
+          permission: Database["public"]["Enums"]["admin_permission"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          granted_by?: string | null
+          id?: string
+          permission?: Database["public"]["Enums"]["admin_permission"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       applications: {
         Row: {
           created_at: string
@@ -369,6 +393,13 @@ export type Database = {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["profile_status"]
       }
+      has_permission: {
+        Args: {
+          _permission: Database["public"]["Enums"]["admin_permission"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -379,6 +410,24 @@ export type Database = {
       is_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
+      admin_permission:
+        | "users_view"
+        | "users_edit"
+        | "users_approve"
+        | "users_delete"
+        | "companies_view"
+        | "companies_edit"
+        | "companies_approve"
+        | "companies_delete"
+        | "news_view"
+        | "news_edit"
+        | "news_delete"
+        | "applications_view"
+        | "applications_edit"
+        | "applications_delete"
+        | "forms_manage"
+        | "reports_view"
+        | "admins_manage"
       app_role: "admin" | "membro"
       application_status: "novo" | "analisado" | "aprovado" | "rejeitado"
       company_status: "publicado" | "pendente_aprovacao" | "rejeitado"
@@ -515,6 +564,25 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      admin_permission: [
+        "users_view",
+        "users_edit",
+        "users_approve",
+        "users_delete",
+        "companies_view",
+        "companies_edit",
+        "companies_approve",
+        "companies_delete",
+        "news_view",
+        "news_edit",
+        "news_delete",
+        "applications_view",
+        "applications_edit",
+        "applications_delete",
+        "forms_manage",
+        "reports_view",
+        "admins_manage",
+      ],
       app_role: ["admin", "membro"],
       application_status: ["novo", "analisado", "aprovado", "rejeitado"],
       company_status: ["publicado", "pendente_aprovacao", "rejeitado"],
