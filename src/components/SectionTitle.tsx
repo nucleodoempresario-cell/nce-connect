@@ -5,7 +5,6 @@ interface SectionTitleProps {
   subtitle?: string;
   className?: string;
   align?: 'left' | 'center';
-  accentColor?: boolean;
 }
 
 export function SectionTitle({ 
@@ -13,7 +12,6 @@ export function SectionTitle({
   subtitle, 
   className,
   align = 'center',
-  accentColor = true
 }: SectionTitleProps) {
   return (
     <div className={cn(
@@ -21,15 +19,13 @@ export function SectionTitle({
       align === 'center' && "text-center",
       className
     )}>
+      <div className={cn(
+        "h-1 w-16 bg-accent rounded-full mb-4",
+        align === 'center' && "mx-auto"
+      )} />
       <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
         {title}
       </h2>
-      {accentColor && (
-        <div className={cn(
-          "h-1 w-16 bg-accent rounded-full mb-4",
-          align === 'center' && "mx-auto"
-        )} />
-      )}
       {subtitle && (
         <p className={cn(
           "text-lg text-muted-foreground max-w-2xl",
