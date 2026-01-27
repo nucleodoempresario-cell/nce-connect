@@ -501,8 +501,7 @@ const Index = () => {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
               <Button 
                 size="lg" 
-                variant="outline"
-                className="h-16 px-12 text-lg border-2 border-white text-white hover:bg-white hover:text-slate-900"
+                className="h-16 px-12 text-lg bg-primary hover:bg-primary/90 text-primary-foreground shadow-hero"
                 asChild
               >
                 <Link to="/seja-nucleado">
@@ -513,7 +512,7 @@ const Index = () => {
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="h-16 px-12 text-lg border-2 border-white/30 text-white hover:bg-white/10"
+                className="h-16 px-12 text-lg border-2 border-white/40 text-white hover:bg-white hover:text-slate-900 transition-all"
                 asChild
               >
                 <Link to="/sobre">

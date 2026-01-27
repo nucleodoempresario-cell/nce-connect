@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Facebook, Instagram, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
+import { Instagram } from 'lucide-react';
 import logoNce from '@/assets/logo-nce.png';
 
 export function Footer() {
@@ -8,9 +8,9 @@ export function Footer() {
   return (
     <footer className="bg-slate-900 text-white">
       <div className="container py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
           {/* Logo and Description */}
-          <div className="lg:col-span-2">
+          <div>
             <div className="flex items-center gap-3 mb-6">
               <img 
                 src={logoNce} 
@@ -22,26 +22,19 @@ export function Footer() {
               Uma comunidade exclusiva de empresários de alto nível, unidos pelo compromisso 
               com a excelência e o crescimento mútuo. Networking estratégico que gera resultados reais.
             </p>
-            <div className="flex gap-3">
-              {[
-                { icon: Facebook, href: '#' },
-                { icon: Instagram, href: '#' },
-                { icon: Linkedin, href: '#' },
-              ].map(({ icon: Icon, href }, i) => (
-                <a
-                  key={i}
-                  href={href}
-                  className="w-10 h-10 rounded-lg bg-white/10 hover:bg-primary flex items-center justify-center transition-colors"
-                  aria-label="Social link"
-                >
-                  <Icon className="h-5 w-5" />
-                </a>
-              ))}
-            </div>
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex w-10 h-10 rounded-lg bg-white/10 hover:bg-primary items-center justify-center transition-colors"
+              aria-label="Instagram"
+            >
+              <Instagram className="h-5 w-5" />
+            </a>
           </div>
 
           {/* Quick Links */}
-          <div>
+          <div className="md:justify-self-end">
             <h4 className="font-semibold text-lg mb-6">Links Rápidos</h4>
             <ul className="space-y-3">
               {[
@@ -61,31 +54,6 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h4 className="font-semibold text-lg mb-6">Contato</h4>
-            <ul className="space-y-4">
-              <li className="flex items-center gap-3 text-white/70">
-                <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
-                  <Mail className="h-4 w-4" />
-                </div>
-                <span>contato@nce.com.br</span>
-              </li>
-              <li className="flex items-center gap-3 text-white/70">
-                <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
-                  <Phone className="h-4 w-4" />
-                </div>
-                <span>(00) 00000-0000</span>
-              </li>
-              <li className="flex items-start gap-3 text-white/70">
-                <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
-                  <MapPin className="h-4 w-4" />
-                </div>
-                <span>Cidade, Estado<br />Brasil</span>
-              </li>
             </ul>
           </div>
         </div>
