@@ -7,9 +7,15 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: "1rem",
+        sm: "2rem",
+        lg: "4rem",
+        xl: "5rem",
+        "2xl": "6rem",
+      },
       screens: {
-        "2xl": "1400px",
+        "2xl": "1536px",
       },
     },
     extend: {
@@ -62,6 +68,12 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      boxShadow: {
+        'hero': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        'card-hover': '0 20px 40px -12px rgba(0, 0, 0, 0.2)',
+        'elevated': '0 10px 40px -10px rgba(0, 0, 0, 0.15)',
+        'image': '0 20px 60px -15px rgba(0, 0, 0, 0.3)',
       },
       keyframes: {
         "accordion-down": {
