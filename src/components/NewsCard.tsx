@@ -8,16 +8,14 @@ interface NewsCardProps {
   resumo?: string | null;
   imagemCapa?: string | null;
   createdAt: string;
-  onClick?: () => void;
 }
 
-export function NewsCard({ titulo, resumo, imagemCapa, createdAt, onClick }: NewsCardProps) {
+export function NewsCard({ titulo, resumo, imagemCapa, createdAt }: NewsCardProps) {
   const formattedDate = format(new Date(createdAt), "d 'de' MMMM, yyyy", { locale: ptBR });
 
   return (
     <Card
       className="group cursor-pointer overflow-hidden transition-all duration-500 shadow-elevated hover:shadow-card-hover hover:-translate-y-2 bg-card border-0"
-      onClick={onClick}
     >
       <CardContent className="p-0">
         <div className="aspect-video relative overflow-hidden">

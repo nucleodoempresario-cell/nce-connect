@@ -1,7 +1,7 @@
 import { Newspaper, Search } from 'lucide-react';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { NewsCard } from '@/components/NewsCard';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -11,7 +11,6 @@ import { useNews } from '@/hooks/useNews';
 
 export default function News() {
   const { data: news, isLoading } = useNews();
-  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredNews = news?.filter(item => 
@@ -83,13 +82,14 @@ export default function News() {
               <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-8" staggerDelay={0.1}>
                 {filteredNews.map((item) => (
                   <StaggerItem key={item.id}>
-                    <NewsCard
-                      titulo={item.titulo}
-                      resumo={item.resumo}
-                      imagemCapa={item.imagem_capa}
-                      createdAt={item.created_at}
-                      onClick={() => navigate(`/noticias/${item.id}`)}
-                    />
+                    <Link to={`/noticias/${item.id}`}>
+                      <NewsCard
+                        titulo={item.titulo}
+                        resumo={item.resumo}
+                        imagemCapa={item.imagem_capa}
+                        createdAt={item.created_at}
+                      />
+                    </Link>
                   </StaggerItem>
                 ))}
               </StaggerContainer>

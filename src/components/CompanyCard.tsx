@@ -5,14 +5,12 @@ interface CompanyCardProps {
   nome: string;
   logoUrl?: string | null;
   descricaoCurta?: string | null;
-  onClick?: () => void;
 }
 
-export function CompanyCard({ nome, logoUrl, descricaoCurta, onClick }: CompanyCardProps) {
+export function CompanyCard({ nome, logoUrl, descricaoCurta }: CompanyCardProps) {
   return (
     <Card
       className="group cursor-pointer overflow-hidden transition-all duration-500 shadow-elevated hover:shadow-card-hover hover:-translate-y-2 bg-card border-0"
-      onClick={onClick}
     >
       <CardContent className="p-0">
         <div className="aspect-[16/10] relative bg-gradient-to-br from-secondary to-muted flex items-center justify-center p-8">

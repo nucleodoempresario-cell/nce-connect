@@ -5,14 +5,12 @@ interface MemberCardProps {
   nome: string;
   fotoUrl?: string | null;
   setor?: string;
-  onClick?: () => void;
 }
 
-export function MemberCard({ nome, fotoUrl, setor, onClick }: MemberCardProps) {
+export function MemberCard({ nome, fotoUrl, setor }: MemberCardProps) {
   return (
     <Card
       className="group cursor-pointer overflow-hidden transition-all duration-500 shadow-elevated hover:shadow-card-hover hover:-translate-y-2 bg-card border-0"
-      onClick={onClick}
     >
       <CardContent className="p-8 text-center">
         <div className="w-28 h-28 rounded-full mx-auto mb-5 overflow-hidden bg-gradient-to-br from-primary/10 to-accent/10 ring-4 ring-primary/10 group-hover:ring-primary/30 transition-all duration-500">
