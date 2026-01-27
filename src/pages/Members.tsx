@@ -1,21 +1,16 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Users, Search } from 'lucide-react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { MemberCard } from '@/components/MemberCard';
-import { SocialLinks } from '@/components/SocialLinks';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/animations';
 import { useProfiles } from '@/hooks/useProfiles';
-import type { Database } from '@/integrations/supabase/types';
-
-type Profile = Database['public']['Tables']['profiles']['Row'];
 
 export default function Members() {
   const { data: members, isLoading } = useProfiles();
-  const [selectedMember, setSelectedMember] = useState<Profile | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredMembers = members?.filter(member => 
@@ -85,13 +80,13 @@ export default function Members() {
               <StaggerContainer className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6" staggerDelay={0.05}>
                 {filteredMembers.map((member) => (
                   <StaggerItem key={member.id}>
-                    <div onClick={() => setSelectedMember(member)} className="cursor-pointer">
+                    <Link to={`/membros/${member.id}`}>
                       <MemberCard
                         nome={member.nome}
                         fotoUrl={member.foto_url}
                         setor="Empresário"
                       />
-                    </div>
+                    </Link>
                   </StaggerItem>
                 ))}
               </StaggerContainer>
@@ -113,58 +108,6 @@ export default function Members() {
           )}
         </div>
       </section>
-
-      {/* Member Modal */}
-      <Dialog open={!!selectedMember} onOpenChange={() => setSelectedMember(null)}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">{selectedMember?.nome}</DialogTitle>
-          </DialogHeader>
-          {selectedMember && (
-            <div className="space-y-6">
-              <div className="flex justify-center">
-                <div className="w-36 h-36 rounded-full bg-secondary overflow-hidden shadow-lg border-4 border-accent">
-                  {selectedMember.foto_url ? (
-                    <img 
-                      src={selectedMember.foto_url} 
-                      alt={selectedMember.nome} 
-                      className="w-full h-full object-cover" 
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-primary/10">
-                      <span className="text-primary text-4xl font-bold">
-                        {selectedMember.nome.charAt(0)}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-              
-              {selectedMember.bio && (
-                <p className="text-muted-foreground text-center leading-relaxed">{selectedMember.bio}</p>
-              )}
-
-              <div className="flex justify-center">
-                <SocialLinks 
-                  links={(selectedMember.redes_sociais as Record<string, string>) || {}} 
-                  size="lg"
-                />
-              </div>
-
-              {(selectedMember.email || selectedMember.telefone) && (
-                <div className="border-t pt-6 text-center space-y-2">
-                  {selectedMember.email && (
-                    <p className="text-muted-foreground">{selectedMember.email}</p>
-                  )}
-                  {selectedMember.telefone && (
-                    <p className="text-muted-foreground">{selectedMember.telefone}</p>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </PageLayout>
   );
 }

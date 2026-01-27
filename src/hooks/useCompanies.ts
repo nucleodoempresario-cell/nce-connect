@@ -63,6 +63,24 @@ export function useCompany(id: string) {
   });
 }
 
+export function useMemberCompany(profileId: string) {
+  return useQuery({
+    queryKey: ['companies', 'member', profileId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('companies')
+        .select('*')
+        .eq('dono_id', profileId)
+        .eq('status', 'publicado')
+        .maybeSingle();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!profileId,
+  });
+}
+
 export function useMyCompany(profileId: string | undefined) {
   return useQuery({
     queryKey: ['companies', 'my', profileId],
