@@ -55,45 +55,72 @@ export type Database = {
       }
       companies: {
         Row: {
+          ano_fundacao: number | null
+          cep: string | null
+          cidade: string | null
           contato: Json | null
           created_at: string
           descricao_completa: string | null
           descricao_curta: string | null
           dono_id: string | null
+          email: string | null
+          endereco: string | null
+          estado: string | null
           id: string
           logo_url: string | null
           nome: string
+          numero_funcionarios: string | null
           redes_sociais: Json | null
+          segmento: string | null
           site_url: string | null
           status: Database["public"]["Enums"]["company_status"]
+          telefone: string | null
           updated_at: string
         }
         Insert: {
+          ano_fundacao?: number | null
+          cep?: string | null
+          cidade?: string | null
           contato?: Json | null
           created_at?: string
           descricao_completa?: string | null
           descricao_curta?: string | null
           dono_id?: string | null
+          email?: string | null
+          endereco?: string | null
+          estado?: string | null
           id?: string
           logo_url?: string | null
           nome: string
+          numero_funcionarios?: string | null
           redes_sociais?: Json | null
+          segmento?: string | null
           site_url?: string | null
           status?: Database["public"]["Enums"]["company_status"]
+          telefone?: string | null
           updated_at?: string
         }
         Update: {
+          ano_fundacao?: number | null
+          cep?: string | null
+          cidade?: string | null
           contato?: Json | null
           created_at?: string
           descricao_completa?: string | null
           descricao_curta?: string | null
           dono_id?: string | null
+          email?: string | null
+          endereco?: string | null
+          estado?: string | null
           id?: string
           logo_url?: string | null
           nome?: string
+          numero_funcionarios?: string | null
           redes_sociais?: Json | null
+          segmento?: string | null
           site_url?: string | null
           status?: Database["public"]["Enums"]["company_status"]
+          telefone?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -189,8 +216,13 @@ export type Database = {
       profiles: {
         Row: {
           bio: string | null
+          cargo: string | null
+          cidade: string | null
           created_at: string
+          data_entrada: string | null
+          data_nascimento: string | null
           email: string | null
+          estado: string | null
           foto_url: string | null
           id: string
           nome: string
@@ -199,11 +231,17 @@ export type Database = {
           telefone: string | null
           updated_at: string
           user_id: string
+          website: string | null
         }
         Insert: {
           bio?: string | null
+          cargo?: string | null
+          cidade?: string | null
           created_at?: string
+          data_entrada?: string | null
+          data_nascimento?: string | null
           email?: string | null
+          estado?: string | null
           foto_url?: string | null
           id?: string
           nome: string
@@ -212,11 +250,17 @@ export type Database = {
           telefone?: string | null
           updated_at?: string
           user_id: string
+          website?: string | null
         }
         Update: {
           bio?: string | null
+          cargo?: string | null
+          cidade?: string | null
           created_at?: string
+          data_entrada?: string | null
+          data_nascimento?: string | null
           email?: string | null
+          estado?: string | null
           foto_url?: string | null
           id?: string
           nome?: string
@@ -225,6 +269,7 @@ export type Database = {
           telefone?: string | null
           updated_at?: string
           user_id?: string
+          website?: string | null
         }
         Relationships: []
       }

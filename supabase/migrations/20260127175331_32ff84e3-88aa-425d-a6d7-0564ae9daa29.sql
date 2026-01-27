@@ -1,0 +1,20 @@
+-- Adicionar campos extras ao perfil do nucleado
+ALTER TABLE public.profiles 
+ADD COLUMN IF NOT EXISTS data_nascimento DATE,
+ADD COLUMN IF NOT EXISTS data_entrada DATE,
+ADD COLUMN IF NOT EXISTS cargo TEXT,
+ADD COLUMN IF NOT EXISTS cidade TEXT,
+ADD COLUMN IF NOT EXISTS estado TEXT,
+ADD COLUMN IF NOT EXISTS website TEXT;
+
+-- Adicionar campos de contato à empresa
+ALTER TABLE public.companies 
+ADD COLUMN IF NOT EXISTS telefone TEXT,
+ADD COLUMN IF NOT EXISTS email TEXT,
+ADD COLUMN IF NOT EXISTS endereco TEXT,
+ADD COLUMN IF NOT EXISTS cidade TEXT,
+ADD COLUMN IF NOT EXISTS estado TEXT,
+ADD COLUMN IF NOT EXISTS cep TEXT,
+ADD COLUMN IF NOT EXISTS ano_fundacao INTEGER,
+ADD COLUMN IF NOT EXISTS numero_funcionarios TEXT,
+ADD COLUMN IF NOT EXISTS segmento TEXT;
