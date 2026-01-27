@@ -43,8 +43,10 @@ export function Header() {
   return (
     <header 
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-background",
-        isScrolled && "shadow-md"
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        isScrolled 
+          ? "bg-background/95 backdrop-blur-md shadow-md border-b border-border/50" 
+          : "bg-background"
       )}
     >
       <div className="container flex h-20 items-center justify-between">
@@ -53,24 +55,27 @@ export function Header() {
           <img 
             src={logoNce} 
             alt="NCE - Núcleo do Empresário" 
-            className="h-12 w-auto"
+            className="h-12 w-auto transition-transform group-hover:scale-105"
           />
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-1">
+        {/* Desktop Navigation - Centered */}
+        <nav className="hidden lg:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               to={link.href}
               className={cn(
-                "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                "relative px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300",
                 isActive(link.href)
-                  ? "text-primary font-semibold"
-                  : "text-muted-foreground hover:text-primary"
+                  ? "text-primary bg-primary/10"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
               )}
             >
               {link.label}
+              {isActive(link.href) && (
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
+              )}
             </Link>
           ))}
         </nav>
@@ -81,14 +86,14 @@ export function Header() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button 
-                  variant="outline" 
+                  variant="ghost" 
                   size="sm" 
-                  className="gap-2 h-10 px-4 border-border hover:border-primary"
+                  className="gap-2 h-11 px-4 rounded-full hover:bg-secondary border border-transparent hover:border-border"
                 >
-                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
-                    <User className="h-3.5 w-3.5 text-primary" />
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
+                    <User className="h-4 w-4 text-primary-foreground" />
                   </div>
-                  <span className="max-w-[100px] truncate">{profile?.nome?.split(' ')[0] || 'Conta'}</span>
+                  <span className="max-w-[100px] truncate font-medium">{profile?.nome?.split(' ')[0] || 'Conta'}</span>
                   <ChevronDown className="h-4 w-4 opacity-50" />
                 </Button>
               </DropdownMenuTrigger>
@@ -119,7 +124,7 @@ export function Header() {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="h-10 text-muted-foreground hover:text-primary"
+                className="h-11 px-5 rounded-full text-muted-foreground hover:text-foreground"
                 asChild
               >
                 <Link to="/auth">
@@ -129,7 +134,7 @@ export function Header() {
               </Button>
               <Button 
                 size="sm" 
-                className="h-10 px-6 bg-primary hover:bg-primary/90 font-semibold"
+                className="h-11 px-6 rounded-full bg-primary hover:bg-primary/90 font-semibold shadow-lg shadow-primary/20"
                 asChild
               >
                 <Link to="/seja-nucleado">Seja Nucleado</Link>
@@ -140,7 +145,7 @@ export function Header() {
 
         {/* Mobile Menu Toggle */}
         <button
-          className="lg:hidden p-2 rounded-lg text-foreground hover:bg-secondary transition-colors"
+          className="lg:hidden p-2.5 rounded-full text-foreground hover:bg-secondary transition-colors"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-label="Toggle menu"
         >
@@ -150,7 +155,7 @@ export function Header() {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="lg:hidden bg-background border-t shadow-lg">
+        <div className="lg:hidden bg-background border-t border-border shadow-lg">
           <nav className="container py-6 flex flex-col gap-2">
             {navLinks.map((link) => (
               <Link
@@ -158,26 +163,26 @@ export function Header() {
                 to={link.href}
                 onClick={() => setIsMenuOpen(false)}
                 className={cn(
-                  "px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+                  "px-4 py-3 rounded-xl text-sm font-medium transition-colors",
                   isActive(link.href)
-                    ? "bg-primary/10 text-primary font-semibold"
-                    : "text-muted-foreground hover:bg-secondary"
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                 )}
               >
                 {link.label}
               </Link>
             ))}
-            <div className="border-t pt-4 mt-2 flex flex-col gap-2">
+            <div className="border-t border-border pt-4 mt-2 flex flex-col gap-2">
               {user ? (
                 <>
-                  <Button variant="outline" size="sm" asChild className="justify-start h-11">
+                  <Button variant="outline" size="sm" asChild className="justify-start h-12 rounded-xl">
                     <Link to="/painel" onClick={() => setIsMenuOpen(false)}>
                       <LayoutDashboard className="h-4 w-4 mr-2" />
                       Meu Painel
                     </Link>
                   </Button>
                   {isAdmin && (
-                    <Button variant="outline" size="sm" asChild className="justify-start h-11">
+                    <Button variant="outline" size="sm" asChild className="justify-start h-12 rounded-xl">
                       <Link to="/admin" onClick={() => setIsMenuOpen(false)}>
                         <LayoutDashboard className="h-4 w-4 mr-2" />
                         Painel Admin
@@ -191,7 +196,7 @@ export function Header() {
                       signOut();
                       setIsMenuOpen(false);
                     }}
-                    className="justify-start h-11 text-destructive"
+                    className="justify-start h-12 rounded-xl text-destructive"
                   >
                     <LogOut className="h-4 w-4 mr-2" />
                     Sair
@@ -199,7 +204,7 @@ export function Header() {
                 </>
               ) : (
                 <>
-                  <Button variant="ghost" size="sm" asChild className="justify-start h-11 text-muted-foreground">
+                  <Button variant="ghost" size="sm" asChild className="justify-start h-12 rounded-xl text-muted-foreground">
                     <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
                       <LogIn className="h-4 w-4 mr-2" />
                       Entrar
@@ -207,7 +212,7 @@ export function Header() {
                   </Button>
                   <Button 
                     size="sm" 
-                    className="h-11 bg-primary hover:bg-primary/90 font-semibold"
+                    className="h-12 rounded-xl bg-primary hover:bg-primary/90 font-semibold"
                     asChild
                   >
                     <Link to="/seja-nucleado" onClick={() => setIsMenuOpen(false)}>
