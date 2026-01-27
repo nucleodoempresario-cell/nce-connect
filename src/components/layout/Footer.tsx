@@ -7,7 +7,7 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-primary text-white">
+    <footer className="bg-slate-900 text-white">
       {/* Pre-footer CTA */}
       <div className="border-b border-white/10">
         <div className="container py-12">
@@ -16,16 +16,29 @@ export function Footer() {
               <h3 className="text-2xl font-bold mb-2">Pronto para fazer parte?</h3>
               <p className="text-white/70">Junte-se aos empresários mais influentes da região.</p>
             </div>
-            <Button 
-              size="lg" 
-              className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-lg"
-              asChild
-            >
-              <Link to="/seja-nucleado">
-                Candidate-se Agora
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+            <div className="flex gap-4">
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="border-white text-white hover:bg-white hover:text-slate-900 font-semibold"
+                asChild
+              >
+                <Link to="/seja-nucleado">
+                  Candidate-se Agora
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="border-white/30 text-white hover:bg-white/10"
+                asChild
+              >
+                <Link to="/sobre">
+                  Saiba Mais
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -54,7 +67,7 @@ export function Footer() {
                 <a
                   key={i}
                   href={href}
-                  className="w-10 h-10 rounded-lg bg-white/10 hover:bg-accent/90 hover:text-accent-foreground flex items-center justify-center transition-colors"
+                  className="w-10 h-10 rounded-lg bg-white/10 hover:bg-primary flex items-center justify-center transition-colors"
                   aria-label="Social link"
                 >
                   <Icon className="h-5 w-5" />
@@ -77,9 +90,9 @@ export function Footer() {
                 <li key={href}>
                   <Link
                     to={href}
-                    className="text-white/70 hover:text-accent transition-colors flex items-center gap-2 group"
+                    className="text-white/70 hover:text-primary transition-colors flex items-center gap-2 group"
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-accent/50 group-hover:bg-accent transition-colors" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary/50 group-hover:bg-primary transition-colors" />
                     {label}
                   </Link>
                 </li>
@@ -118,8 +131,8 @@ export function Footer() {
         <div className="container py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/50">
           <p>© {currentYear} NCE - Núcleo do Empresário. Todos os direitos reservados.</p>
           <div className="flex gap-6">
-            <Link to="#" className="hover:text-accent transition-colors">Privacidade</Link>
-            <Link to="#" className="hover:text-accent transition-colors">Termos</Link>
+            <Link to="#" className="hover:text-primary transition-colors">Privacidade</Link>
+            <Link to="#" className="hover:text-primary transition-colors">Termos</Link>
           </div>
         </div>
       </div>

@@ -55,12 +55,12 @@ export default function BecomeNucleado() {
         <div className="min-h-[80vh] flex items-center justify-center px-4 bg-secondary">
           <FadeIn className="text-center max-w-lg">
             <motion.div 
-              className="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-6"
+              className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-6"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", duration: 0.6 }}
             >
-              <CheckCircle className="h-10 w-10 text-accent" />
+              <CheckCircle className="h-10 w-10 text-primary" />
             </motion.div>
             <h1 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">Candidatura Enviada!</h1>
             <p className="text-lg text-muted-foreground mb-8">
@@ -88,58 +88,39 @@ export default function BecomeNucleado() {
   return (
     <PageLayout>
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=2070&auto=format&fit=crop')" }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/90 to-primary/80" />
-        
-        <motion.div 
-          className="absolute top-1/4 -left-32 w-64 h-64 bg-accent/30 rounded-full blur-3xl"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.4, 0.3] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        />
-        
-        <div className="container relative z-10">
-          <motion.div 
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-accent-foreground text-sm font-semibold mb-6"
+      <section className="pt-28 pb-16 bg-background">
+        <div className="container">
+          <motion.div
+            className="max-w-3xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            transition={{ duration: 0.6 }}
           >
-            <Star className="h-4 w-4" />
-            Processo Seletivo
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-6">
+              <Star className="h-4 w-4" />
+              Processo Seletivo
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
+              Seja um{" "}
+              <span className="text-accent">Nucleado</span>
+            </h1>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              Faça parte de uma comunidade exclusiva de empresários de alto nível. 
+              Candidate-se e descubra o que podemos construir juntos.
+            </p>
           </motion.div>
-          <motion.h1 
-            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 max-w-3xl"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            Seja um Nucleado
-          </motion.h1>
-          <motion.p 
-            className="text-xl text-white/90 max-w-2xl leading-relaxed"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
-            Faça parte de uma comunidade exclusiva de empresários de alto nível. 
-            Candidate-se e descubra o que podemos construir juntos.
-          </motion.p>
         </div>
       </section>
 
       {/* Benefits Cards */}
-      <section className="relative -mt-10 z-20 pb-12">
+      <section className="py-8 bg-background">
         <div className="container">
           <StaggerContainer className="grid md:grid-cols-3 gap-4" staggerDelay={0.1}>
             {benefits.map(({ icon: Icon, title, description }, i) => (
               <StaggerItem key={i}>
-                <Card className="bg-white shadow-xl border-0">
+                <Card className="bg-card shadow-lg border-0">
                   <CardContent className="p-6 flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                       <Icon className="h-6 w-6 text-primary" />
                     </div>
                     <div>
@@ -160,10 +141,10 @@ export default function BecomeNucleado() {
           <div className="grid lg:grid-cols-5 gap-8">
             {/* Requirements */}
             <FadeIn direction="right" className="lg:col-span-2">
-              <Card className="sticky top-28 border-0 shadow-lg bg-white">
+              <Card className="sticky top-28 border-0 shadow-lg bg-card">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-foreground">
-                    <CheckCircle className="h-5 w-5 text-accent" />
+                    <CheckCircle className="h-5 w-5 text-primary" />
                     {requisitos?.titulo || 'Requisitos para Participar'}
                   </CardTitle>
                 </CardHeader>
@@ -177,8 +158,8 @@ export default function BecomeNucleado() {
                       'Postura ética e colaborativa'
                     ]).map((req, i) => (
                       <li key={i} className="flex items-start gap-3">
-                        <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <CheckCircle className="h-4 w-4 text-accent" />
+                        <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <CheckCircle className="h-4 w-4 text-primary" />
                         </div>
                         <span className="text-foreground">{req}</span>
                       </li>
@@ -197,7 +178,7 @@ export default function BecomeNucleado() {
 
             {/* Form */}
             <FadeIn direction="left" delay={0.2} className="lg:col-span-3">
-              <Card className="border-0 shadow-lg bg-white">
+              <Card className="border-0 shadow-lg bg-card">
                 <CardHeader>
                   <CardTitle className="text-foreground">Formulário de Candidatura</CardTitle>
                 </CardHeader>
@@ -301,7 +282,7 @@ export default function BecomeNucleado() {
                     <Button 
                       type="submit" 
                       size="lg"
-                      className="w-full h-14 text-lg bg-accent hover:bg-accent/90 text-accent-foreground font-semibold" 
+                      className="w-full h-14 text-lg bg-primary hover:bg-primary/90 font-semibold" 
                       disabled={createApplication.isPending}
                     >
                       {createApplication.isPending ? (

@@ -4,6 +4,7 @@ import { Building2, Globe, Search } from 'lucide-react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { CompanyCard } from '@/components/CompanyCard';
 import { SocialLinks } from '@/components/SocialLinks';
+import { SectionTitle } from '@/components/SectionTitle';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,69 +26,45 @@ export default function Companies() {
   return (
     <PageLayout>
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop')" }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/90 to-primary/80" />
-        
-        <motion.div 
-          className="absolute top-1/4 -left-32 w-64 h-64 bg-accent/30 rounded-full blur-3xl"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.4, 0.3] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        />
-        
-        <div className="container relative z-10">
-          <motion.div 
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-accent-foreground text-sm font-semibold mb-6"
+      <section className="pt-28 pb-16 bg-background">
+        <div className="container">
+          <motion.div
+            className="max-w-3xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            transition={{ duration: 0.6 }}
           >
-            <Building2 className="h-4 w-4" />
-            Nossos Parceiros
-          </motion.div>
-          <motion.h1 
-            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 max-w-3xl"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            Empresas de Excelência
-          </motion.h1>
-          <motion.p 
-            className="text-xl text-white/90 max-w-2xl leading-relaxed mb-8"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
-            Conheça as empresas que fazem parte do NCE. Cada uma representa 
-            excelência em seu segmento e compartilha dos nossos valores.
-          </motion.p>
-          
-          {/* Search */}
-          <motion.div 
-            className="max-w-md"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-          >
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/50" />
-              <Input 
-                placeholder="Buscar empresa..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-12 h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-accent focus:ring-accent"
-              />
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-6">
+              <Building2 className="h-4 w-4" />
+              Nossos Parceiros
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
+              Empresas de{" "}
+              <span className="text-accent">Excelência</span>
+            </h1>
+            <p className="text-lg text-muted-foreground leading-relaxed mb-8">
+              Conheça as empresas que fazem parte do NCE. Cada uma representa 
+              excelência em seu segmento e compartilha dos nossos valores.
+            </p>
+            
+            {/* Search */}
+            <div className="max-w-md">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input 
+                  placeholder="Buscar empresa..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-12 h-12"
+                />
+              </div>
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* Companies Grid */}
-      <section className="py-20 bg-secondary">
+      <section className="py-16 bg-secondary">
         <div className="container">
           {isLoading ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -185,7 +162,7 @@ export default function Companies() {
                           className="w-full h-full object-cover" 
                         />
                       ) : (
-                        <span className="text-white font-bold text-lg">
+                        <span className="text-primary-foreground font-bold text-lg">
                           {selectedCompany.dono.nome?.charAt(0)}
                         </span>
                       )}
