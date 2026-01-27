@@ -1,348 +1,254 @@
 
-# Plano: Sistema Administrativo Completo para NCE
+# Sistema de Gerenciamento de Conteúdo (CMS) Completo
 
-## Visao Geral
-
-Este plano aborda todas as solicitacoes para melhorar o painel administrativo:
-
-1. **Visualizacao completa de dados** de usuarios e empresas
-2. **Edicao de dados** pelo administrador
-3. **Ativar/Desativar usuarios e empresas** (com vinculo automatico)
-4. **Auto-aprovacao** para empresas selecionadas
-5. **Historico de alteracoes** com registro de datas
-6. **Relatorios** sobre nucleados e empresas
-7. **Controle de usuarios Admin** com gestao de roles
+## Objetivo
+Criar uma interface administrativa intuitiva que permita editar TODOS os textos, imagens e banners do site de forma visual e organizada, tornando a manutenção do site simples e acessível para qualquer administrador.
 
 ---
 
-## 1. Alteracoes no Banco de Dados
+## Visão Geral da Solução
 
-### 1.1 Adicionar campo auto_aprovacao na tabela companies
-
-```text
-ALTER TABLE public.companies 
-ADD COLUMN auto_aprovacao boolean DEFAULT false;
-```
-
-### 1.2 Criar tabela de historico de alteracoes (audit_log)
+O CMS será organizado por **páginas do site**, permitindo que o administrador navegue facilmente e edite qualquer seção. Cada página terá suas seções editáveis claramente identificadas.
 
 ```text
-CREATE TABLE public.audit_log (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  tabela text NOT NULL,
-  registro_id uuid NOT NULL,
-  usuario_id uuid NOT NULL,
-  acao text NOT NULL,
-  dados_anteriores jsonb,
-  dados_novos jsonb,
-  created_at timestamptz DEFAULT now()
-);
-
--- Habilitar RLS
-ALTER TABLE public.audit_log ENABLE ROW LEVEL SECURITY;
-
--- Apenas admins podem ver o historico
-CREATE POLICY "Admins podem ver audit_log"
-  ON public.audit_log FOR SELECT
-  USING (is_admin(auth.uid()));
-```
-
-### 1.3 Trigger para registrar alteracoes automaticamente
-
-```text
-CREATE OR REPLACE FUNCTION log_changes()
-RETURNS trigger AS $$
-BEGIN
-  INSERT INTO public.audit_log (tabela, registro_id, usuario_id, acao, dados_anteriores, dados_novos)
-  VALUES (
-    TG_TABLE_NAME,
-    COALESCE(NEW.id, OLD.id),
-    auth.uid(),
-    TG_OP,
-    CASE WHEN TG_OP = 'DELETE' THEN to_jsonb(OLD) ELSE NULL END,
-    CASE WHEN TG_OP != 'DELETE' THEN to_jsonb(NEW) ELSE NULL END
-  );
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- Aplicar trigger em profiles e companies
-CREATE TRIGGER audit_profiles AFTER UPDATE OR DELETE ON profiles
-  FOR EACH ROW EXECUTE FUNCTION log_changes();
-
-CREATE TRIGGER audit_companies AFTER UPDATE OR DELETE ON companies
-  FOR EACH ROW EXECUTE FUNCTION log_changes();
-```
-
-### 1.4 Modificar useUpdateCompany para respeitar auto_aprovacao
-
-Na logica de update da empresa pelo membro:
-- Se `auto_aprovacao = true` => status permanece `publicado`
-- Se `auto_aprovacao = false` => status muda para `pendente_aprovacao`
-
----
-
-## 2. Pagina de Gerenciamento de Usuarios (ManageUsers.tsx)
-
-### 2.1 Funcionalidades a adicionar
-
-| Funcionalidade | Descricao |
-|----------------|-----------|
-| Ver dados completos | Modal/painel expansivel mostrando todos os campos do perfil |
-| Editar dados | Formulario inline ou modal para admin editar qualquer campo |
-| Ativar/Desativar | Toggle ou botoes para mudar status do usuario |
-| Ver empresa vinculada | Link para a empresa do nucleado |
-| Converter em Admin | Botao para adicionar role de admin |
-
-### 2.2 Interface proposta
-
-```text
-+--------------------------------------------------+
-| Gerenciar Usuarios                               |
-+--------------------------------------------------+
-| [Tabs: Pendentes | Ativos | Inativos | Admins]   |
-+--------------------------------------------------+
-| Nome        | Email         | Empresa   | Acoes  |
-|-------------|---------------|-----------|--------|
-| Joao Silva  | joao@...      | Tech SA   | [botoes]|
-|   [Expandir para ver todos os dados]             |
-|   - Cargo: CEO                                   |
-|   - Nascimento: 01/01/1980                       |
-|   - Entrada NCE: 15/03/2020                      |
-|   [Editar] [Ativar/Desativar] [Tornar Admin]     |
-+--------------------------------------------------+
+┌─────────────────────────────────────────────────────────────┐
+│  PAINEL ADMIN > CONTEÚDO DO SITE                           │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌───────┐ │
+│  │  Home   │ │  Sobre  │ │Empresas │ │Membros  │ │ Seja  │ │
+│  │         │ │         │ │         │ │         │ │Nuclead│ │
+│  └─────────┘ └─────────┘ └─────────┘ └─────────┘ └───────┘ │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  PÁGINA HOME - Seções Editáveis:                           │
+│                                                             │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │  🏠 HERO PRINCIPAL                              [✏️]  │  │
+│  │  Título, subtítulo, botões, imagem                   │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                             │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │  🤝 SEÇÃO CONFIANÇA                             [✏️]  │  │
+│  │  Título, descrição, features                         │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                             │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │  🎯 PILARES (Missão/Visão/Valores)              [✏️]  │  │
+│  │  3 cards editáveis                                   │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 3. Pagina de Gerenciamento de Empresas (ManageCompanies.tsx)
+## Estrutura de Conteúdos Editáveis
 
-### 3.1 Funcionalidades a adicionar
+### 1. Página Inicial (Home)
+| Seção | Campos Editáveis |
+|-------|------------------|
+| **Hero Principal** | Título, subtítulo, texto do botão primário, texto do botão secundário, imagem de fundo, estatística (número de empresários) |
+| **Confiança** | Título, descrição, imagem, 3 features (ícone + título + descrição) |
+| **Pilares** | Título da seção, subtítulo, 3 cards (título + descrição cada) |
+| **Colaboração** | Título, descrição, 3 features, imagem, texto do botão CTA |
+| **Seção Empresas** | Título, subtítulo |
+| **Seção Membros** | Título, subtítulo |
+| **Seção Notícias** | Título, subtítulo |
+| **Comunidade** | Título, descrição, lista de benefícios (até 5) |
+| **CTA Final** | Título, subtítulo, texto do botão |
 
-| Funcionalidade | Descricao |
-|----------------|-----------|
-| Ver dados completos | Painel expansivel com todas as informacoes |
-| Editar dados | Formulario para admin editar empresa |
-| Ativar/Desativar | Toggle para mudar status |
-| Auto-aprovacao | Toggle para marcar empresa como auto-aprovacao |
-| Ver proprietario | Link para o perfil do nucleado |
-| Historico | Ver alteracoes feitas na empresa |
+### 2. Página Sobre (O NCE)
+| Seção | Campos Editáveis |
+|-------|------------------|
+| **Hero** | Título, subtítulo, imagem |
+| **Estatísticas** | 4 cards (valor + label cada) |
+| **Missão/Visão/Valores** | Já existente no banco (tipo: institucional) |
+| **Descrição** | Título, 3 parágrafos de texto |
+| **Objetivos** | Já existente no banco (tipo: institucional) |
 
-### 3.2 Logica de desativacao em cascata
+### 3. Página Seja Nucleado
+| Seção | Campos Editáveis |
+|-------|------------------|
+| **Hero** | Título, subtítulo |
+| **Benefícios** | 3 cards (ícone + título + descrição) |
+| **Requisitos** | Já existente no banco (tipo: requisitos) |
+| **Mensagem de sucesso** | Título, descrição |
 
-Quando desativar um usuario:
-1. Alterar status do perfil para `inativo`
-2. Buscar empresa vinculada (onde `dono_id = profile.id`)
-3. Alterar status da empresa para `rejeitado`
+### 4. Páginas de Listagem (Empresas, Membros, Notícias)
+| Seção | Campos Editáveis |
+|-------|------------------|
+| **Hero** | Título, subtítulo, ícone badge |
+
+### 5. Configurações Globais
+| Item | Campos Editáveis |
+|------|------------------|
+| **Footer** | Descrição do NCE |
+| **Redes Sociais** | Link do Instagram |
+| **Informações Gerais** | Nome do núcleo, slogan |
 
 ---
 
-## 4. Pagina de Relatorios (Nova: AdminReports.tsx)
+## Mudanças no Banco de Dados
 
-### 4.1 Relatorios propostos
+Será criada uma nova estrutura de conteúdo mais granular na tabela `site_content`:
 
-**Nucleados:**
-- Total de membros por status
-- Membros por ano de entrada
-- Faixa etaria dos membros
-- Membros por cidade/estado
+```sql
+-- Novos tipos de conteúdo a serem inseridos
+INSERT INTO site_content (tipo, conteudo) VALUES
+('home_hero', '{"titulo": "...", "subtitulo": "...", ...}'),
+('home_confianca', '{"titulo": "...", "descricao": "...", ...}'),
+('home_pilares', '{"titulo": "...", "subtitulo": "...", "cards": [...]}'),
+...
+```
 
-**Empresas:**
-- Total por segmento
-- Empresas por numero de funcionarios
-- Empresas por ano de fundacao
-- Empresas por cidade/estado
-
-### 4.2 Exportacao de dados
-
-- Botao para exportar lista de nucleados (CSV)
-- Botao para exportar lista de empresas (CSV)
-- Dados incluem todas as informacoes cadastradas
-
----
-
-## 5. Controle de Usuarios Admin (Nova: AdminRoles.tsx)
-
-### 5.1 Funcionalidades
-
-| Funcionalidade | Descricao |
-|----------------|-----------|
-| Listar admins | Mostrar todos usuarios com role admin |
-| Adicionar admin | Selecionar nucleado ativo e tornar admin |
-| Remover admin | Remover role de admin (mantendo role membro) |
-| Protecao | Nao permitir remover o ultimo admin |
-
-### 5.2 Interface
+**Estrutura de cada tipo:**
 
 ```text
-+--------------------------------------------------+
-| Controle de Administradores                      |
-+--------------------------------------------------+
-| Administradores Atuais (3)                       |
-|--------------------------------------------------|
-| Nome           | Email           | Desde | Acoes |
-|----------------|-----------------|-------|-------|
-| Admin Master   | admin@...       | 2020  | -     |
-| Maria Santos   | maria@...       | 2023  | [X]   |
-+--------------------------------------------------+
-| Adicionar Administrador                          |
-| [Select: Nucleados ativos] [Adicionar]           |
-+--------------------------------------------------+
+home_hero:
+  - titulo: string
+  - subtitulo: string
+  - botao_primario: string
+  - botao_secundario: string
+  - imagem_url: string
+  - estatistica_numero: string
+  - estatistica_label: string
+
+home_confianca:
+  - titulo: string
+  - descricao: string
+  - imagem_url: string
+  - features: [{icon: string, titulo: string, descricao: string}]
+
+home_pilares:
+  - titulo_secao: string
+  - subtitulo_secao: string
+  - cards: [{icon: string, titulo: string, descricao: string}]
+
+... (demais seções seguem o mesmo padrão)
 ```
 
 ---
 
-## 6. Arquivos a Criar/Modificar
+## Arquivos a Serem Criados/Modificados
 
-### Novos arquivos:
+### Novos Arquivos
 
-| Arquivo | Descricao |
+| Arquivo | Descrição |
 |---------|-----------|
-| `src/hooks/useAuditLog.ts` | Hook para buscar historico |
-| `src/hooks/useUserRoles.ts` | Hook para gerenciar roles |
-| `src/pages/admin/AdminReports.tsx` | Pagina de relatorios |
-| `src/components/admin/UserDetailPanel.tsx` | Painel de detalhes do usuario |
-| `src/components/admin/CompanyDetailPanel.tsx` | Painel de detalhes da empresa |
-| `src/components/admin/AuditHistory.tsx` | Componente de historico |
+| `src/pages/AdminContentPage.tsx` | Wrapper da página de conteúdo |
+| `src/pages/admin/ManageContent.tsx` | Página principal do CMS |
+| `src/components/admin/content/HomeContentEditor.tsx` | Editor da página Home |
+| `src/components/admin/content/AboutContentEditor.tsx` | Editor da página Sobre |
+| `src/components/admin/content/BecomeContentEditor.tsx` | Editor da página Seja Nucleado |
+| `src/components/admin/content/ListingPagesEditor.tsx` | Editor das páginas de listagem |
+| `src/components/admin/content/GlobalSettingsEditor.tsx` | Configurações globais |
+| `src/components/admin/content/SectionEditor.tsx` | Componente reutilizável para editar seções |
+| `src/components/admin/content/ImageUploader.tsx` | Upload de imagens para banners |
+| `src/hooks/useSiteContentMutations.ts` | Hook para salvar conteúdos |
 
-### Arquivos a modificar:
+### Arquivos Modificados
 
-| Arquivo | Alteracoes |
-|---------|-----------|
-| `src/pages/admin/ManageUsers.tsx` | Adicionar visualizacao, edicao, ativacao, admin control |
-| `src/pages/admin/ManageCompanies.tsx` | Adicionar visualizacao, edicao, auto-aprovacao, historico |
-| `src/hooks/useCompanies.ts` | Atualizar logica de auto-aprovacao |
-| `src/components/layout/AdminLayout.tsx` | Adicionar link para Relatorios |
-| `src/App.tsx` | Adicionar rota para relatorios |
+| Arquivo | Modificação |
+|---------|-------------|
+| `src/components/layout/AdminLayout.tsx` | Adicionar link "Conteúdo" no menu |
+| `src/App.tsx` | Adicionar rota `/admin/conteudo` |
+| `src/pages/Index.tsx` | Consumir dados dinâmicos do banco |
+| `src/pages/About.tsx` | Consumir dados dinâmicos do banco |
+| `src/pages/BecomeNucleado.tsx` | Consumir dados dinâmicos do banco |
+| `src/pages/Companies.tsx` | Consumir dados dinâmicos do banco |
+| `src/pages/Members.tsx` | Consumir dados dinâmicos do banco |
+| `src/pages/News.tsx` | Consumir dados dinâmicos do banco |
+| `src/hooks/useSiteContent.ts` | Adicionar novos hooks para cada tipo |
 
 ---
 
-## 7. Fluxo de Auto-aprovacao
+## Interface do Editor
+
+### Layout Principal
+- **Navegação por abas**: Cada aba representa uma página do site
+- **Accordion por seção**: Dentro de cada página, seções colapsáveis
+- **Prévia visual**: Mostrar como ficará o texto/imagem
+- **Salvamento individual**: Botão salvar em cada seção
+- **Indicador de alterações**: Mostrar quando há mudanças não salvas
+
+### Componentes de Edição
+- **Campo de texto simples**: Para títulos e frases curtas
+- **Campo de texto longo**: Para descrições e parágrafos
+- **Editor de lista**: Para valores, objetivos, requisitos
+- **Seletor de ícone**: Para escolher ícones Lucide
+- **Upload de imagem**: Para banners e fotos de seção
+- **Editor de features**: Para grupos de 3-4 itens com ícone+título+descrição
+
+---
+
+## Fluxo de Uso
 
 ```text
-+-------------------+     +-------------------+
-| Nucleado edita    |---->| Verifica empresa  |
-| dados da empresa  |     | auto_aprovacao?   |
-+-------------------+     +-------------------+
-                                |
-              +--------+--------+--------+
-              |                          |
-              v                          v
-    +----------------+          +----------------+
-    | TRUE:          |          | FALSE:         |
-    | status =       |          | status =       |
-    | 'publicado'    |          | 'pendente'     |
-    +----------------+          +----------------+
-              |                          |
-              v                          v
-    +----------------+          +----------------+
-    | Alteracao      |          | Aguarda        |
-    | imediata       |          | aprovacao      |
-    +----------------+          +----------------+
+1. Admin acessa /admin/conteudo
+          ↓
+2. Seleciona a página que quer editar (ex: Home)
+          ↓
+3. Vê todas as seções da página como cards/accordions
+          ↓
+4. Clica em "Editar" na seção desejada
+          ↓
+5. Preenche os campos no formulário
+          ↓
+6. Clica em "Salvar" 
+          ↓
+7. Alterações refletem imediatamente no site
 ```
 
 ---
 
-## 8. Secao Tecnica
+## Detalhes Técnicos
 
-### 8.1 Hook useUserRoles
+### Migração SQL
+```sql
+-- Inserir conteúdos padrão para todas as seções
+-- (usando os textos atuais do código como valores iniciais)
+```
 
+### Hook de Mutação
 ```typescript
-export function useUserRoles() {
-  const queryClient = useQueryClient();
-
-  const { data: admins } = useQuery({
-    queryKey: ['user_roles', 'admins'],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from('user_roles')
-        .select(`
-          *,
-          profile:profiles!user_roles_user_id_fkey(id, nome, email)
-        `)
-        .eq('role', 'admin');
-      return data;
-    }
-  });
-
-  const addAdmin = useMutation({
-    mutationFn: async (userId: string) => {
-      await supabase.from('user_roles').insert({ 
-        user_id: userId, 
-        role: 'admin' 
-      });
+export function useUpdateSiteContent() {
+  return useMutation({
+    mutationFn: async ({ tipo, conteudo }) => {
+      const { error } = await supabase
+        .from('site_content')
+        .upsert({ tipo, conteudo, updated_at: new Date().toISOString() })
+      if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries(['user_roles'])
+    onSuccess: () => queryClient.invalidateQueries(['site_content'])
   });
-
-  const removeAdmin = useMutation({
-    mutationFn: async (userId: string) => {
-      await supabase.from('user_roles')
-        .delete()
-        .eq('user_id', userId)
-        .eq('role', 'admin');
-    },
-    onSuccess: () => queryClient.invalidateQueries(['user_roles'])
-  });
-
-  return { admins, addAdmin, removeAdmin };
 }
 ```
 
-### 8.2 Logica de desativacao em cascata
-
-```typescript
-const handleDeactivateUser = async (profileId: string) => {
-  // 1. Desativar usuario
-  await supabase.from('profiles')
-    .update({ status: 'inativo' })
-    .eq('id', profileId);
-
-  // 2. Desativar empresa vinculada
-  await supabase.from('companies')
-    .update({ status: 'rejeitado' })
-    .eq('dono_id', profileId);
-};
-```
-
-### 8.3 Exportacao CSV
-
-```typescript
-const exportToCSV = (data: any[], filename: string) => {
-  const headers = Object.keys(data[0]).join(',');
-  const rows = data.map(row => 
-    Object.values(row).map(v => `"${v}"`).join(',')
-  ).join('\n');
-  
-  const blob = new Blob([headers + '\n' + rows], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${filename}.csv`;
-  a.click();
-};
-```
+### Permissões
+- Será adicionada permissão `content_edit` ao enum de permissões
+- Apenas admins com essa permissão poderão editar conteúdos
 
 ---
 
-## 9. Navegacao Atualizada do Admin
+## Benefícios da Solução
 
-```text
-[Dashboard] [Usuarios] [Empresas] [Noticias] [Formulario] [Inscricoes] [Relatorios]
-```
-
-A aba "Usuarios" tera sub-secoes:
-- Gerenciar Nucleados
-- Controle de Admins
+- **Intuitivo**: Organizado por páginas, fácil de encontrar o que editar
+- **Completo**: Permite editar absolutamente todo o texto do site
+- **Visual**: Campos claramente identificados com seus propósitos
+- **Seguro**: Permissões granulares controlam quem pode editar
+- **Performático**: Dados cacheados com React Query
+- **Flexível**: Estrutura permite adicionar novas seções facilmente
 
 ---
 
-## Resumo das Entregas
+## Ordem de Implementação
 
-1. **Migracao SQL** com novos campos e tabela de auditoria
-2. **ManageUsers.tsx** expandido com visualizacao, edicao e controle de status
-3. **ManageCompanies.tsx** expandido com auto-aprovacao e historico
-4. **AdminReports.tsx** nova pagina com relatorios e exportacao
-5. **Controle de Admins** integrado na gestao de usuarios
-6. **Hooks auxiliares** para roles e auditoria
-7. **Atualizacao do layout** com nova navegacao
+1. Criar migração SQL com estrutura de conteúdos
+2. Criar hooks de leitura/escrita de conteúdo
+3. Criar componentes de edição (SectionEditor, ImageUploader)
+4. Criar página ManageContent com tabs por página
+5. Implementar editores de cada página
+6. Atualizar páginas públicas para consumir dados do banco
+7. Adicionar rota e link no menu admin
+8. Adicionar permissão content_edit
+
