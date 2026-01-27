@@ -124,10 +124,34 @@ export function useUpdateCompany() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, updates }: { id: string; updates: CompanyUpdate }) => {
+    mutationFn: async ({ id, updates, skipApproval = false }: { id: string; updates: CompanyUpdate; skipApproval?: boolean }) => {
+      // Check if company has auto_aprovacao enabled
+      let newStatus: 'publicado' | 'pendente_aprovacao' = 'pendente_aprovacao';
+      
+      if (skipApproval) {
+        // Admin is updating, keep current status
+        const { data: current } = await supabase
+          .from('companies')
+          .select('status')
+          .eq('id', id)
+          .single();
+        newStatus = current?.status as 'publicado' | 'pendente_aprovacao' || 'pendente_aprovacao';
+      } else {
+        // Check for auto_aprovacao
+        const { data: company } = await supabase
+          .from('companies')
+          .select('auto_aprovacao, status')
+          .eq('id', id)
+          .single();
+        
+        if ((company as any)?.auto_aprovacao && company?.status === 'publicado') {
+          newStatus = 'publicado';
+        }
+      }
+      
       const { data, error } = await supabase
         .from('companies')
-        .update({ ...updates, status: 'pendente_aprovacao' })
+        .update({ ...updates, status: newStatus })
         .eq('id', id)
         .select()
         .single();

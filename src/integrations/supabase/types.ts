@@ -53,9 +53,43 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_log: {
+        Row: {
+          acao: string
+          created_at: string | null
+          dados_anteriores: Json | null
+          dados_novos: Json | null
+          id: string
+          registro_id: string
+          tabela: string
+          usuario_id: string | null
+        }
+        Insert: {
+          acao: string
+          created_at?: string | null
+          dados_anteriores?: Json | null
+          dados_novos?: Json | null
+          id?: string
+          registro_id: string
+          tabela: string
+          usuario_id?: string | null
+        }
+        Update: {
+          acao?: string
+          created_at?: string | null
+          dados_anteriores?: Json | null
+          dados_novos?: Json | null
+          id?: string
+          registro_id?: string
+          tabela?: string
+          usuario_id?: string | null
+        }
+        Relationships: []
+      }
       companies: {
         Row: {
           ano_fundacao: number | null
+          auto_aprovacao: boolean | null
           campos_visiveis: Json | null
           cep: string | null
           cidade: string | null
@@ -81,6 +115,7 @@ export type Database = {
         }
         Insert: {
           ano_fundacao?: number | null
+          auto_aprovacao?: boolean | null
           campos_visiveis?: Json | null
           cep?: string | null
           cidade?: string | null
@@ -106,6 +141,7 @@ export type Database = {
         }
         Update: {
           ano_fundacao?: number | null
+          auto_aprovacao?: boolean | null
           campos_visiveis?: Json | null
           cep?: string | null
           cidade?: string | null
