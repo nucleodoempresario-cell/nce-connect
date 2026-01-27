@@ -1,172 +1,143 @@
 
-# Redesign Completo - NCE: Site Premium Corporativo
+
+# Novo Layout NCE - Design Limpo e Profissional
 
 ## Visao Geral
 
-Vou transformar o site atual em uma experiencia visual de alto nivel, inspirada na referencia fornecida mas elevando significativamente a qualidade. A nova identidade visual sera **corporativa, elegante e impactante**, transmitindo a exclusividade e profissionalismo do Nucleo do Empresario.
+Vou transformar o site para seguir exatamente o layout da referencia fornecida. O novo design e mais **limpo, moderno e profissional**, com fundo branco predominante, cores teal/verde como primaria e detalhes em dourado/amarelo para acentos.
 
 ---
 
-## Nova Identidade Visual
+## Nova Paleta de Cores
 
-### Paleta de Cores
-- **Azul Corporativo Principal**: #1e3a8a (primary)
-- **Azul Escuro**: #0f172a (dark backgrounds)
-- **Dourado/Amber**: #f59e0b (accent/destaques)
-- **Branco e Cinzas**: Para fundos e textos secundarios
-
-### Tipografia
-- Manter a fonte **Inter** com pesos 300, 400, 600 e 800
-- Titulos grandes e impactantes
-- Textos com boa legibilidade
+| Elemento | Cor Atual | Nova Cor |
+|----------|-----------|----------|
+| Primary (botoes, links) | Azul #1e3a8a | Teal #0d9488 |
+| Accent (destaques texto) | Dourado #f59e0b | Dourado #eab308 |
+| Footer/CTA | Azul escuro | Slate #0f172a |
+| Background | Branco/Cinza | Branco puro |
 
 ---
 
-## Mudancas por Componente
+## Mudancas por Secao (Pagina Inicial)
 
-### 1. Variaveis CSS Globais (src/index.css)
-- Atualizar toda a paleta de cores CSS
-- Novo primary: azul corporativo
-- Adicionar variavel "accent" para dourado
-- Ajustar tons de background e foreground
+### 1. Hero Section
+**Layout atual:** Imagem de fundo full-screen com overlay azul
+**Novo layout:**
+- Fundo branco limpo
+- Layout em 2 colunas: texto a esquerda, imagem a direita
+- Tag "Rede de Empresarios Multisetorial" em teal com icone
+- Titulo "Conectando **Empresarios** para o Sucesso" com destaque amarelo
+- Botoes: "Explorar Oportunidades" (teal cheio) + "Conheca o Nucleo" (outline teal)
+- Imagem de reuniao empresarial com bordas arredondadas e sombra
 
-### 2. Tailwind Config (tailwind.config.ts)
-- Adicionar cor "accent" (dourado)
-- Configurar variantes de cores corporativas
+### 2. Secao "Fundado em Confianca e Credibilidade"
+**Novo bloco:**
+- Imagem ilustrativa a esquerda (handshake com elementos graficos)
+- Titulo com barra dourada no topo
+- Lista de beneficios com icones teal:
+  - Ambiente Seguro
+  - Networking Estrategico
+  - Crescimento Compartilhado
 
-### 3. Header (src/components/layout/Header.tsx)
-- Fundo **branco solido** com sombra quando scrollado
-- Sem transparencia na home (mais profissional)
-- Botao "Seja Nucleado" com destaque dourado
-- Navegacao com hover em azul
+### 3. Secao "Nossos Pilares" (Missao/Visao/Valores)
+- Titulo centralizado com barra dourada
+- 3 cards brancos com sombra suave
+- Icones em quadrados com fundo teal claro
+- Sem borda colorida no topo
 
-### 4. Footer (src/components/layout/Footer.tsx)
-- Background azul escuro corporativo
-- Detalhes em dourado nos hover
-- Links organizados em colunas
-- Visual mais limpo e profissional
+### 4. Secao "Crescimento Atraves da Colaboracao"
+- Layout 2 colunas inverso: texto a esquerda, imagem a direita
+- Titulo com barra dourada no topo
+- Lista com barra lateral dourada:
+  - Reunioes Estrategicas
+  - Parcerias e Oportunidades
+  - Conhecimento Compartilhado
 
-### 5. Pagina Inicial (src/pages/Index.tsx)
-**Hero Section:**
-- Background com imagem real de negocios (reuniao executiva)
-- Overlay azul com gradiente
-- Tag animada "Conexao & Crescimento" em dourado
-- Titulo grande e impactante
-- Botoes: primario dourado + secundario outline branco
-- Seta animada de scroll no rodape
+### 5. Secao "Empresas do Nucleo"
+- Titulo centralizado com barra dourada
+- 3 cards simples: logo, nome, descricao, "Ver Detalhes >"
+- Botao "Explorar Todas as Empresas" outline centralizado
 
-**Secao Nossa Essencia (Missao/Visao/Valores):**
-- Cards brancos com borda colorida no topo
-- Icones em circulos que mudam de cor no hover
-- Layout 3 colunas
+### 6. Secao "Nucleados"
+- Titulo centralizado com barra dourada
+- Cards de membros com foto arredondada
+- Nome, Setor, "Ver Perfil ->"
+- Botao "Conheca Todos os Nucleados" centralizado
 
-**Secao Empresas:**
-- Cards com efeito de elevacao
-- Ultimo card especial "Sua empresa aqui?"
-- Link "Ver todas" com seta
+### 7. Secao "Noticias e Acoes"
+- Titulo centralizado com barra dourada
+- Cards com placeholder teal claro quando sem imagem
+- Data em teal, titulo em preto
+- "Ler Mais >" como link
 
-**Secao Noticias:**
-- Layout assimetrico (destaque grande + lista lateral)
-- Imagens com hover zoom
-- Tags coloridas por categoria
+### 8. Secao "A Forca de Uma Comunidade Unida"
+- Layout 2 colunas: imagem ilustrativa a esquerda
+- Lista com checkmarks em teal
+- Botao "Junte-se ao NCE" teal
 
-**CTA Final:**
-- Background azul escuro
-- Texto impactante
-- Botao dourado
-
-### 6. Pagina Sobre (src/pages/About.tsx)
-- Hero com imagem de fundo
-- Cards Missao/Visao/Valores com borda colorida no topo
-- Numeros/estatisticas em destaque
-- Timeline da historia do NCE
-
-### 7. Pagina Empresas (src/pages/Companies.tsx)
-- Cards redesenhados com visual corporativo
-- Hover com sombra e elevacao
-- Modal mais elegante
-
-### 8. Pagina Membros (src/pages/Members.tsx)
-- Grid de cards profissionais
-- Foto circular com borda
-- Nome e cargo em destaque
-
-### 9. Pagina Noticias (src/pages/News.tsx)
-- Layout de blog moderno
-- Noticia em destaque maior
-- Cards com data e categoria
-
-### 10. Pagina Seja Nucleado (src/pages/BecomeNucleado.tsx)
-- Hero inspirador
-- Formulario limpo e profissional
-- Sidebar com requisitos
-
-### 11. Componentes Auxiliares
-- **CompanyCard**: Redesenhar com novo visual
-- **MemberCard**: Adicionar cargo e estilizar
-- **NewsCard**: Layout mais editorial
+### 9. CTA Final + Footer
+- CTA em fundo slate escuro
+- Titulo grande, dois botoes brancos outline
+- Footer em slate escuro com colunas de navegacao
 
 ---
 
-## Novos Componentes a Criar
+## Arquivos a Modificar
 
-### 1. SectionTitle
-Componente reutilizavel para titulos de secao com:
-- Titulo centralizado
-- Linha decorativa dourada abaixo
-- Subtitulo opcional
+### Estilos Globais
+1. **src/index.css** - Atualizar variaveis CSS (primary para teal)
+2. **tailwind.config.ts** - Manter configuracao compativel
 
-### 2. StatCard
-Card para exibir estatisticas com:
-- Numero grande
-- Descricao
-- Icone opcional
+### Layout
+3. **src/components/layout/Header.tsx** - Ajustar botao CTA para teal
+4. **src/components/layout/Footer.tsx** - Redesenhar com novo layout
 
-### 3. HeroBackground
-Componente para heros com:
-- Imagem de fundo
-- Overlay com gradiente
-- Conteudo centralizado
+### Pagina Inicial
+5. **src/pages/Index.tsx** - Redesenho completo com novas secoes
+
+### Componentes
+6. **src/components/SectionTitle.tsx** - Ajustar barra dourada no topo
+7. **src/components/CompanyCard.tsx** - Simplificar, remover borda colorida
+8. **src/components/MemberCard.tsx** - Novo layout com setor
+9. **src/components/NewsCard.tsx** - Ajustar para novo visual
+
+### Outras Paginas (ajustes menores)
+10. **src/pages/About.tsx** - Alinhar com novo estilo
+11. **src/pages/Companies.tsx** - Usar novos cards
+12. **src/pages/Members.tsx** - Usar novos cards
+13. **src/pages/News.tsx** - Usar novos cards
+14. **src/pages/BecomeNucleado.tsx** - Ajustar botoes
 
 ---
 
 ## Detalhes Tecnicos
 
-### Arquivos a Modificar
-1. `src/index.css` - Variaveis CSS globais
-2. `tailwind.config.ts` - Cores e tema
-3. `src/components/layout/Header.tsx` - Novo header
-4. `src/components/layout/Footer.tsx` - Novo footer
-5. `src/pages/Index.tsx` - Pagina inicial completa
-6. `src/pages/About.tsx` - Pagina sobre
-7. `src/pages/Companies.tsx` - Pagina empresas
-8. `src/pages/Members.tsx` - Pagina membros
-9. `src/pages/News.tsx` - Pagina noticias
-10. `src/pages/NewsDetail.tsx` - Detalhe noticia
-11. `src/pages/BecomeNucleado.tsx` - Formulario candidatura
-12. `src/pages/Auth.tsx` - Pagina login
-13. `src/components/CompanyCard.tsx` - Card empresa
-14. `src/components/MemberCard.tsx` - Card membro
-15. `src/components/NewsCard.tsx` - Card noticia
+### Nova Paleta CSS (index.css)
+```text
+--primary: 168 84% 32%  (teal #0d9488)
+--accent: 48 96% 53%    (amarelo #eab308)
+```
 
-### Novos Arquivos a Criar
-1. `src/components/SectionTitle.tsx`
-2. `src/components/HeroSection.tsx`
+### Novas Ilustracoes
+Usarei imagens do Unsplash para:
+- Hero: foto de reuniao empresarial
+- Secoes de confianca: imagens ilustrativas de negocios
+- Placeholder para membros: fundo teal claro
 
-### Imagens de Fundo (Unsplash)
-- Hero principal: reuniao executiva
-- Sobre: ambiente corporativo
-- CTA: networking empresarial
+### Animacoes
+- Manter Framer Motion para fade-in suaves
+- Hover sutil nos cards e botoes
+- Sem animacoes excessivas
 
 ---
 
 ## Resultado Esperado
 
 Um site que transmite:
-- **Exclusividade**: Visual que mostra que e um grupo seleto
-- **Profissionalismo**: Cores corporativas classicas
-- **Confianca**: Design limpo e bem estruturado
-- **Modernidade**: Animacoes sutis e responsividade perfeita
-- **Impacto**: Hero sections memoraveis
+- **Clareza**: Layout limpo e bem organizado
+- **Profissionalismo**: Cores corporativas equilibradas
+- **Confianca**: Secoes bem estruturadas com proposito claro
+- **Modernidade**: Design atual sem exageros
+- **Acessibilidade**: Alto contraste e boa legibilidade
 
-O novo design sera digno de uma organizacao empresarial de alto nivel, equilibrando elegancia classica com elementos modernos.
