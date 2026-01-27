@@ -1,143 +1,150 @@
 
 
-# Novo Layout NCE - Design Limpo e Profissional
+# Layout Expansivo e Imponente - NCE
 
-## Visao Geral
+## Visao Geral do Problema
 
-Vou transformar o site para seguir exatamente o layout da referencia fornecida. O novo design e mais **limpo, moderno e profissional**, com fundo branco predominante, cores teal/verde como primaria e detalhes em dourado/amarelo para acentos.
+O site atual parece "espremido" por varios motivos:
+- Container limitado a 1400px de largura
+- Falta de sombras e profundidade nas imagens
+- Cards muito simples sem impacto visual
+- Elementos decorativos de fundo muito sutis
+- Espacamentos uniformes demais
 
----
+## Solucoes Propostas
 
-## Nova Paleta de Cores
+### 1. Expandir o Container Principal
 
-| Elemento | Cor Atual | Nova Cor |
-|----------|-----------|----------|
-| Primary (botoes, links) | Azul #1e3a8a | Teal #0d9488 |
-| Accent (destaques texto) | Dourado #f59e0b | Dourado #eab308 |
-| Footer/CTA | Azul escuro | Slate #0f172a |
-| Background | Branco/Cinza | Branco puro |
+**Arquivo:** `tailwind.config.ts`
 
----
+Aumentar o container de 1400px para 1536px (xl) e adicionar breakpoint 3xl:
 
-## Mudancas por Secao (Pagina Inicial)
+```text
+container: {
+  center: true,
+  padding: {
+    DEFAULT: "1rem",
+    sm: "2rem",
+    lg: "4rem",
+    xl: "5rem",
+    "2xl": "6rem",
+  },
+  screens: {
+    "2xl": "1536px",
+  },
+},
+```
 
-### 1. Hero Section
-**Layout atual:** Imagem de fundo full-screen com overlay azul
-**Novo layout:**
-- Fundo branco limpo
-- Layout em 2 colunas: texto a esquerda, imagem a direita
-- Tag "Rede de Empresarios Multisetorial" em teal com icone
-- Titulo "Conectando **Empresarios** para o Sucesso" com destaque amarelo
-- Botoes: "Explorar Oportunidades" (teal cheio) + "Conheca o Nucleo" (outline teal)
-- Imagem de reuniao empresarial com bordas arredondadas e sombra
+### 2. Adicionar Sombras Mais Pronunciadas
 
-### 2. Secao "Fundado em Confianca e Credibilidade"
-**Novo bloco:**
-- Imagem ilustrativa a esquerda (handshake com elementos graficos)
-- Titulo com barra dourada no topo
-- Lista de beneficios com icones teal:
-  - Ambiente Seguro
-  - Networking Estrategico
-  - Crescimento Compartilhado
+**Arquivo:** `tailwind.config.ts`
 
-### 3. Secao "Nossos Pilares" (Missao/Visao/Valores)
-- Titulo centralizado com barra dourada
-- 3 cards brancos com sombra suave
-- Icones em quadrados com fundo teal claro
-- Sem borda colorida no topo
+Adicionar sombras customizadas para criar profundidade:
 
-### 4. Secao "Crescimento Atraves da Colaboracao"
-- Layout 2 colunas inverso: texto a esquerda, imagem a direita
-- Titulo com barra dourada no topo
-- Lista com barra lateral dourada:
-  - Reunioes Estrategicas
-  - Parcerias e Oportunidades
-  - Conhecimento Compartilhado
+```text
+boxShadow: {
+  'hero': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+  'card-hover': '0 20px 40px -12px rgba(0, 0, 0, 0.2)',
+  'elevated': '0 10px 40px -10px rgba(0, 0, 0, 0.15)',
+}
+```
 
-### 5. Secao "Empresas do Nucleo"
-- Titulo centralizado com barra dourada
-- 3 cards simples: logo, nome, descricao, "Ver Detalhes >"
-- Botao "Explorar Todas as Empresas" outline centralizado
+### 3. Hero Section Mais Imponente
 
-### 6. Secao "Nucleados"
-- Titulo centralizado com barra dourada
-- Cards de membros com foto arredondada
-- Nome, Setor, "Ver Perfil ->"
-- Botao "Conheca Todos os Nucleados" centralizado
+**Arquivo:** `src/pages/Index.tsx`
 
-### 7. Secao "Noticias e Acoes"
-- Titulo centralizado com barra dourada
-- Cards com placeholder teal claro quando sem imagem
-- Data em teal, titulo em preto
-- "Ler Mais >" como link
+Modificacoes no Hero:
+- Padding vertical maior (pt-32 pb-24)
+- Imagem com sombra mais pronunciada (shadow-hero)
+- Elementos decorativos maiores e mais visiveis
+- Tipografia maior (text-5xl md:text-6xl lg:text-7xl)
+- Gap maior entre colunas (gap-16 lg:gap-20)
 
-### 8. Secao "A Forca de Uma Comunidade Unida"
-- Layout 2 colunas: imagem ilustrativa a esquerda
-- Lista com checkmarks em teal
-- Botao "Junte-se ao NCE" teal
+### 4. Elementos Decorativos de Fundo
 
-### 9. CTA Final + Footer
-- CTA em fundo slate escuro
-- Titulo grande, dois botoes brancos outline
-- Footer em slate escuro com colunas de navegacao
+**Arquivo:** `src/pages/Index.tsx`
+
+Adicionar elementos de textura em varias secoes:
+- Circulos com blur em tamanhos variados
+- Gradientes sutis de fundo
+- Linhas decorativas
+
+Exemplo para o Hero:
+```text
+<!-- Elementos decorativos de fundo -->
+<div className="absolute top-20 right-0 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
+<div className="absolute bottom-0 left-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
+```
+
+### 5. Cards com Mais Impacto Visual
+
+**Arquivo:** `src/components/CompanyCard.tsx`, `src/components/MemberCard.tsx`, `src/components/NewsCard.tsx`
+
+- Sombras mais pronunciadas no hover
+- Transicao de elevacao suave
+- Bordas mais definidas
+
+```text
+className="shadow-lg hover:shadow-card-hover hover:-translate-y-2 transition-all duration-300"
+```
+
+### 6. Secoes com Espacamento Generoso
+
+**Arquivo:** `src/pages/Index.tsx`
+
+- Aumentar py-20 para py-24 ou py-28
+- Gaps maiores entre elementos (gap-16 para gap-20)
+- Margens mais generosas nos titulos
+
+### 7. Imagens com Sombras e Decoracao
+
+**Arquivo:** `src/pages/Index.tsx`
+
+Para cada imagem nas secoes:
+- Adicionar shadow-hero ou shadow-elevated
+- Elementos decorativos posicionados atras da imagem
+- Bordas arredondadas maiores (rounded-3xl)
+
+Exemplo:
+```text
+<div className="relative">
+  <!-- Decorative elements -->
+  <div className="absolute -bottom-8 -right-8 w-40 h-40 bg-accent/20 rounded-full blur-xl" />
+  <div className="absolute -top-8 -left-8 w-32 h-32 bg-primary/15 rounded-full blur-xl" />
+  
+  <!-- Image with shadow -->
+  <img 
+    className="rounded-3xl shadow-hero relative z-10"
+  />
+</div>
+```
 
 ---
 
 ## Arquivos a Modificar
 
-### Estilos Globais
-1. **src/index.css** - Atualizar variaveis CSS (primary para teal)
-2. **tailwind.config.ts** - Manter configuracao compativel
-
-### Layout
-3. **src/components/layout/Header.tsx** - Ajustar botao CTA para teal
-4. **src/components/layout/Footer.tsx** - Redesenhar com novo layout
-
-### Pagina Inicial
-5. **src/pages/Index.tsx** - Redesenho completo com novas secoes
-
-### Componentes
-6. **src/components/SectionTitle.tsx** - Ajustar barra dourada no topo
-7. **src/components/CompanyCard.tsx** - Simplificar, remover borda colorida
-8. **src/components/MemberCard.tsx** - Novo layout com setor
-9. **src/components/NewsCard.tsx** - Ajustar para novo visual
-
-### Outras Paginas (ajustes menores)
-10. **src/pages/About.tsx** - Alinhar com novo estilo
-11. **src/pages/Companies.tsx** - Usar novos cards
-12. **src/pages/Members.tsx** - Usar novos cards
-13. **src/pages/News.tsx** - Usar novos cards
-14. **src/pages/BecomeNucleado.tsx** - Ajustar botoes
-
----
-
-## Detalhes Tecnicos
-
-### Nova Paleta CSS (index.css)
-```text
---primary: 168 84% 32%  (teal #0d9488)
---accent: 48 96% 53%    (amarelo #eab308)
-```
-
-### Novas Ilustracoes
-Usarei imagens do Unsplash para:
-- Hero: foto de reuniao empresarial
-- Secoes de confianca: imagens ilustrativas de negocios
-- Placeholder para membros: fundo teal claro
-
-### Animacoes
-- Manter Framer Motion para fade-in suaves
-- Hover sutil nos cards e botoes
-- Sem animacoes excessivas
+| Arquivo | Alteracoes |
+|---------|------------|
+| `tailwind.config.ts` | Container maior, sombras customizadas |
+| `src/index.css` | Utilitarios de sombra e textura |
+| `src/pages/Index.tsx` | Hero expandido, decoracoes, espacamentos |
+| `src/components/CompanyCard.tsx` | Sombras e hover mais impactantes |
+| `src/components/MemberCard.tsx` | Sombras e hover mais impactantes |
+| `src/components/NewsCard.tsx` | Sombras e hover mais impactantes |
+| `src/components/SectionTitle.tsx` | Tipografia maior |
 
 ---
 
 ## Resultado Esperado
 
-Um site que transmite:
-- **Clareza**: Layout limpo e bem organizado
-- **Profissionalismo**: Cores corporativas equilibradas
-- **Confianca**: Secoes bem estruturadas com proposito claro
-- **Modernidade**: Design atual sem exageros
-- **Acessibilidade**: Alto contraste e boa legibilidade
+Apos as alteracoes, o site tera:
+
+1. **Layout mais amplo** - Conteudo ocupando melhor o espaco em telas grandes
+2. **Profundidade visual** - Sombras que criam hierarquia e impacto
+3. **Elementos decorativos** - Texturas sutis que adicionam sofisticacao
+4. **Tipografia imponente** - Titulos maiores e mais bold
+5. **Cards elevados** - Efeitos de hover que transmitem qualidade premium
+6. **Espacamento generoso** - Respiro entre secoes que transmite exclusividade
+
+O resultado sera um site que transmite **forca, solidez e profissionalismo** - digno de uma organizacao empresarial de alto nivel.
 
