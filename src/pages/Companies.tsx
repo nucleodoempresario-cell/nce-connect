@@ -1,21 +1,17 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Building2, Globe, Search } from 'lucide-react';
+import { Building2, Search } from 'lucide-react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { CompanyCard } from '@/components/CompanyCard';
-import { SocialLinks } from '@/components/SocialLinks';
 import { SectionTitle } from '@/components/SectionTitle';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/animations';
 import { useCompanies } from '@/hooks/useCompanies';
-import { Link } from 'react-router-dom';
 
 export default function Companies() {
   const { data: companies, isLoading } = useCompanies();
-  const [selectedCompany, setSelectedCompany] = useState<typeof companies extends (infer T)[] ? T : never | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredCompanies = companies?.filter(company => 
@@ -26,8 +22,12 @@ export default function Companies() {
   return (
     <PageLayout>
       {/* Hero Section */}
-      <section className="pt-28 pb-16 bg-background">
-        <div className="container">
+      <section className="pt-28 pb-16 bg-background relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-20 right-0 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
+        
+        <div className="container relative">
           <motion.div
             className="max-w-3xl"
             initial={{ opacity: 0, y: 20 }}
@@ -38,7 +38,7 @@ export default function Companies() {
               <Building2 className="h-4 w-4" />
               Nossos Parceiros
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
               Empresas de{" "}
               <span className="text-accent">Excelência</span>
             </h1>
@@ -64,10 +64,12 @@ export default function Companies() {
       </section>
 
       {/* Companies Grid */}
-      <section className="py-16 bg-secondary">
+      <section className="py-24 bg-secondary relative">
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+        
         <div className="container">
           {isLoading ? (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {[...Array(8)].map((_, i) => (
                 <div key={i} className="space-y-3">
                   <Skeleton className="aspect-video w-full rounded-xl" />
@@ -83,15 +85,16 @@ export default function Companies() {
                   {filteredCompanies.length} {filteredCompanies.length === 1 ? 'empresa encontrada' : 'empresas encontradas'}
                 </p>
               </FadeIn>
-              <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" staggerDelay={0.05}>
+              <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" staggerDelay={0.05}>
                 {filteredCompanies.map((company) => (
                   <StaggerItem key={company.id}>
-                    <CompanyCard
-                      nome={company.nome}
-                      logoUrl={company.logo_url}
-                      descricaoCurta={company.descricao_curta}
-                      onClick={() => setSelectedCompany(company)}
-                    />
+                    <Link to={`/empresas/${company.id}`}>
+                      <CompanyCard
+                        nome={company.nome}
+                        logoUrl={company.logo_url}
+                        descricaoCurta={company.descricao_curta}
+                      />
+                    </Link>
                   </StaggerItem>
                 ))}
               </StaggerContainer>
@@ -113,68 +116,6 @@ export default function Companies() {
           )}
         </div>
       </section>
-
-      {/* Company Modal */}
-      <Dialog open={!!selectedCompany} onOpenChange={() => setSelectedCompany(null)}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">{selectedCompany?.nome}</DialogTitle>
-          </DialogHeader>
-          {selectedCompany && (
-            <div className="space-y-6">
-              {selectedCompany.logo_url && (
-                <div className="h-40 flex items-center justify-center bg-secondary rounded-xl p-6">
-                  <img 
-                    src={selectedCompany.logo_url} 
-                    alt={selectedCompany.nome} 
-                    className="max-h-full max-w-full object-contain" 
-                  />
-                </div>
-              )}
-              
-              {selectedCompany.descricao_completa && (
-                <p className="text-muted-foreground leading-relaxed">{selectedCompany.descricao_completa}</p>
-              )}
-
-              <div className="flex flex-wrap gap-4">
-                {selectedCompany.site_url && (
-                  <Button asChild className="bg-primary hover:bg-primary/90">
-                    <a href={selectedCompany.site_url} target="_blank" rel="noopener noreferrer">
-                      <Globe className="h-4 w-4 mr-2" /> Visitar Site
-                    </a>
-                  </Button>
-                )}
-                <SocialLinks links={(selectedCompany.redes_sociais as Record<string, string>) || {}} />
-              </div>
-
-              {selectedCompany.dono && (
-                <div className="border-t pt-6">
-                  <h4 className="font-semibold mb-4 text-foreground">Proprietário</h4>
-                  <Link 
-                    to="/membros" 
-                    className="flex items-center gap-4 p-4 rounded-xl bg-secondary hover:bg-secondary/80 transition-colors"
-                  >
-                    <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center overflow-hidden">
-                      {selectedCompany.dono.foto_url ? (
-                        <img 
-                          src={selectedCompany.dono.foto_url} 
-                          alt={selectedCompany.dono.nome} 
-                          className="w-full h-full object-cover" 
-                        />
-                      ) : (
-                        <span className="text-primary-foreground font-bold text-lg">
-                          {selectedCompany.dono.nome?.charAt(0)}
-                        </span>
-                      )}
-                    </div>
-                    <span className="font-medium text-foreground">{selectedCompany.dono.nome}</span>
-                  </Link>
-                </div>
-              )}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </PageLayout>
   );
 }

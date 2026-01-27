@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -28,7 +27,6 @@ import {
 } from "lucide-react";
 
 const Index = () => {
-  const navigate = useNavigate();
   const { data: news } = useNews();
   const { data: companies } = useCompanies();
   const { data: members } = useProfiles();
@@ -329,12 +327,13 @@ const Index = () => {
             <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8" staggerDelay={0.1}>
               {featuredCompanies.map((company) => (
                 <StaggerItem key={company.id}>
-                  <CompanyCard
-                    nome={company.nome}
-                    logoUrl={company.logo_url}
-                    descricaoCurta={company.descricao_curta}
-                    onClick={() => navigate(`/empresas?id=${company.id}`)}
-                  />
+                  <Link to={`/empresas/${company.id}`}>
+                    <CompanyCard
+                      nome={company.nome}
+                      logoUrl={company.logo_url}
+                      descricaoCurta={company.descricao_curta}
+                    />
+                  </Link>
                 </StaggerItem>
               ))}
             </StaggerContainer>
@@ -367,12 +366,13 @@ const Index = () => {
             <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8" staggerDelay={0.1}>
               {featuredMembers.map((member) => (
                 <StaggerItem key={member.id}>
-                  <MemberCard
-                    nome={member.nome}
-                    fotoUrl={member.foto_url}
-                    setor="Empresário"
-                    onClick={() => navigate('/membros')}
-                  />
+                  <Link to="/membros">
+                    <MemberCard
+                      nome={member.nome}
+                      fotoUrl={member.foto_url}
+                      setor="Empresário"
+                    />
+                  </Link>
                 </StaggerItem>
               ))}
             </StaggerContainer>
@@ -405,13 +405,14 @@ const Index = () => {
             <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-10" staggerDelay={0.1}>
               {recentNews.map((article) => (
                 <StaggerItem key={article.id}>
-                  <NewsCard
-                    titulo={article.titulo}
-                    resumo={article.resumo}
-                    imagemCapa={article.imagem_capa}
-                    createdAt={article.created_at}
-                    onClick={() => navigate(`/noticias/${article.id}`)}
-                  />
+                  <Link to={`/noticias/${article.id}`}>
+                    <NewsCard
+                      titulo={article.titulo}
+                      resumo={article.resumo}
+                      imagemCapa={article.imagem_capa}
+                      createdAt={article.created_at}
+                    />
+                  </Link>
                 </StaggerItem>
               ))}
             </StaggerContainer>

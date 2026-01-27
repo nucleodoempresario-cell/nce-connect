@@ -85,12 +85,13 @@ export default function Members() {
               <StaggerContainer className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6" staggerDelay={0.05}>
                 {filteredMembers.map((member) => (
                   <StaggerItem key={member.id}>
-                    <MemberCard
-                      nome={member.nome}
-                      fotoUrl={member.foto_url}
-                      setor="Empresário"
-                      onClick={() => setSelectedMember(member)}
-                    />
+                    <div onClick={() => setSelectedMember(member)} className="cursor-pointer">
+                      <MemberCard
+                        nome={member.nome}
+                        fotoUrl={member.foto_url}
+                        setor="Empresário"
+                      />
+                    </div>
                   </StaggerItem>
                 ))}
               </StaggerContainer>
