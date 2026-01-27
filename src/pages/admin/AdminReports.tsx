@@ -5,9 +5,10 @@ import { useAllProfiles } from '@/hooks/useProfiles';
 import { useAllCompanies } from '@/hooks/useCompanies';
 import { exportToCSV } from '@/lib/exportCSV';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BirthdayList } from '@/components/admin/reports/BirthdayList';
+import { BirthdayPeriodReport } from '@/components/admin/reports/BirthdayPeriodReport';
 
 const COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', 'hsl(var(--secondary))', '#8884d8', '#82ca9d', '#ffc658', '#ff7300'];
-
 export default function AdminReports() {
   const { data: profiles, isLoading: loadingProfiles } = useAllProfiles();
   const { data: companies, isLoading: loadingCompanies } = useAllCompanies();
@@ -184,6 +185,12 @@ export default function AdminReports() {
             <p className="text-xs text-muted-foreground">Diferentes segmentos</p>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Birthday Reports */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <BirthdayList profiles={profiles} />
+        <BirthdayPeriodReport profiles={profiles} />
       </div>
 
       {/* Charts Row 1 */}
