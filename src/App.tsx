@@ -12,6 +12,7 @@ import About from "./pages/About";
 import Companies from "./pages/Companies";
 import CompanyDetail from "./pages/CompanyDetail";
 import Members from "./pages/Members";
+import MemberDetail from "./pages/MemberDetail";
 import News from "./pages/News";
 import NewsDetail from "./pages/NewsDetail";
 import BecomeNucleado from "./pages/BecomeNucleado";
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/empresas" element={<Companies />} />
             <Route path="/empresas/:id" element={<CompanyDetail />} />
             <Route path="/membros" element={<Members />} />
+            <Route path="/membros/:id" element={<MemberDetail />} />
             <Route path="/noticias" element={<News />} />
             <Route path="/noticias/:id" element={<NewsDetail />} />
             <Route path="/seja-nucleado" element={<BecomeNucleado />} />
