@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Loader2, Upload, AlertCircle, CheckCircle, Clock, Building2, MapPin, Phone, Users, Globe } from 'lucide-react';
+import { Loader2, Upload, AlertCircle, CheckCircle, Clock, Building2, MapPin, Phone, Users, Globe, Eye, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -8,9 +8,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { MaskedInput } from '@/components/ui/masked-input';
+import { SocialInput } from '@/components/ui/social-input';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMyCompany, useCreateCompany, useUpdateCompany } from '@/hooks/useCompanies';
 import { uploadFile } from '@/lib/uploadFile';
+import { optimizeLogo } from '@/lib/imageOptimizer';
+import { normalizeAllSocialLinks } from '@/lib/socialLinks';
 import { useToast } from '@/hooks/use-toast';
 
 const ESTADOS_BRASIL = [
@@ -28,6 +33,34 @@ const NUMERO_FUNCIONARIOS = [
   'Mais de 500 funcionários'
 ];
 
+const VISIBILITY_FIELDS = [
+  { key: 'descricao_curta', label: 'Descrição curta' },
+  { key: 'descricao_completa', label: 'Descrição completa' },
+  { key: 'produtos_servicos', label: 'Produtos e Serviços' },
+  { key: 'segmento', label: 'Segmento' },
+  { key: 'ano_fundacao', label: 'Ano de Fundação' },
+  { key: 'numero_funcionarios', label: 'Nº Funcionários' },
+  { key: 'telefone', label: 'Telefone' },
+  { key: 'email', label: 'E-mail' },
+  { key: 'endereco', label: 'Endereço' },
+  { key: 'site_url', label: 'Website' },
+  { key: 'redes_sociais', label: 'Redes Sociais' },
+];
+
+const DEFAULT_VISIBILITY = {
+  descricao_curta: true,
+  descricao_completa: true,
+  produtos_servicos: true,
+  telefone: true,
+  email: true,
+  endereco: true,
+  site_url: true,
+  redes_sociais: true,
+  segmento: true,
+  ano_fundacao: true,
+  numero_funcionarios: true,
+};
+
 export default function EditCompany() {
   const { profile } = useAuth();
   const { data: company, isLoading: loadingCompany } = useMyCompany(profile?.id);
@@ -40,6 +73,7 @@ export default function EditCompany() {
     nome: '',
     descricao_curta: '',
     descricao_completa: '',
+    produtos_servicos: '',
     segmento: '',
     site_url: '',
     telefone: '',
@@ -55,14 +89,19 @@ export default function EditCompany() {
     facebook: '',
   });
 
+  const [visibility, setVisibility] = useState<Record<string, boolean>>(DEFAULT_VISIBILITY);
+
   useEffect(() => {
     if (company) {
       const redes = (company.redes_sociais as Record<string, string>) || {};
       const companyAny = company as Record<string, unknown>;
+      const camposVisiveis = (companyAny.campos_visiveis as Record<string, boolean>) || DEFAULT_VISIBILITY;
+      
       setFormData({
         nome: company.nome || '',
         descricao_curta: company.descricao_curta || '',
         descricao_completa: company.descricao_completa || '',
+        produtos_servicos: (companyAny.produtos_servicos as string) || '',
         segmento: (companyAny.segmento as string) || '',
         site_url: company.site_url || '',
         telefone: (companyAny.telefone as string) || '',
@@ -77,6 +116,8 @@ export default function EditCompany() {
         linkedin: redes.linkedin || '',
         facebook: redes.facebook || '',
       });
+      
+      setVisibility({ ...DEFAULT_VISIBILITY, ...camposVisiveis });
     }
   }, [company]);
 
@@ -85,10 +126,16 @@ export default function EditCompany() {
     if (!file || !company) return;
     
     setIsLoading(true);
-    const url = await uploadFile(file, 'company-logos', company.id);
-    if (url) {
-      await updateCompany.mutateAsync({ id: company.id, updates: { logo_url: url } });
-      toast({ title: 'Logo atualizado!' });
+    try {
+      // Optimize image before upload
+      const optimizedFile = await optimizeLogo(file);
+      const url = await uploadFile(optimizedFile, 'company-logos', company.id);
+      if (url) {
+        await updateCompany.mutateAsync({ id: company.id, updates: { logo_url: url } });
+        toast({ title: 'Logo atualizado!' });
+      }
+    } catch (error) {
+      toast({ title: 'Erro ao enviar logo', variant: 'destructive' });
     }
     setIsLoading(false);
   };
@@ -99,10 +146,17 @@ export default function EditCompany() {
     
     setIsLoading(true);
     try {
+      const normalizedSocial = normalizeAllSocialLinks({
+        instagram: formData.instagram,
+        linkedin: formData.linkedin,
+        facebook: formData.facebook,
+      });
+
       const data = {
         nome: formData.nome,
         descricao_curta: formData.descricao_curta,
         descricao_completa: formData.descricao_completa,
+        produtos_servicos: formData.produtos_servicos,
         segmento: formData.segmento,
         site_url: formData.site_url,
         telefone: formData.telefone,
@@ -113,7 +167,8 @@ export default function EditCompany() {
         cep: formData.cep,
         ano_fundacao: formData.ano_fundacao ? parseInt(formData.ano_fundacao) : null,
         numero_funcionarios: formData.numero_funcionarios,
-        redes_sociais: { instagram: formData.instagram, linkedin: formData.linkedin, facebook: formData.facebook },
+        redes_sociais: normalizedSocial,
+        campos_visiveis: visibility,
       };
 
       if (company) {
@@ -126,6 +181,10 @@ export default function EditCompany() {
       toast({ title: 'Erro ao salvar', variant: 'destructive' });
     }
     setIsLoading(false);
+  };
+
+  const toggleVisibility = (key: string) => {
+    setVisibility(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
   if (loadingCompany) {
@@ -185,7 +244,7 @@ export default function EditCompany() {
                       </div>
                     </Label>
                     <input id="logo" type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
-                    <p className="text-xs text-muted-foreground">PNG ou JPG. Preferencialmente fundo transparente.</p>
+                    <p className="text-xs text-muted-foreground">PNG ou JPG. A imagem será otimizada automaticamente.</p>
                   </div>
                 </div>
                 <Separator />
@@ -221,6 +280,26 @@ export default function EditCompany() {
                   value={formData.descricao_completa} 
                   onChange={(e) => setFormData({...formData, descricao_completa: e.target.value})} 
                   placeholder="Conte a história da sua empresa, seus valores, diferenciais e o que vocês fazem..."
+                />
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Produtos e Serviços */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <Package className="h-4 w-4 text-primary" />
+                Produtos e Serviços
+              </h3>
+              <div className="space-y-2">
+                <Label htmlFor="produtos_servicos">Descreva os produtos e serviços oferecidos</Label>
+                <Textarea 
+                  id="produtos_servicos" 
+                  rows={5} 
+                  value={formData.produtos_servicos} 
+                  onChange={(e) => setFormData({...formData, produtos_servicos: e.target.value})} 
+                  placeholder="Liste os principais produtos e serviços que sua empresa oferece, suas especialidades e diferenciais..."
                 />
               </div>
             </div>
@@ -273,7 +352,13 @@ export default function EditCompany() {
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="telefone_empresa">Telefone</Label>
-                  <Input id="telefone_empresa" placeholder="(00) 0000-0000" value={formData.telefone} onChange={(e) => setFormData({...formData, telefone: e.target.value})} />
+                  <MaskedInput 
+                    mask="phone"
+                    id="telefone_empresa" 
+                    placeholder="(00) 0000-0000" 
+                    value={formData.telefone} 
+                    onChange={(value) => setFormData({...formData, telefone: value})} 
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email_empresa">E-mail</Label>
@@ -290,6 +375,7 @@ export default function EditCompany() {
                 <MapPin className="h-4 w-4 text-primary" />
                 Endereço
               </h3>
+              <p className="text-sm text-muted-foreground">O endereço será exibido junto com um mapa de localização na página da empresa.</p>
               <div className="space-y-2">
                 <Label htmlFor="endereco">Endereço</Label>
                 <Input id="endereco" placeholder="Rua, número, bairro..." value={formData.endereco} onChange={(e) => setFormData({...formData, endereco: e.target.value})} />
@@ -314,7 +400,13 @@ export default function EditCompany() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="cep">CEP</Label>
-                  <Input id="cep" placeholder="00000-000" value={formData.cep} onChange={(e) => setFormData({...formData, cep: e.target.value})} />
+                  <MaskedInput 
+                    mask="cep"
+                    id="cep" 
+                    placeholder="00000-000" 
+                    value={formData.cep} 
+                    onChange={(value) => setFormData({...formData, cep: value})} 
+                  />
                 </div>
               </div>
             </div>
@@ -327,6 +419,7 @@ export default function EditCompany() {
                 <Globe className="h-4 w-4 text-primary" />
                 Site e Redes Sociais
               </h3>
+              <p className="text-sm text-muted-foreground">Para redes sociais, você pode inserir o link completo ou apenas o @usuário.</p>
               <div className="space-y-2">
                 <Label htmlFor="site_url">Website</Label>
                 <Input id="site_url" type="url" value={formData.site_url} onChange={(e) => setFormData({...formData, site_url: e.target.value})} placeholder="https://www.suaempresa.com.br" />
@@ -334,16 +427,61 @@ export default function EditCompany() {
               <div className="grid md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="instagram_empresa">Instagram</Label>
-                  <Input id="instagram_empresa" placeholder="https://instagram.com/..." value={formData.instagram} onChange={(e) => setFormData({...formData, instagram: e.target.value})} />
+                  <SocialInput 
+                    platform="instagram"
+                    id="instagram_empresa" 
+                    value={formData.instagram} 
+                    onChange={(value) => setFormData({...formData, instagram: value})} 
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="linkedin_empresa">LinkedIn</Label>
-                  <Input id="linkedin_empresa" placeholder="https://linkedin.com/company/..." value={formData.linkedin} onChange={(e) => setFormData({...formData, linkedin: e.target.value})} />
+                  <SocialInput 
+                    platform="linkedin"
+                    id="linkedin_empresa" 
+                    value={formData.linkedin} 
+                    onChange={(value) => setFormData({...formData, linkedin: value})} 
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="facebook_empresa">Facebook</Label>
-                  <Input id="facebook_empresa" placeholder="https://facebook.com/..." value={formData.facebook} onChange={(e) => setFormData({...formData, facebook: e.target.value})} />
+                  <SocialInput 
+                    platform="facebook"
+                    id="facebook_empresa" 
+                    value={formData.facebook} 
+                    onChange={(value) => setFormData({...formData, facebook: value})} 
+                  />
                 </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Visibilidade */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <Eye className="h-4 w-4 text-primary" />
+                Visibilidade do Perfil
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Escolha quais informações devem aparecer na página pública da sua empresa. Desmarque os campos que não deseja exibir.
+              </p>
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {VISIBILITY_FIELDS.map((field) => (
+                  <div key={field.key} className="flex items-center space-x-3">
+                    <Checkbox 
+                      id={`visibility-${field.key}`}
+                      checked={visibility[field.key] ?? true}
+                      onCheckedChange={() => toggleVisibility(field.key)}
+                    />
+                    <Label 
+                      htmlFor={`visibility-${field.key}`}
+                      className="text-sm font-normal cursor-pointer"
+                    >
+                      {field.label}
+                    </Label>
+                  </div>
+                ))}
               </div>
             </div>
 

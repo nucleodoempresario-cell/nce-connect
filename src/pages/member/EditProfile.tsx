@@ -1,15 +1,38 @@
 import { useState, useEffect } from 'react';
-import { Loader2, Upload, User, MapPin, Calendar, Briefcase, Globe } from 'lucide-react';
+import { Loader2, Upload, User, Calendar, Globe, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { Checkbox } from '@/components/ui/checkbox';
+import { MaskedInput } from '@/components/ui/masked-input';
+import { SocialInput } from '@/components/ui/social-input';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUpdateProfile } from '@/hooks/useProfiles';
 import { uploadFile } from '@/lib/uploadFile';
+import { optimizeAvatar } from '@/lib/imageOptimizer';
+import { normalizeAllSocialLinks } from '@/lib/socialLinks';
 import { useToast } from '@/hooks/use-toast';
+
+const VISIBILITY_FIELDS = [
+  { key: 'bio', label: 'Biografia' },
+  { key: 'cargo', label: 'Cargo / Função' },
+  { key: 'telefone', label: 'Telefone' },
+  { key: 'email', label: 'E-mail' },
+  { key: 'website', label: 'Website Pessoal' },
+  { key: 'redes_sociais', label: 'Redes Sociais' },
+];
+
+const DEFAULT_VISIBILITY = {
+  bio: true,
+  telefone: true,
+  email: true,
+  cargo: true,
+  website: true,
+  redes_sociais: true,
+};
 
 export default function EditProfile() {
   const { profile, user, refreshProfile } = useAuth();
@@ -23,8 +46,6 @@ export default function EditProfile() {
     telefone: '',
     email: '',
     cargo: '',
-    cidade: '',
-    estado: '',
     website: '',
     data_nascimento: '',
     data_entrada: '',
@@ -33,18 +54,20 @@ export default function EditProfile() {
     facebook: '',
   });
 
+  const [visibility, setVisibility] = useState<Record<string, boolean>>(DEFAULT_VISIBILITY);
+
   useEffect(() => {
     if (profile) {
       const redes = (profile.redes_sociais as Record<string, string>) || {};
       const profileAny = profile as Record<string, unknown>;
+      const camposVisiveis = (profileAny.campos_visiveis as Record<string, boolean>) || DEFAULT_VISIBILITY;
+      
       setFormData({
         nome: profile.nome || '',
         bio: profile.bio || '',
         telefone: profile.telefone || '',
         email: profile.email || '',
         cargo: (profileAny.cargo as string) || '',
-        cidade: (profileAny.cidade as string) || '',
-        estado: (profileAny.estado as string) || '',
         website: (profileAny.website as string) || '',
         data_nascimento: (profileAny.data_nascimento as string) || '',
         data_entrada: (profileAny.data_entrada as string) || '',
@@ -52,6 +75,8 @@ export default function EditProfile() {
         linkedin: redes.linkedin || '',
         facebook: redes.facebook || '',
       });
+      
+      setVisibility({ ...DEFAULT_VISIBILITY, ...camposVisiveis });
     }
   }, [profile]);
 
@@ -60,11 +85,17 @@ export default function EditProfile() {
     if (!file || !profile || !user) return;
     
     setIsLoading(true);
-    const url = await uploadFile(file, 'avatars', user.id);
-    if (url) {
-      await updateProfile.mutateAsync({ id: profile.id, updates: { foto_url: url } });
-      await refreshProfile();
-      toast({ title: 'Foto atualizada!' });
+    try {
+      // Optimize image before upload
+      const optimizedFile = await optimizeAvatar(file);
+      const url = await uploadFile(optimizedFile, 'avatars', user.id);
+      if (url) {
+        await updateProfile.mutateAsync({ id: profile.id, updates: { foto_url: url } });
+        await refreshProfile();
+        toast({ title: 'Foto atualizada!' });
+      }
+    } catch (error) {
+      toast({ title: 'Erro ao enviar foto', variant: 'destructive' });
     }
     setIsLoading(false);
   };
@@ -75,6 +106,12 @@ export default function EditProfile() {
     
     setIsLoading(true);
     try {
+      const normalizedSocial = normalizeAllSocialLinks({
+        instagram: formData.instagram,
+        linkedin: formData.linkedin,
+        facebook: formData.facebook,
+      });
+
       await updateProfile.mutateAsync({
         id: profile.id,
         updates: {
@@ -83,16 +120,11 @@ export default function EditProfile() {
           telefone: formData.telefone,
           email: formData.email,
           cargo: formData.cargo,
-          cidade: formData.cidade,
-          estado: formData.estado,
           website: formData.website,
           data_nascimento: formData.data_nascimento || null,
           data_entrada: formData.data_entrada || null,
-          redes_sociais: {
-            instagram: formData.instagram,
-            linkedin: formData.linkedin,
-            facebook: formData.facebook,
-          },
+          redes_sociais: normalizedSocial,
+          campos_visiveis: visibility,
         } as Record<string, unknown>,
       });
       await refreshProfile();
@@ -101,6 +133,10 @@ export default function EditProfile() {
       toast({ title: 'Erro ao salvar', variant: 'destructive' });
     }
     setIsLoading(false);
+  };
+
+  const toggleVisibility = (key: string) => {
+    setVisibility(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
   return (
@@ -133,7 +169,7 @@ export default function EditProfile() {
                   </div>
                 </Label>
                 <input id="photo" type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
-                <p className="text-xs text-muted-foreground">JPG, PNG ou GIF. Máximo 2MB.</p>
+                <p className="text-xs text-muted-foreground">JPG, PNG ou GIF. A imagem será otimizada automaticamente.</p>
               </div>
             </div>
 
@@ -160,7 +196,13 @@ export default function EditProfile() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="telefone">Telefone</Label>
-                  <Input id="telefone" placeholder="(00) 00000-0000" value={formData.telefone} onChange={(e) => setFormData({...formData, telefone: e.target.value})} />
+                  <MaskedInput 
+                    mask="phone"
+                    id="telefone" 
+                    placeholder="(00) 00000-0000" 
+                    value={formData.telefone} 
+                    onChange={(value) => setFormData({...formData, telefone: value})} 
+                  />
                 </div>
               </div>
               <div className="space-y-2">
@@ -172,27 +214,6 @@ export default function EditProfile() {
                   value={formData.bio} 
                   onChange={(e) => setFormData({...formData, bio: e.target.value})} 
                 />
-                <p className="text-xs text-muted-foreground">Esta informação será exibida publicamente no site.</p>
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Localização */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-primary" />
-                Localização
-              </h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="cidade">Cidade</Label>
-                  <Input id="cidade" placeholder="Sua cidade" value={formData.cidade} onChange={(e) => setFormData({...formData, cidade: e.target.value})} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="estado">Estado</Label>
-                  <Input id="estado" placeholder="Ex: PR, SP, SC..." value={formData.estado} onChange={(e) => setFormData({...formData, estado: e.target.value})} />
-                </div>
               </div>
             </div>
 
@@ -235,6 +256,7 @@ export default function EditProfile() {
                 <Globe className="h-4 w-4 text-primary" />
                 Redes Sociais e Website
               </h3>
+              <p className="text-sm text-muted-foreground">Você pode inserir o link completo ou apenas o @usuário.</p>
               <div className="space-y-2">
                 <Label htmlFor="website">Website Pessoal</Label>
                 <Input id="website" type="url" placeholder="https://seusite.com" value={formData.website} onChange={(e) => setFormData({...formData, website: e.target.value})} />
@@ -242,16 +264,61 @@ export default function EditProfile() {
               <div className="grid md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="instagram">Instagram</Label>
-                  <Input id="instagram" placeholder="https://instagram.com/..." value={formData.instagram} onChange={(e) => setFormData({...formData, instagram: e.target.value})} />
+                  <SocialInput 
+                    platform="instagram"
+                    id="instagram" 
+                    value={formData.instagram} 
+                    onChange={(value) => setFormData({...formData, instagram: value})} 
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="linkedin">LinkedIn</Label>
-                  <Input id="linkedin" placeholder="https://linkedin.com/in/..." value={formData.linkedin} onChange={(e) => setFormData({...formData, linkedin: e.target.value})} />
+                  <SocialInput 
+                    platform="linkedin"
+                    id="linkedin" 
+                    value={formData.linkedin} 
+                    onChange={(value) => setFormData({...formData, linkedin: value})} 
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="facebook">Facebook</Label>
-                  <Input id="facebook" placeholder="https://facebook.com/..." value={formData.facebook} onChange={(e) => setFormData({...formData, facebook: e.target.value})} />
+                  <SocialInput 
+                    platform="facebook"
+                    id="facebook" 
+                    value={formData.facebook} 
+                    onChange={(value) => setFormData({...formData, facebook: value})} 
+                  />
                 </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Visibilidade do Perfil */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <Eye className="h-4 w-4 text-primary" />
+                Visibilidade do Perfil
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Escolha quais informações devem aparecer no seu perfil público. Desmarque os campos que não deseja exibir.
+              </p>
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {VISIBILITY_FIELDS.map((field) => (
+                  <div key={field.key} className="flex items-center space-x-3">
+                    <Checkbox 
+                      id={`visibility-${field.key}`}
+                      checked={visibility[field.key] ?? true}
+                      onCheckedChange={() => toggleVisibility(field.key)}
+                    />
+                    <Label 
+                      htmlFor={`visibility-${field.key}`}
+                      className="text-sm font-normal cursor-pointer"
+                    >
+                      {field.label}
+                    </Label>
+                  </div>
+                ))}
               </div>
             </div>
 
