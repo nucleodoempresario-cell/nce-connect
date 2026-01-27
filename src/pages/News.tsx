@@ -8,10 +8,17 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/animations';
 import { useNews } from '@/hooks/useNews';
+import { useListagemNoticiasContent } from '@/hooks/useContentTypes';
 
 export default function News() {
   const { data: news, isLoading } = useNews();
+  const { data: pageContent } = useListagemNoticiasContent();
   const [searchTerm, setSearchTerm] = useState('');
+
+  const badge = pageContent?.badge || 'Fique Atualizado';
+  const titulo = pageContent?.titulo || 'Notícias e Novidades';
+  const subtitulo = pageContent?.subtitulo || 
+    'Acompanhe as últimas notícias, eventos e acontecimentos do Núcleo do Empresário.';
 
   const filteredNews = news?.filter(item => 
     item.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -31,15 +38,18 @@ export default function News() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-6">
               <Newspaper className="h-4 w-4" />
-              Fique Atualizado
+              {badge}
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
-              Notícias e{" "}
-              <span className="text-accent">Novidades</span>
+              {titulo.includes('Novidades') ? (
+                <>
+                  Notícias e{" "}
+                  <span className="text-accent">Novidades</span>
+                </>
+              ) : titulo}
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-              Acompanhe as últimas notícias, eventos e acontecimentos 
-              do Núcleo do Empresário.
+              {subtitulo}
             </p>
             
             {/* Search */}

@@ -1,9 +1,16 @@
 import { Link } from 'react-router-dom';
 import { Instagram } from 'lucide-react';
 import logoNce from '@/assets/logo-nce.png';
+import { useGlobalFooterContent } from '@/hooks/useContentTypes';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const { data: footerContent } = useGlobalFooterContent();
+
+  const descricao = footerContent?.descricao || 
+    'Uma comunidade exclusiva de empresários de alto nível, unidos pelo compromisso com a excelência e o crescimento mútuo. Networking estratégico que gera resultados reais.';
+  
+  const instagramUrl = footerContent?.instagram_url || 'https://instagram.com';
 
   return (
     <footer className="bg-slate-900 text-white">
@@ -19,11 +26,10 @@ export function Footer() {
               />
             </div>
             <p className="text-white/70 mb-6 max-w-md leading-relaxed">
-              Uma comunidade exclusiva de empresários de alto nível, unidos pelo compromisso 
-              com a excelência e o crescimento mútuo. Networking estratégico que gera resultados reais.
+              {descricao}
             </p>
             <a
-              href="https://instagram.com"
+              href={instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex w-10 h-10 rounded-lg bg-white/10 hover:bg-primary items-center justify-center transition-colors"

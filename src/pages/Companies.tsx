@@ -4,15 +4,21 @@ import { motion } from 'framer-motion';
 import { Building2, Search } from 'lucide-react';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { CompanyCard } from '@/components/CompanyCard';
-import { SectionTitle } from '@/components/SectionTitle';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/animations';
 import { useCompanies } from '@/hooks/useCompanies';
+import { useListagemEmpresasContent } from '@/hooks/useContentTypes';
 
 export default function Companies() {
   const { data: companies, isLoading } = useCompanies();
+  const { data: pageContent } = useListagemEmpresasContent();
   const [searchTerm, setSearchTerm] = useState('');
+
+  const badge = pageContent?.badge || 'Empresas Parceiras';
+  const titulo = pageContent?.titulo || 'Empresas do Núcleo';
+  const subtitulo = pageContent?.subtitulo || 
+    'Conheça as empresas que fazem parte da nossa comunidade de empresários de alto nível.';
 
   const filteredCompanies = companies?.filter(company => 
     company.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -36,15 +42,13 @@ export default function Companies() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-6">
               <Building2 className="h-4 w-4" />
-              Nossos Parceiros
+              {badge}
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
-              Empresas de{" "}
-              <span className="text-accent">Excelência</span>
+              {titulo}
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-              Conheça as empresas que fazem parte do NCE. Cada uma representa 
-              excelência em seu segmento e compartilha dos nossos valores.
+              {subtitulo}
             </p>
             
             {/* Search */}
