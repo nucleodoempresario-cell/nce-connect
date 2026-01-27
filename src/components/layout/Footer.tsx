@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Facebook, Instagram, Linkedin, Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Facebook, Instagram, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
 import logoNce from '@/assets/logo-nce.png';
 
 export function Footer() {
@@ -8,41 +7,6 @@ export function Footer() {
 
   return (
     <footer className="bg-slate-900 text-white">
-      {/* Pre-footer CTA */}
-      <div className="border-b border-white/10">
-        <div className="container py-12">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <h3 className="text-2xl font-bold mb-2">Pronto para fazer parte?</h3>
-              <p className="text-white/70">Junte-se aos empresários mais influentes da região.</p>
-            </div>
-            <div className="flex gap-4">
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="border-white text-white hover:bg-white hover:text-slate-900 font-semibold"
-                asChild
-              >
-                <Link to="/seja-nucleado">
-                  Candidate-se Agora
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="border-white/30 text-white hover:bg-white/10"
-                asChild
-              >
-                <Link to="/sobre">
-                  Saiba Mais
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-      
       <div className="container py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Logo and Description */}
