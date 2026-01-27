@@ -8,10 +8,17 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/animations';
 import { useProfiles } from '@/hooks/useProfiles';
+import { useListagemMembrosContent } from '@/hooks/useContentTypes';
 
 export default function Members() {
   const { data: members, isLoading } = useProfiles();
+  const { data: pageContent } = useListagemMembrosContent();
   const [searchTerm, setSearchTerm] = useState('');
+
+  const badge = pageContent?.badge || 'Nossa Comunidade';
+  const titulo = pageContent?.titulo || 'Nossos Nucleados';
+  const subtitulo = pageContent?.subtitulo || 
+    'Conheça os empresários de alto nível que fazem parte do NCE. Líderes comprometidos com a excelência e o crescimento mútuo.';
 
   const filteredMembers = members?.filter(member => 
     member.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -31,15 +38,18 @@ export default function Members() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-6">
               <Users className="h-4 w-4" />
-              Nossa Comunidade
+              {badge}
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
-              Nossos{" "}
-              <span className="text-accent">Nucleados</span>
+              {titulo.includes('Nucleados') ? (
+                <>
+                  Nossos{" "}
+                  <span className="text-accent">Nucleados</span>
+                </>
+              ) : titulo}
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-              Conheça os empresários de alto nível que fazem parte do NCE. 
-              Líderes comprometidos com a excelência e o crescimento mútuo.
+              {subtitulo}
             </p>
             
             {/* Search */}
