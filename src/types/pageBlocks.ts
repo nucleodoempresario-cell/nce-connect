@@ -10,7 +10,8 @@ export type BlockType =
   | 'texto_simples' 
   | 'galeria' 
   | 'divisor' 
-  | 'embed';
+  | 'embed'
+  | 'configuracoes';
 
 export interface PageBlock {
   id: string;
@@ -154,6 +155,7 @@ export const BLOCK_TYPES: BlockTypeInfo[] = [
   { tipo: 'galeria', nome: 'Galeria de Imagens', descricao: 'Grid de imagens com legendas', icon: 'Images' },
   { tipo: 'divisor', nome: 'Divisor', descricao: 'Linha separadora ou espaço', icon: 'Minus' },
   { tipo: 'embed', nome: 'Conteúdo Dinâmico', descricao: 'Lista de empresas, membros ou notícias', icon: 'Code' },
+  { tipo: 'configuracoes', nome: 'Configurações Globais', descricao: 'Footer, redes sociais e informações do site', icon: 'Settings' },
 ];
 
 // Nomes de páginas disponíveis
@@ -161,6 +163,18 @@ export const AVAILABLE_PAGES = [
   { id: 'home', nome: 'Página Inicial' },
   { id: 'sobre', nome: 'Sobre Nós' },
   { id: 'seja-nucleado', nome: 'Seja Nucleado' },
+  { id: 'empresas', nome: 'Empresas' },
+  { id: 'membros', nome: 'Membros' },
+  { id: 'noticias', nome: 'Notícias' },
+  { id: 'global', nome: 'Configurações Globais' },
 ] as const;
 
 export type PageId = typeof AVAILABLE_PAGES[number]['id'];
+
+// Tipo para configurações globais
+export interface GlobalConfigContent {
+  footer_descricao?: string;
+  footer_instagram?: string;
+  nome_site?: string;
+  slogan?: string;
+}

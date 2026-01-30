@@ -1,16 +1,16 @@
 import { Link } from 'react-router-dom';
 import { Instagram } from 'lucide-react';
 import logoNce from '@/assets/logo-nce.png';
-import { useGlobalFooterContent } from '@/hooks/useContentTypes';
+import { useGlobalConfig } from '@/hooks/useGlobalConfig';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
-  const { data: footerContent } = useGlobalFooterContent();
+  const { data: config } = useGlobalConfig();
 
-  const descricao = footerContent?.descricao || 
+  const descricao = config?.footer_descricao || 
     'Uma comunidade exclusiva de empresários de alto nível, unidos pelo compromisso com a excelência e o crescimento mútuo. Networking estratégico que gera resultados reais.';
   
-  const instagramUrl = footerContent?.instagram_url || 'https://instagram.com';
+  const instagramUrl = config?.footer_instagram || 'https://instagram.com';
 
   return (
     <footer className="bg-slate-900 text-white">

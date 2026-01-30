@@ -637,6 +637,51 @@ export function BlockEditorDialog({ block, open, onOpenChange }: BlockEditorDial
             )}
           </div>
         );
+      
+      // Configurações Globais (Footer, Header, etc.)
+      case 'configuracoes':
+        return (
+          <div className="space-y-4">
+            <div className="bg-muted p-3 rounded-lg mb-4">
+              <p className="text-sm text-muted-foreground">
+                Configure informações globais que aparecem em todo o site.
+              </p>
+            </div>
+            <div>
+              <Label>Descrição do Footer</Label>
+              <Textarea
+                value={(content.footer_descricao as string) || ''}
+                onChange={(e) => updateField('footer_descricao', e.target.value)}
+                rows={4}
+                placeholder="Texto que aparece no rodapé do site"
+              />
+            </div>
+            <div>
+              <Label>URL do Instagram</Label>
+              <Input
+                value={(content.footer_instagram as string) || ''}
+                onChange={(e) => updateField('footer_instagram', e.target.value)}
+                placeholder="https://instagram.com/seuperfil"
+              />
+            </div>
+            <div>
+              <Label>Nome do Site</Label>
+              <Input
+                value={(content.nome_site as string) || ''}
+                onChange={(e) => updateField('nome_site', e.target.value)}
+                placeholder="NCE - Núcleo do Empresário"
+              />
+            </div>
+            <div>
+              <Label>Slogan</Label>
+              <Input
+                value={(content.slogan as string) || ''}
+                onChange={(e) => updateField('slogan', e.target.value)}
+                placeholder="Conectando Empresários para o Sucesso"
+              />
+            </div>
+          </div>
+        );
         
       default:
         return (
