@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { HeroContent } from '@/types/pageBlocks';
 import { Network, Users, ArrowRight } from 'lucide-react';
+import { resolveImageUrl } from '@/lib/siteImages';
 
 interface HeroBlockProps {
   content: HeroContent | unknown;
@@ -10,6 +11,7 @@ interface HeroBlockProps {
 
 export function HeroBlock({ content }: HeroBlockProps) {
   const data = content as HeroContent;
+  const imageUrl = resolveImageUrl(data.imagem_url);
   
   return (
     <section className="relative pt-32 pb-28 bg-background overflow-hidden">
@@ -77,7 +79,7 @@ export function HeroBlock({ content }: HeroBlockProps) {
             </div>
           </motion.div>
           
-          {data.imagem_url && (
+          {imageUrl && (
             <motion.div
               className="relative"
               initial={{ opacity: 0, x: 40 }}
@@ -91,7 +93,7 @@ export function HeroBlock({ content }: HeroBlockProps) {
               
               <div className="relative rounded-3xl overflow-hidden shadow-image">
                 <img 
-                  src={data.imagem_url} 
+                  src={imageUrl} 
                   alt="Hero"
                   className="w-full h-auto aspect-[4/3] object-cover"
                 />
