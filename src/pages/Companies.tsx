@@ -8,16 +8,16 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/animations';
 import { useCompanies } from '@/hooks/useCompanies';
-import { useListagemEmpresasContent } from '@/hooks/useContentTypes';
+import { useListingPageHero } from '@/hooks/useGlobalConfig';
 
 export default function Companies() {
   const { data: companies, isLoading } = useCompanies();
-  const { data: pageContent } = useListagemEmpresasContent();
+  const { data: heroContent } = useListingPageHero('empresas');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const badge = pageContent?.badge || 'Empresas Parceiras';
-  const titulo = pageContent?.titulo || 'Empresas do Núcleo';
-  const subtitulo = pageContent?.subtitulo || 
+  const badge = heroContent?.badge || 'Empresas Parceiras';
+  const titulo = heroContent?.titulo || 'Empresas do Núcleo';
+  const subtitulo = heroContent?.subtitulo || 
     'Conheça as empresas que fazem parte da nossa comunidade de empresários de alto nível.';
 
   const filteredCompanies = companies?.filter(company => 

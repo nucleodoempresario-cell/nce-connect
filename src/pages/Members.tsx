@@ -8,16 +8,16 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/animations';
 import { useProfiles } from '@/hooks/useProfiles';
-import { useListagemMembrosContent } from '@/hooks/useContentTypes';
+import { useListingPageHero } from '@/hooks/useGlobalConfig';
 
 export default function Members() {
   const { data: members, isLoading } = useProfiles();
-  const { data: pageContent } = useListagemMembrosContent();
+  const { data: heroContent } = useListingPageHero('membros');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const badge = pageContent?.badge || 'Nossa Comunidade';
-  const titulo = pageContent?.titulo || 'Nossos Nucleados';
-  const subtitulo = pageContent?.subtitulo || 
+  const badge = heroContent?.badge || 'Nossa Comunidade';
+  const titulo = heroContent?.titulo || 'Nossos Nucleados';
+  const subtitulo = heroContent?.subtitulo || 
     'Conheça os empresários de alto nível que fazem parte do NCE. Líderes comprometidos com a excelência e o crescimento mútuo.';
 
   const filteredMembers = members?.filter(member => 

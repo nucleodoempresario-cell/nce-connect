@@ -8,16 +8,16 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/animations';
 import { useNews } from '@/hooks/useNews';
-import { useListagemNoticiasContent } from '@/hooks/useContentTypes';
+import { useListingPageHero } from '@/hooks/useGlobalConfig';
 
 export default function News() {
   const { data: news, isLoading } = useNews();
-  const { data: pageContent } = useListagemNoticiasContent();
+  const { data: heroContent } = useListingPageHero('noticias');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const badge = pageContent?.badge || 'Fique Atualizado';
-  const titulo = pageContent?.titulo || 'Notícias e Novidades';
-  const subtitulo = pageContent?.subtitulo || 
+  const badge = heroContent?.badge || 'Fique Atualizado';
+  const titulo = heroContent?.titulo || 'Notícias e Novidades';
+  const subtitulo = heroContent?.subtitulo || 
     'Acompanhe as últimas notícias, eventos e acontecimentos do Núcleo do Empresário.';
 
   const filteredNews = news?.filter(item => 
