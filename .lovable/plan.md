@@ -1,254 +1,284 @@
 
-# Sistema de Gerenciamento de Conteúdo (CMS) Completo
+# Sistema Page Builder Dinâmico - CMS Completo
 
-## Objetivo
-Criar uma interface administrativa intuitiva que permita editar TODOS os textos, imagens e banners do site de forma visual e organizada, tornando a manutenção do site simples e acessível para qualquer administrador.
+## Problema Identificado
 
----
+1. **Dados não populados**: A tabela `site_content` só possui 2 registros (`institucional` e `requisitos`). Os 15+ tipos de conteúdo criados para as seções da Home, Sobre, etc. não foram inseridos no banco.
 
-## Visão Geral da Solução
+2. **Sistema atual é rígido**: Cada página tem seções fixas pré-definidas. O admin pode editar textos, mas não pode adicionar novas seções, reordenar ou remover blocos.
 
-O CMS será organizado por **páginas do site**, permitindo que o administrador navegue facilmente e edite qualquer seção. Cada página terá suas seções editáveis claramente identificadas.
+## Solução: Page Builder Dinâmico
+
+Vamos criar um sistema onde cada página é uma coleção de **blocos de conteúdo** que podem ser:
+- Adicionados dinamicamente
+- Reordenados via drag-and-drop
+- Editados individualmente
+- Removidos
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
-│  PAINEL ADMIN > CONTEÚDO DO SITE                           │
-├─────────────────────────────────────────────────────────────┤
-│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌───────┐ │
-│  │  Home   │ │  Sobre  │ │Empresas │ │Membros  │ │ Seja  │ │
-│  │         │ │         │ │         │ │         │ │Nuclead│ │
-│  └─────────┘ └─────────┘ └─────────┘ └─────────┘ └───────┘ │
+│  EDITOR DE PÁGINA: HOME                                     │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
-│  PÁGINA HOME - Seções Editáveis:                           │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ ☰ Bloco: HERO                               [✏️] [🗑️] │   │
+│  │ Título: "Conectando Empresários..."                  │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                         ↕️ arrastar                         │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ ☰ Bloco: FEATURES                           [✏️] [🗑️] │   │
+│  │ 3 cards com ícone + título + descrição               │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                         ↕️ arrastar                         │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ ☰ Bloco: TEXTO + IMAGEM                     [✏️] [🗑️] │   │
+│  │ Layout 2 colunas: texto à esquerda, imagem à direita │   │
+│  └─────────────────────────────────────────────────────┘   │
 │                                                             │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │  🏠 HERO PRINCIPAL                              [✏️]  │  │
-│  │  Título, subtítulo, botões, imagem                   │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                                                             │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │  🤝 SEÇÃO CONFIANÇA                             [✏️]  │  │
-│  │  Título, descrição, features                         │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                                                             │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │  🎯 PILARES (Missão/Visão/Valores)              [✏️]  │  │
-│  │  3 cards editáveis                                   │  │
-│  └──────────────────────────────────────────────────────┘  │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │              [+ ADICIONAR NOVO BLOCO]                │   │
+│  └─────────────────────────────────────────────────────┘   │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Estrutura de Conteúdos Editáveis
+## Tipos de Blocos Disponíveis
 
-### 1. Página Inicial (Home)
-| Seção | Campos Editáveis |
-|-------|------------------|
-| **Hero Principal** | Título, subtítulo, texto do botão primário, texto do botão secundário, imagem de fundo, estatística (número de empresários) |
-| **Confiança** | Título, descrição, imagem, 3 features (ícone + título + descrição) |
-| **Pilares** | Título da seção, subtítulo, 3 cards (título + descrição cada) |
-| **Colaboração** | Título, descrição, 3 features, imagem, texto do botão CTA |
-| **Seção Empresas** | Título, subtítulo |
-| **Seção Membros** | Título, subtítulo |
-| **Seção Notícias** | Título, subtítulo |
-| **Comunidade** | Título, descrição, lista de benefícios (até 5) |
-| **CTA Final** | Título, subtítulo, texto do botão |
-
-### 2. Página Sobre (O NCE)
-| Seção | Campos Editáveis |
-|-------|------------------|
-| **Hero** | Título, subtítulo, imagem |
-| **Estatísticas** | 4 cards (valor + label cada) |
-| **Missão/Visão/Valores** | Já existente no banco (tipo: institucional) |
-| **Descrição** | Título, 3 parágrafos de texto |
-| **Objetivos** | Já existente no banco (tipo: institucional) |
-
-### 3. Página Seja Nucleado
-| Seção | Campos Editáveis |
-|-------|------------------|
-| **Hero** | Título, subtítulo |
-| **Benefícios** | 3 cards (ícone + título + descrição) |
-| **Requisitos** | Já existente no banco (tipo: requisitos) |
-| **Mensagem de sucesso** | Título, descrição |
-
-### 4. Páginas de Listagem (Empresas, Membros, Notícias)
-| Seção | Campos Editáveis |
-|-------|------------------|
-| **Hero** | Título, subtítulo, ícone badge |
-
-### 5. Configurações Globais
-| Item | Campos Editáveis |
-|------|------------------|
-| **Footer** | Descrição do NCE |
-| **Redes Sociais** | Link do Instagram |
-| **Informações Gerais** | Nome do núcleo, slogan |
+| Bloco | Descrição | Campos |
+|-------|-----------|--------|
+| **hero** | Banner principal | badge, título, subtítulo, botões, imagem, estatística |
+| **features** | Cards lado a lado | título da seção, subtítulo, cards (ícone + título + descrição) |
+| **texto_imagem** | Texto + Imagem | título, texto, imagem, lado da imagem (esq/dir), botão opcional |
+| **lista_beneficios** | Lista com checks | título, descrição, lista de itens, botão |
+| **cta** | Call to action | título, subtítulo, botão primário, botão secundário |
+| **cards_icone** | Grid de cards | título da seção, subtítulo, cards (até 6) |
+| **texto_simples** | Parágrafo | título, texto (editor WYSIWYG) |
+| **galeria** | Grid de imagens | título, imagens |
+| **divisor** | Linha separadora | estilo (linha, espaço) |
+| **embed** | Conteúdo externo | tipo (empresas, membros, notícias) |
 
 ---
 
-## Mudanças no Banco de Dados
+## Nova Estrutura do Banco de Dados
 
-Será criada uma nova estrutura de conteúdo mais granular na tabela `site_content`:
+### Tabela: `page_blocks` (nova)
 
 ```sql
--- Novos tipos de conteúdo a serem inseridos
-INSERT INTO site_content (tipo, conteudo) VALUES
-('home_hero', '{"titulo": "...", "subtitulo": "...", ...}'),
-('home_confianca', '{"titulo": "...", "descricao": "...", ...}'),
-('home_pilares', '{"titulo": "...", "subtitulo": "...", "cards": [...]}'),
-...
+CREATE TABLE page_blocks (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  pagina TEXT NOT NULL,           -- 'home', 'sobre', 'seja-nucleado', etc.
+  tipo_bloco TEXT NOT NULL,       -- 'hero', 'features', 'texto_imagem', etc.
+  ordem INTEGER NOT NULL,         -- posição do bloco na página
+  conteudo JSONB NOT NULL,        -- dados específicos do bloco
+  visivel BOOLEAN DEFAULT true,   -- permite ocultar sem deletar
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
 ```
 
-**Estrutura de cada tipo:**
+**Exemplo de conteúdo por tipo:**
 
-```text
-home_hero:
-  - titulo: string
-  - subtitulo: string
-  - botao_primario: string
-  - botao_secundario: string
-  - imagem_url: string
-  - estatistica_numero: string
-  - estatistica_label: string
+```json
+// Bloco tipo: hero
+{
+  "badge": "Rede de Empresários",
+  "titulo": "Conectando Empresários para o Sucesso",
+  "subtitulo": "Uma comunidade exclusiva...",
+  "botao_primario": { "texto": "Explorar", "link": "/empresas" },
+  "botao_secundario": { "texto": "Saiba Mais", "link": "/sobre" },
+  "imagem_url": "https://...",
+  "estatistica": { "numero": "50+", "label": "Empresários" }
+}
 
-home_confianca:
-  - titulo: string
-  - descricao: string
-  - imagem_url: string
-  - features: [{icon: string, titulo: string, descricao: string}]
-
-home_pilares:
-  - titulo_secao: string
-  - subtitulo_secao: string
-  - cards: [{icon: string, titulo: string, descricao: string}]
-
-... (demais seções seguem o mesmo padrão)
-```
-
----
-
-## Arquivos a Serem Criados/Modificados
-
-### Novos Arquivos
-
-| Arquivo | Descrição |
-|---------|-----------|
-| `src/pages/AdminContentPage.tsx` | Wrapper da página de conteúdo |
-| `src/pages/admin/ManageContent.tsx` | Página principal do CMS |
-| `src/components/admin/content/HomeContentEditor.tsx` | Editor da página Home |
-| `src/components/admin/content/AboutContentEditor.tsx` | Editor da página Sobre |
-| `src/components/admin/content/BecomeContentEditor.tsx` | Editor da página Seja Nucleado |
-| `src/components/admin/content/ListingPagesEditor.tsx` | Editor das páginas de listagem |
-| `src/components/admin/content/GlobalSettingsEditor.tsx` | Configurações globais |
-| `src/components/admin/content/SectionEditor.tsx` | Componente reutilizável para editar seções |
-| `src/components/admin/content/ImageUploader.tsx` | Upload de imagens para banners |
-| `src/hooks/useSiteContentMutations.ts` | Hook para salvar conteúdos |
-
-### Arquivos Modificados
-
-| Arquivo | Modificação |
-|---------|-------------|
-| `src/components/layout/AdminLayout.tsx` | Adicionar link "Conteúdo" no menu |
-| `src/App.tsx` | Adicionar rota `/admin/conteudo` |
-| `src/pages/Index.tsx` | Consumir dados dinâmicos do banco |
-| `src/pages/About.tsx` | Consumir dados dinâmicos do banco |
-| `src/pages/BecomeNucleado.tsx` | Consumir dados dinâmicos do banco |
-| `src/pages/Companies.tsx` | Consumir dados dinâmicos do banco |
-| `src/pages/Members.tsx` | Consumir dados dinâmicos do banco |
-| `src/pages/News.tsx` | Consumir dados dinâmicos do banco |
-| `src/hooks/useSiteContent.ts` | Adicionar novos hooks para cada tipo |
-
----
-
-## Interface do Editor
-
-### Layout Principal
-- **Navegação por abas**: Cada aba representa uma página do site
-- **Accordion por seção**: Dentro de cada página, seções colapsáveis
-- **Prévia visual**: Mostrar como ficará o texto/imagem
-- **Salvamento individual**: Botão salvar em cada seção
-- **Indicador de alterações**: Mostrar quando há mudanças não salvas
-
-### Componentes de Edição
-- **Campo de texto simples**: Para títulos e frases curtas
-- **Campo de texto longo**: Para descrições e parágrafos
-- **Editor de lista**: Para valores, objetivos, requisitos
-- **Seletor de ícone**: Para escolher ícones Lucide
-- **Upload de imagem**: Para banners e fotos de seção
-- **Editor de features**: Para grupos de 3-4 itens com ícone+título+descrição
-
----
-
-## Fluxo de Uso
-
-```text
-1. Admin acessa /admin/conteudo
-          ↓
-2. Seleciona a página que quer editar (ex: Home)
-          ↓
-3. Vê todas as seções da página como cards/accordions
-          ↓
-4. Clica em "Editar" na seção desejada
-          ↓
-5. Preenche os campos no formulário
-          ↓
-6. Clica em "Salvar" 
-          ↓
-7. Alterações refletem imediatamente no site
-```
-
----
-
-## Detalhes Técnicos
-
-### Migração SQL
-```sql
--- Inserir conteúdos padrão para todas as seções
--- (usando os textos atuais do código como valores iniciais)
-```
-
-### Hook de Mutação
-```typescript
-export function useUpdateSiteContent() {
-  return useMutation({
-    mutationFn: async ({ tipo, conteudo }) => {
-      const { error } = await supabase
-        .from('site_content')
-        .upsert({ tipo, conteudo, updated_at: new Date().toISOString() })
-      if (error) throw error;
-    },
-    onSuccess: () => queryClient.invalidateQueries(['site_content'])
-  });
+// Bloco tipo: features
+{
+  "titulo": "Nossos Pilares",
+  "subtitulo": "Os fundamentos que guiam...",
+  "cards": [
+    { "icon": "Target", "titulo": "Missão", "descricao": "..." },
+    { "icon": "Eye", "titulo": "Visão", "descricao": "..." },
+    { "icon": "Heart", "titulo": "Valores", "descricao": "..." }
+  ]
 }
 ```
 
-### Permissões
-- Será adicionada permissão `content_edit` ao enum de permissões
-- Apenas admins com essa permissão poderão editar conteúdos
+---
+
+## Arquivos a Criar
+
+### Core do Page Builder
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `src/components/pagebuilder/PageBuilder.tsx` | Componente principal com drag-and-drop |
+| `src/components/pagebuilder/BlockWrapper.tsx` | Container de cada bloco com ações |
+| `src/components/pagebuilder/BlockSelector.tsx` | Modal para escolher tipo de bloco |
+| `src/components/pagebuilder/BlockRenderer.tsx` | Renderiza bloco na página pública |
+| `src/hooks/usePageBlocks.ts` | Hook para carregar/salvar blocos |
+
+### Editores de Bloco
+
+| Arquivo | Bloco |
+|---------|-------|
+| `src/components/pagebuilder/editors/HeroEditor.tsx` | Editor do hero |
+| `src/components/pagebuilder/editors/FeaturesEditor.tsx` | Editor de features |
+| `src/components/pagebuilder/editors/TextoImagemEditor.tsx` | Editor texto+imagem |
+| `src/components/pagebuilder/editors/ListaBeneficiosEditor.tsx` | Editor de lista |
+| `src/components/pagebuilder/editors/CtaEditor.tsx` | Editor de CTA |
+| `src/components/pagebuilder/editors/CardsIconeEditor.tsx` | Editor de cards |
+| `src/components/pagebuilder/editors/TextoSimplesEditor.tsx` | Editor de texto |
+
+### Renderizadores de Bloco (públicos)
+
+| Arquivo | Bloco |
+|---------|-------|
+| `src/components/blocks/HeroBlock.tsx` | Renderiza hero |
+| `src/components/blocks/FeaturesBlock.tsx` | Renderiza features |
+| `src/components/blocks/TextoImagemBlock.tsx` | Renderiza texto+imagem |
+| `src/components/blocks/ListaBeneficiosBlock.tsx` | Renderiza lista |
+| `src/components/blocks/CtaBlock.tsx` | Renderiza CTA |
+| `src/components/blocks/CardsIconeBlock.tsx` | Renderiza cards |
+| `src/components/blocks/TextoSimplesBlock.tsx` | Renderiza texto |
+| `src/components/blocks/EmbedBlock.tsx` | Renderiza lista de empresas/membros/notícias |
+
+### Admin
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `src/pages/admin/PageEditor.tsx` | Página de edição com Page Builder |
 
 ---
 
-## Benefícios da Solução
+## Migração de Dados
 
-- **Intuitivo**: Organizado por páginas, fácil de encontrar o que editar
-- **Completo**: Permite editar absolutamente todo o texto do site
-- **Visual**: Campos claramente identificados com seus propósitos
-- **Seguro**: Permissões granulares controlam quem pode editar
-- **Performático**: Dados cacheados com React Query
-- **Flexível**: Estrutura permite adicionar novas seções facilmente
+Vamos criar registros na tabela `page_blocks` **usando os textos atuais do site**:
+
+```sql
+-- PÁGINA: HOME
+INSERT INTO page_blocks (pagina, tipo_bloco, ordem, conteudo) VALUES
+('home', 'hero', 1, '{
+  "badge": "Rede de Empresários Multisetorial",
+  "titulo": "Conectando Empresários para o Sucesso",
+  "subtitulo": "Uma comunidade exclusiva de líderes empresariais comprometidos com o crescimento mútuo, networking estratégico e excelência nos negócios.",
+  "botao_primario": {"texto": "Explorar Oportunidades", "link": "/empresas"},
+  "botao_secundario": {"texto": "Conheça o Núcleo", "link": "/sobre"},
+  "imagem_url": "https://images.unsplash.com/photo-1600880292203-757bb62b4baf",
+  "estatistica": {"numero": "50+", "label": "Empresários"}
+}'::jsonb),
+
+('home', 'texto_imagem', 2, '{
+  "titulo": "Fundado em Confiança e Credibilidade",
+  "descricao": "O Núcleo do Empresário nasceu da necessidade de criar um ambiente onde líderes empresariais pudessem se conectar de forma genuína e gerar oportunidades reais.",
+  "imagem_url": "https://images.unsplash.com/photo-1521791136064-7986c2920216",
+  "imagem_lado": "esquerda",
+  "features": [
+    {"icon": "Shield", "titulo": "Ambiente Seguro", "descricao": "Grupo seleto e comprometido com valores éticos"},
+    {"icon": "Network", "titulo": "Networking Estratégico", "descricao": "Conexões de alto nível que geram resultados"},
+    {"icon": "TrendingUp", "titulo": "Crescimento Compartilhado", "descricao": "Sucesso mútuo através da colaboração"}
+  ]
+}'::jsonb),
+
+-- ... todos os outros blocos da Home, Sobre, Seja Nucleado, etc.
+```
+
+---
+
+## Fluxo de Uso para o Admin
+
+```text
+1. Admin acessa /admin/conteudo
+                ↓
+2. Seleciona página (Home, Sobre, Seja Nucleado...)
+                ↓
+3. Vê lista de blocos existentes (drag para reordenar)
+                ↓
+4. Pode:
+   • [+ Adicionar] → Escolhe tipo → Preenche campos → Salvar
+   • [✏️ Editar] → Modifica campos → Salvar
+   • [🗑️ Remover] → Confirmação → Remove
+   • [☰ Arrastar] → Muda ordem → Auto-salva
+   • [👁️ Ocultar] → Oculta bloco sem deletar
+                ↓
+5. Alterações aparecem imediatamente no site
+```
+
+---
+
+## Como as Páginas Renderizam os Blocos
+
+As páginas públicas (Home, Sobre, etc.) vão iterar sobre os blocos cadastrados:
+
+```typescript
+// src/pages/Index.tsx (simplificado)
+export default function Index() {
+  const { data: blocks } = usePageBlocks('home');
+  
+  return (
+    <PageLayout>
+      {blocks?.map(block => (
+        <BlockRenderer key={block.id} block={block} />
+      ))}
+    </PageLayout>
+  );
+}
+
+// src/components/blocks/BlockRenderer.tsx
+export function BlockRenderer({ block }) {
+  const components = {
+    hero: HeroBlock,
+    features: FeaturesBlock,
+    texto_imagem: TextoImagemBlock,
+    lista_beneficios: ListaBeneficiosBlock,
+    cta: CtaBlock,
+    cards_icone: CardsIconeBlock,
+    texto_simples: TextoSimplesBlock,
+    embed: EmbedBlock,
+  };
+  
+  const Component = components[block.tipo_bloco];
+  return Component ? <Component {...block.conteudo} /> : null;
+}
+```
 
 ---
 
 ## Ordem de Implementação
 
-1. Criar migração SQL com estrutura de conteúdos
-2. Criar hooks de leitura/escrita de conteúdo
-3. Criar componentes de edição (SectionEditor, ImageUploader)
-4. Criar página ManageContent com tabs por página
-5. Implementar editores de cada página
-6. Atualizar páginas públicas para consumir dados do banco
-7. Adicionar rota e link no menu admin
-8. Adicionar permissão content_edit
+### Fase 1: Infraestrutura
+1. Criar tabela `page_blocks` no banco de dados
+2. Criar hook `usePageBlocks` com CRUD
+3. Criar tipos TypeScript para cada bloco
+4. Popular banco com dados atuais do site
 
+### Fase 2: Componentes de Bloco (Públicos)
+5. Extrair seções atuais para componentes `*Block.tsx`
+6. Criar `BlockRenderer.tsx`
+7. Atualizar páginas para usar blocos dinâmicos
+
+### Fase 3: Page Builder (Admin)
+8. Instalar dependência de drag-and-drop (@dnd-kit/core)
+9. Criar `PageBuilder.tsx` com lista arrastável
+10. Criar `BlockWrapper.tsx` com ações
+11. Criar `BlockSelector.tsx` para adicionar blocos
+
+### Fase 4: Editores
+12. Criar editores para cada tipo de bloco
+13. Integrar editores no Page Builder
+
+### Fase 5: Finalização
+14. Atualizar AdminContentPage
+15. Testar todas as páginas
+16. Adicionar permissões
+
+---
+
+## Benefícios
+
+- **Flexibilidade Total**: Adicione qualquer bloco em qualquer página
+- **Fácil de Usar**: Drag-and-drop intuitivo
+- **Mantém Conteúdo Atual**: Migração preserva todos os textos existentes
+- **Escalável**: Fácil adicionar novos tipos de blocos
+- **Preview em Tempo Real**: Veja mudanças instantaneamente
+- **Consistência Visual**: Cada bloco segue o design system do site
