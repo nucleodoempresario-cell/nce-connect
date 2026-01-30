@@ -7,6 +7,7 @@ import { exportToCSV } from '@/lib/exportCSV';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { BirthdayList } from '@/components/admin/reports/BirthdayList';
 import { BirthdayPeriodReport } from '@/components/admin/reports/BirthdayPeriodReport';
+import { HeartbeatWidget } from '@/components/admin/HeartbeatWidget';
 
 const COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', '#eab308', '#8884d8', '#82ca9d', '#ffc658', '#ff7300'];
 
@@ -113,7 +114,9 @@ export default function AdminDashboard() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+        <HeartbeatWidget />
+        
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Nucleados</CardTitle>

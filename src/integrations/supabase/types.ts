@@ -396,6 +396,27 @@ export type Database = {
         }
         Relationships: []
       }
+      system_heartbeat: {
+        Row: {
+          created_at: string
+          detalhes: Json | null
+          id: string
+          tipo: string
+        }
+        Insert: {
+          created_at?: string
+          detalhes?: Json | null
+          id?: string
+          tipo?: string
+        }
+        Update: {
+          created_at?: string
+          detalhes?: Json | null
+          id?: string
+          tipo?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -440,6 +461,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      insert_heartbeat: { Args: never; Returns: undefined }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
