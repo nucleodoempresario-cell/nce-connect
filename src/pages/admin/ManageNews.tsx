@@ -4,11 +4,12 @@ import { Plus, Edit, Trash2, Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-reac
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Input } from '@/components/ui/input';
 import { RichTextEditor } from '@/components/RichTextEditor';
+import { ImageUploader } from '@/components/admin/content/ImageUploader';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { useAllNews, useCreateNews, useUpdateNews, useDeleteNews, useNewsItem } from '@/hooks/useNews';
 import { useAuth } from '@/contexts/AuthContext';
@@ -126,10 +127,24 @@ export function NewsForm({ newsId }: { newsId?: string }) {
       <Card>
         <CardContent className="pt-6">
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div><Label htmlFor="titulo">Título *</Label><Input id="titulo" value={formData.titulo} onChange={(e) => setFormData({...formData, titulo: e.target.value})} required /></div>
-            <div><Label htmlFor="resumo">Resumo</Label><Textarea id="resumo" value={formData.resumo} onChange={(e) => setFormData({...formData, resumo: e.target.value})} rows={2} /></div>
-            <div><Label htmlFor="imagem_capa">URL da Imagem de Capa</Label><Input id="imagem_capa" value={formData.imagem_capa} onChange={(e) => setFormData({...formData, imagem_capa: e.target.value})} placeholder="https://..." /></div>
-            <div><Label>Conteúdo *</Label><RichTextEditor content={formData.conteudo} onChange={(content) => setFormData({...formData, conteudo: content})} /></div>
+            <div className="space-y-2">
+              <Label htmlFor="titulo">Título *</Label>
+              <Input id="titulo" value={formData.titulo} onChange={(e) => setFormData({...formData, titulo: e.target.value})} required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="resumo">Resumo</Label>
+              <Textarea id="resumo" value={formData.resumo} onChange={(e) => setFormData({...formData, resumo: e.target.value})} rows={2} />
+            </div>
+            <ImageUploader 
+              value={formData.imagem_capa} 
+              onChange={(url) => setFormData({...formData, imagem_capa: url})} 
+              label="Imagem de Capa"
+              aspectRatio="16/9"
+            />
+            <div className="space-y-2">
+              <Label>Conteúdo *</Label>
+              <RichTextEditor content={formData.conteudo} onChange={(content) => setFormData({...formData, conteudo: content})} />
+            </div>
             <div className="flex items-center gap-2"><Switch checked={formData.publicado} onCheckedChange={(checked) => setFormData({...formData, publicado: checked})} /><Label>Publicar</Label></div>
             <div className="flex gap-2">
               <Button type="submit" disabled={isLoading}>{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Salvar</Button>
