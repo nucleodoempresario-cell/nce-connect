@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { SectionTitle } from '@/components/SectionTitle';
@@ -10,6 +11,7 @@ import { useCompanies } from '@/hooks/useCompanies';
 import { useProfiles } from '@/hooks/useProfiles';
 import { useNews } from '@/hooks/useNews';
 import { ArrowRight } from 'lucide-react';
+import { shuffleArray } from '@/lib/shuffle';
 
 interface EmbedBlockProps {
   content: EmbedContent | unknown;
@@ -24,6 +26,17 @@ export function EmbedBlock({ content }: EmbedBlockProps) {
   
   const limite = data.limite || 3;
   
+  // Embaralha empresas e membros para exibição aleatória
+  const shuffledCompanies = useMemo(() => 
+    companies ? shuffleArray(companies) : [], 
+    [companies]
+  );
+  
+  const shuffledMembers = useMemo(() => 
+    members ? shuffleArray(members) : [], 
+    [members]
+  );
+  
   // Formulário de candidatura é renderizado diferente
   if (data.tipo === 'formulario_candidatura') {
     return null; // Formulário é handled diretamente na página
@@ -31,7 +44,7 @@ export function EmbedBlock({ content }: EmbedBlockProps) {
   
   // Empresas
   if (data.tipo === 'empresas') {
-    const items = companies?.slice(0, limite) || [];
+    const items = shuffledCompanies.slice(0, limite);
     if (items.length === 0) return null;
     
     return (
@@ -75,7 +88,7 @@ export function EmbedBlock({ content }: EmbedBlockProps) {
   
   // Membros
   if (data.tipo === 'membros') {
-    const items = members?.slice(0, limite) || [];
+    const items = shuffledMembers.slice(0, limite);
     if (items.length === 0) return null;
     
     return (
