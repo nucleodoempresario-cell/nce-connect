@@ -136,12 +136,12 @@ export default function BecomeNucleado() {
 
       {/* Form Section */}
       <section className="py-16 bg-secondary">
-        <div className="container max-w-2xl">
+        <div className="container">
           {/* Form */}
           <FadeIn>
-            <Card className="border-0 shadow-lg bg-card">
+            <Card className="border-0 shadow-lg bg-card max-w-4xl mx-auto">
                 <CardHeader>
-                  <CardTitle className="text-foreground">Formulário de Candidatura</CardTitle>
+                  <CardTitle className="text-foreground text-2xl">Formulário de Candidatura</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleSubmit} className="space-y-6">
