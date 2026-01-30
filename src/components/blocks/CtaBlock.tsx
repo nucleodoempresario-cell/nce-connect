@@ -46,7 +46,7 @@ export function CtaBlock({ content }: CtaBlockProps) {
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  className="h-16 px-12 text-lg border-2 border-white/40 text-white hover:bg-white hover:text-slate-900 transition-all"
+                  className="h-16 px-12 text-lg border-2 border-white/40 bg-transparent text-white hover:bg-white hover:text-slate-900 transition-all"
                   asChild
                 >
                   <Link to={data.botao_secundario.link}>
