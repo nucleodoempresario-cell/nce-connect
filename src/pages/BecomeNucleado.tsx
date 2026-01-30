@@ -12,12 +12,11 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/animations';
 import { useToast } from '@/hooks/use-toast';
-import { useRequisitosContent } from '@/hooks/useSiteContent';
+
 import { useFormQuestions } from '@/hooks/useFormQuestions';
 import { useCreateApplication } from '@/hooks/useApplications';
 
 export default function BecomeNucleado() {
-  const { data: requisitos } = useRequisitosContent();
   const { data: questions } = useFormQuestions();
   const createApplication = useCreateApplication();
   const { toast } = useToast();
@@ -137,48 +136,10 @@ export default function BecomeNucleado() {
 
       {/* Form Section */}
       <section className="py-16 bg-secondary">
-        <div className="container max-w-5xl">
-          <div className="grid lg:grid-cols-5 gap-8">
-            {/* Requirements */}
-            <FadeIn direction="right" className="lg:col-span-2">
-              <Card className="sticky top-28 border-0 shadow-lg bg-card">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-foreground">
-                    <CheckCircle className="h-5 w-5 text-primary" />
-                    {requisitos?.titulo || 'Requisitos para Participar'}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-4">
-                    {(requisitos?.requisitos || [
-                      'Ser empresário ou líder de negócio',
-                      'Comprometimento com os valores do grupo',
-                      'Disponibilidade para participar dos encontros',
-                      'Interesse genuíno em networking',
-                      'Postura ética e colaborativa'
-                    ]).map((req, i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <CheckCircle className="h-4 w-4 text-primary" />
-                        </div>
-                        <span className="text-foreground">{req}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  
-                  <div className="mt-8 p-4 rounded-xl bg-secondary">
-                    <p className="text-sm text-muted-foreground">
-                      <strong className="text-foreground">Processo seletivo:</strong> Após o envio, 
-                      sua candidatura será analisada pela nossa equipe. Retornaremos em até 7 dias úteis.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </FadeIn>
-
-            {/* Form */}
-            <FadeIn direction="left" delay={0.2} className="lg:col-span-3">
-              <Card className="border-0 shadow-lg bg-card">
+        <div className="container max-w-2xl">
+          {/* Form */}
+          <FadeIn>
+            <Card className="border-0 shadow-lg bg-card">
                 <CardHeader>
                   <CardTitle className="text-foreground">Formulário de Candidatura</CardTitle>
                 </CardHeader>
@@ -296,7 +257,6 @@ export default function BecomeNucleado() {
                 </CardContent>
               </Card>
             </FadeIn>
-          </div>
         </div>
       </section>
     </PageLayout>
