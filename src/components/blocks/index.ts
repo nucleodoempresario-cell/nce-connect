@@ -1,0 +1,9 @@
+export { BlockRenderer } from './BlockRenderer';
+export { HeroBlock } from './HeroBlock';
+export { FeaturesBlock } from './FeaturesBlock';
+export { TextoImagemBlock } from './TextoImagemBlock';
+export { ListaBeneficiosBlock } from './ListaBeneficiosBlock';
+export { CtaBlock } from './CtaBlock';
+export { EmbedBlock } from './EmbedBlock';
+export { TextoSimplesBlock } from './TextoSimplesBlock';
+export { DivisorBlock } from './DivisorBlock';

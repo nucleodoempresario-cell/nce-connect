@@ -279,6 +279,39 @@ export type Database = {
           },
         ]
       }
+      page_blocks: {
+        Row: {
+          conteudo: Json
+          created_at: string | null
+          id: string
+          ordem: number
+          pagina: string
+          tipo_bloco: string
+          updated_at: string | null
+          visivel: boolean | null
+        }
+        Insert: {
+          conteudo?: Json
+          created_at?: string | null
+          id?: string
+          ordem: number
+          pagina: string
+          tipo_bloco: string
+          updated_at?: string | null
+          visivel?: boolean | null
+        }
+        Update: {
+          conteudo?: Json
+          created_at?: string | null
+          id?: string
+          ordem?: number
+          pagina?: string
+          tipo_bloco?: string
+          updated_at?: string | null
+          visivel?: boolean | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           bio: string | null
