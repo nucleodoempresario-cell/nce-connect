@@ -5,11 +5,9 @@ import { Label } from '@/components/ui/label';
 import { SectionEditor } from './SectionEditor';
 import { ImageUploader } from './ImageUploader';
 import { StringListEditor } from './StringListEditor';
-import { FeatureListEditor } from './FeatureListEditor';
-import { Award, BarChart3, FileText } from 'lucide-react';
+import { Award, FileText } from 'lucide-react';
 import { 
   useSobreHeroContent, 
-  useSobreStatsContent,
   useSobreDescricaoContent,
 } from '@/hooks/useContentTypes';
 import { useInstitucionalContent } from '@/hooks/useSiteContent';
@@ -26,15 +24,6 @@ export function AboutContentEditor() {
   useEffect(() => {
     if (heroData && !hero) setHero(heroData);
   }, [heroData, hero]);
-
-  // Stats Section
-  const { data: statsData, isLoading: statsLoading } = useSobreStatsContent();
-  const [stats, setStats] = useState<typeof statsData>(null);
-  const [statsChanged, setStatsChanged] = useState(false);
-
-  useEffect(() => {
-    if (statsData && !stats) setStats(statsData);
-  }, [statsData, stats]);
 
   // Descrição Section
   const { data: descricaoData, isLoading: descricaoLoading } = useSobreDescricaoContent();
@@ -115,49 +104,6 @@ export function AboutContentEditor() {
                 setHeroChanged(true);
               }}
             />
-          </div>
-        )}
-      </SectionEditor>
-
-      {/* Stats Section */}
-      <SectionEditor
-        title="Estatísticas"
-        icon={<BarChart3 className="h-5 w-5" />}
-        isLoading={statsLoading}
-        isSaving={updateContent.isPending}
-        hasChanges={statsChanged}
-        onSave={() => {
-          if (stats) {
-            updateContent.mutate({ tipo: 'sobre_stats', conteudo: stats });
-            setStatsChanged(false);
-          }
-        }}
-      >
-        {stats && (
-          <div className="space-y-4">
-            <Label>Estatísticas (4 itens)</Label>
-            <FeatureListEditor
-              value={stats.items.map(item => ({
-                icon: item.icon,
-                titulo: item.valor,
-                descricao: item.label,
-              }))}
-              onChange={(items) => {
-                setStats({
-                  items: items.map(item => ({
-                    icon: item.icon || 'Star',
-                    valor: item.titulo,
-                    label: item.descricao,
-                  })),
-                });
-                setStatsChanged(true);
-              }}
-              maxItems={4}
-              itemLabel="Estatística"
-            />
-            <p className="text-sm text-muted-foreground">
-              Use o campo "Título" para o valor (ex: "50+") e "Descrição" para o label (ex: "Empresários Ativos")
-            </p>
           </div>
         )}
       </SectionEditor>
