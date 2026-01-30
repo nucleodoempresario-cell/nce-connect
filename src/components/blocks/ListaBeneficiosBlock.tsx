@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { StaggerContainer, StaggerItem } from '@/components/animations';
 import { ListaBeneficiosContent } from '@/types/pageBlocks';
 import { CheckCircle, ArrowRight } from 'lucide-react';
+import { resolveImageUrl } from '@/lib/siteImages';
 
 interface ListaBeneficiosBlockProps {
   content: ListaBeneficiosContent | unknown;
@@ -14,7 +15,8 @@ interface ListaBeneficiosBlockProps {
 export function ListaBeneficiosBlock({ content }: ListaBeneficiosBlockProps) {
   const data = content as ListaBeneficiosContent;
   const isNumerado = data.estilo === 'numerado';
-  const hasImage = !!data.imagem_url;
+  const imageUrl = resolveImageUrl(data.imagem_url);
+  const hasImage = !!imageUrl;
   
   // Layout com imagem
   if (hasImage) {
@@ -33,7 +35,7 @@ export function ListaBeneficiosBlock({ content }: ListaBeneficiosBlockProps) {
                   <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-accent/30 rounded-full blur-2xl" />
                   <div className="absolute -top-6 -left-6 w-32 h-32 bg-primary/20 rounded-full blur-xl" />
                   <img 
-                    src={data.imagem_url} 
+                    src={imageUrl} 
                     alt={data.titulo}
                     className="rounded-3xl shadow-image w-full relative z-10"
                   />
@@ -73,13 +75,13 @@ export function ListaBeneficiosBlock({ content }: ListaBeneficiosBlockProps) {
               )}
             </FadeIn>
             
-            {!imagemPrimeiro && data.imagem_url && (
+            {!imagemPrimeiro && imageUrl && (
               <FadeIn direction="left" delay={0.2}>
                 <div className="relative">
                   <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-primary/20 rounded-full blur-2xl" />
                   <div className="absolute -top-6 -right-6 w-32 h-32 bg-accent/30 rounded-full blur-xl" />
                   <img 
-                    src={data.imagem_url} 
+                    src={imageUrl} 
                     alt={data.titulo}
                     className="rounded-3xl shadow-image w-full relative z-10"
                   />

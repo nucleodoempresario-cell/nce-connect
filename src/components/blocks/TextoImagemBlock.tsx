@@ -4,6 +4,7 @@ import { FadeIn } from '@/components/animations';
 import { TextoImagemContent, FeatureItem } from '@/types/pageBlocks';
 import * as LucideIcons from 'lucide-react';
 import { ArrowRight } from 'lucide-react';
+import { resolveImageUrl } from '@/lib/siteImages';
 
 const getIcon = (iconName: string): React.ComponentType<{ className?: string }> => {
   const icons = LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>;
@@ -17,6 +18,7 @@ interface TextoImagemBlockProps {
 export function TextoImagemBlock({ content }: TextoImagemBlockProps) {
   const data = content as TextoImagemContent;
   const imagemPrimeiro = data.imagem_lado === 'esquerda';
+  const imageUrl = resolveImageUrl(data.imagem_url);
   
   return (
     <section className="relative py-28 bg-secondary overflow-hidden">
@@ -27,13 +29,13 @@ export function TextoImagemBlock({ content }: TextoImagemBlockProps) {
       <div className="container relative z-10">
         <div className={`grid lg:grid-cols-2 gap-20 items-center ${imagemPrimeiro ? '' : 'lg:flex-row-reverse'}`}>
           {/* Image */}
-          {imagemPrimeiro && data.imagem_url && (
+          {imagemPrimeiro && imageUrl && (
             <FadeIn direction="right">
               <div className="relative">
                 <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-accent/30 rounded-full blur-2xl" />
                 <div className="absolute -top-10 -left-10 w-40 h-40 bg-primary/20 rounded-full blur-2xl" />
                 <img 
-                  src={data.imagem_url} 
+                  src={imageUrl} 
                   alt={data.titulo}
                   className="rounded-3xl shadow-image w-full relative z-10"
                 />
@@ -98,13 +100,13 @@ export function TextoImagemBlock({ content }: TextoImagemBlockProps) {
           </FadeIn>
           
           {/* Image (when on right) */}
-          {!imagemPrimeiro && data.imagem_url && (
+          {!imagemPrimeiro && imageUrl && (
             <FadeIn direction="left" delay={0.2}>
               <div className="relative">
                 <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-primary/20 rounded-full blur-2xl" />
                 <div className="absolute -top-6 -right-6 w-32 h-32 bg-accent/30 rounded-full blur-xl" />
                 <img 
-                  src={data.imagem_url} 
+                  src={imageUrl} 
                   alt={data.titulo}
                   className="rounded-3xl shadow-image w-full relative z-10"
                 />
