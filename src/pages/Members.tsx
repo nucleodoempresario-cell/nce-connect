@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Users, Search } from 'lucide-react';
@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/animations';
 import { useProfiles } from '@/hooks/useProfiles';
 import { useListingPageHero } from '@/hooks/useGlobalConfig';
+import { shuffleArray } from '@/lib/shuffle';
 
 export default function Members() {
   const { data: members, isLoading } = useProfiles();
@@ -20,7 +21,13 @@ export default function Members() {
   const subtitulo = heroContent?.subtitulo || 
     'Conheça os empresários de alto nível que fazem parte do NCE. Líderes comprometidos com a excelência e o crescimento mútuo.';
 
-  const filteredMembers = members?.filter(member => 
+  // Embaralha os membros uma vez quando os dados carregam
+  const shuffledMembers = useMemo(() => 
+    members ? shuffleArray(members) : [], 
+    [members]
+  );
+
+  const filteredMembers = shuffledMembers.filter(member => 
     member.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
     member.bio?.toLowerCase().includes(searchTerm.toLowerCase())
   );

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Building2, Search } from 'lucide-react';
@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/animations';
 import { useCompanies } from '@/hooks/useCompanies';
 import { useListingPageHero } from '@/hooks/useGlobalConfig';
+import { shuffleArray } from '@/lib/shuffle';
 
 export default function Companies() {
   const { data: companies, isLoading } = useCompanies();
@@ -20,7 +21,13 @@ export default function Companies() {
   const subtitulo = heroContent?.subtitulo || 
     'Conheça as empresas que fazem parte da nossa comunidade de empresários de alto nível.';
 
-  const filteredCompanies = companies?.filter(company => 
+  // Embaralha as empresas uma vez quando os dados carregam
+  const shuffledCompanies = useMemo(() => 
+    companies ? shuffleArray(companies) : [], 
+    [companies]
+  );
+
+  const filteredCompanies = shuffledCompanies.filter(company => 
     company.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
     company.descricao_curta?.toLowerCase().includes(searchTerm.toLowerCase())
   );
