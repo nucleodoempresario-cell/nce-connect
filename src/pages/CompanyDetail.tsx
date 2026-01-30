@@ -368,7 +368,7 @@ export default function CompanyDetail() {
               <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
                 <Link to="/seja-nucleado">Seja um Nucleado</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-background text-background hover:bg-background hover:text-foreground">
+              <Button asChild size="lg" variant="outlineDark">
                 <Link to="/empresas">Ver Outras Empresas</Link>
               </Button>
             </div>
