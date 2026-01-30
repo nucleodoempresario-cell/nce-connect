@@ -12,66 +12,134 @@ import { useNews } from "@/hooks/useNews";
 import { useCompanies } from "@/hooks/useCompanies";
 import { useProfiles } from "@/hooks/useProfiles";
 import { 
+  useHomeHeroContent,
+  useHomeConfiancaContent,
+  useHomePilaresContent,
+  useHomeColaboracaoContent,
+  useHomeSecaoEmpresasContent,
+  useHomeSecaoMembrosContent,
+  useHomeSecaoNoticiasContent,
+  useHomeComunidadeContent,
+  useHomeCtaContent,
+} from "@/hooks/useContentTypes";
+import * as LucideIcons from "lucide-react";
+import { 
   Users, 
-  Building2, 
   ArrowRight, 
   Target, 
-  Handshake, 
-  TrendingUp,
   Eye,
   Heart,
   CheckCircle,
   Shield,
-  Lightbulb,
   Network
 } from "lucide-react";
+
+// Helper to get Lucide icon by name
+const getIcon = (iconName: string): React.ComponentType<{ className?: string }> => {
+  const icons = LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>;
+  return icons[iconName] || LucideIcons.Star;
+};
 
 const Index = () => {
   const { data: news } = useNews();
   const { data: companies } = useCompanies();
   const { data: members } = useProfiles();
+  
+  // Dynamic content from database
+  const { data: heroContent } = useHomeHeroContent();
+  const { data: confiancaContent } = useHomeConfiancaContent();
+  const { data: pilaresContent } = useHomePilaresContent();
+  const { data: colaboracaoContent } = useHomeColaboracaoContent();
+  const { data: secaoEmpresasContent } = useHomeSecaoEmpresasContent();
+  const { data: secaoMembrosContent } = useHomeSecaoMembrosContent();
+  const { data: secaoNoticiasContent } = useHomeSecaoNoticiasContent();
+  const { data: comunidadeContent } = useHomeComunidadeContent();
+  const { data: ctaContent } = useHomeCtaContent();
 
   const recentNews = news?.slice(0, 3) || [];
   const featuredCompanies = companies?.slice(0, 3) || [];
   const featuredMembers = members?.slice(0, 4) || [];
 
-  const pilares = [
-    {
-      icon: Target,
-      title: "Missão",
-      description: "Conectar empresários estrategicamente para fortalecer o desenvolvimento econômico regional e gerar oportunidades de negócios.",
-    },
-    {
-      icon: Eye,
-      title: "Visão",
-      description: "Ser a referência em networking empresarial de alto nível, reconhecido pela qualidade das conexões e resultados.",
-    },
-    {
-      icon: Heart,
-      title: "Valores",
-      description: "Ética, integridade, colaboração genuína, excelência e respeito mútuo em todas as interações.",
-    },
-  ];
+  // Default content with fallbacks
+  const hero = {
+    badge: heroContent?.badge || "Rede de Empresários Multisetorial",
+    titulo: heroContent?.titulo || "Conectando Empresários para o Sucesso",
+    subtitulo: heroContent?.subtitulo || "Uma comunidade exclusiva de líderes empresariais comprometidos com o crescimento mútuo, networking estratégico e excelência nos negócios.",
+    botao_primario: heroContent?.botao_primario || "Explorar Oportunidades",
+    botao_secundario: heroContent?.botao_secundario || "Conheça o Núcleo",
+    imagem_url: heroContent?.imagem_url || "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=1974&auto=format&fit=crop",
+    estatistica_numero: heroContent?.estatistica_numero || "50+",
+    estatistica_label: heroContent?.estatistica_label || "Empresários",
+  };
 
-  const trustFeatures = [
-    { icon: Shield, title: "Ambiente Seguro", description: "Grupo seleto e comprometido com valores éticos" },
-    { icon: Network, title: "Networking Estratégico", description: "Conexões de alto nível que geram resultados" },
-    { icon: TrendingUp, title: "Crescimento Compartilhado", description: "Sucesso mútuo através da colaboração" },
-  ];
+  const confianca = {
+    titulo: confiancaContent?.titulo || "Fundado em Confiança e Credibilidade",
+    descricao: confiancaContent?.descricao || "O Núcleo do Empresário nasceu da necessidade de criar um ambiente onde líderes empresariais pudessem se conectar de forma genuína e gerar oportunidades reais.",
+    imagem_url: confiancaContent?.imagem_url || "https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2069&auto=format&fit=crop",
+    features: confiancaContent?.features || [
+      { icon: "Shield", titulo: "Ambiente Seguro", descricao: "Grupo seleto e comprometido com valores éticos" },
+      { icon: "Network", titulo: "Networking Estratégico", descricao: "Conexões de alto nível que geram resultados" },
+      { icon: "TrendingUp", titulo: "Crescimento Compartilhado", descricao: "Sucesso mútuo através da colaboração" },
+    ],
+  };
 
-  const collaborationFeatures = [
-    { title: "Reuniões Estratégicas", description: "Encontros mensais com foco em resultados e conexões" },
-    { title: "Parcerias e Oportunidades", description: "Ambiente propício para geração de negócios reais" },
-    { title: "Conhecimento Compartilhado", description: "Troca de experiências entre líderes empresariais" },
-  ];
+  const pilares = {
+    titulo_secao: pilaresContent?.titulo_secao || "Nossos Pilares",
+    subtitulo_secao: pilaresContent?.subtitulo_secao || "Os fundamentos que guiam nossa comunidade de empresários",
+    cards: pilaresContent?.cards || [
+      { icon: "Target", titulo: "Missão", descricao: "Conectar empresários estrategicamente para fortalecer o desenvolvimento econômico regional e gerar oportunidades de negócios." },
+      { icon: "Eye", titulo: "Visão", descricao: "Ser a referência em networking empresarial de alto nível, reconhecido pela qualidade das conexões e resultados." },
+      { icon: "Heart", titulo: "Valores", descricao: "Ética, integridade, colaboração genuína, excelência e respeito mútuo em todas as interações." },
+    ],
+  };
 
-  const communityBenefits = [
-    "Acesso a uma rede exclusiva de empresários de alto nível",
-    "Eventos e encontros mensais com networking qualificado",
-    "Oportunidades reais de negócios entre membros",
-    "Ambiente de confiança e colaboração mútua",
-    "Crescimento profissional e pessoal contínuo",
-  ];
+  const colaboracao = {
+    titulo: colaboracaoContent?.titulo || "Crescimento Através da Colaboração",
+    descricao: colaboracaoContent?.descricao || "Nossos encontros estratégicos e ambiente de confiança proporcionam as condições ideais para que negócios aconteçam naturalmente entre pessoas comprometidas.",
+    imagem_url: colaboracaoContent?.imagem_url || "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop",
+    features: colaboracaoContent?.features || [
+      { titulo: "Reuniões Estratégicas", descricao: "Encontros mensais com foco em resultados e conexões" },
+      { titulo: "Parcerias e Oportunidades", descricao: "Ambiente propício para geração de negócios reais" },
+      { titulo: "Conhecimento Compartilhado", descricao: "Troca de experiências entre líderes empresariais" },
+    ],
+    botao_texto: colaboracaoContent?.botao_texto || "Junte-se ao NCE",
+  };
+
+  const secaoEmpresas = {
+    titulo: secaoEmpresasContent?.titulo || "Empresas do Núcleo",
+    subtitulo: secaoEmpresasContent?.subtitulo || "Conheça algumas das empresas que fazem parte da nossa comunidade",
+  };
+
+  const secaoMembros = {
+    titulo: secaoMembrosContent?.titulo || "Nucleados",
+    subtitulo: secaoMembrosContent?.subtitulo || "Empresários de destaque que fazem parte do nosso núcleo",
+  };
+
+  const secaoNoticias = {
+    titulo: secaoNoticiasContent?.titulo || "Notícias e Ações",
+    subtitulo: secaoNoticiasContent?.subtitulo || "Acompanhe as novidades e acontecimentos do NCE",
+  };
+
+  const comunidade = {
+    titulo: comunidadeContent?.titulo || "A Força de Uma Comunidade Unida",
+    descricao: comunidadeContent?.descricao || "Fazer parte do NCE significa ter acesso a uma rede de empresários comprometidos com o crescimento mútuo e a excelência nos negócios.",
+    imagem_url: comunidadeContent?.imagem_url || "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070&auto=format&fit=crop",
+    beneficios: comunidadeContent?.beneficios || [
+      "Acesso a uma rede exclusiva de empresários de alto nível",
+      "Eventos e encontros mensais com networking qualificado",
+      "Oportunidades reais de negócios entre membros",
+      "Ambiente de confiança e colaboração mútua",
+      "Crescimento profissional e pessoal contínuo",
+    ],
+    botao_texto: comunidadeContent?.botao_texto || "Junte-se ao NCE",
+  };
+
+  const cta = {
+    titulo: ctaContent?.titulo || "Pronto para fazer parte da elite empresarial?",
+    subtitulo: ctaContent?.subtitulo || "Candidate-se agora e descubra como o NCE pode transformar sua rede de contatos e impulsionar seu negócio.",
+    botao_primario: ctaContent?.botao_primario || "Candidate-se Agora",
+    botao_secundario: ctaContent?.botao_secundario || "Saiba Mais",
+  };
 
   return (
     <PageLayout>
@@ -92,23 +160,22 @@ const Index = () => {
               {/* Tag */}
               <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary/10 text-primary text-sm font-bold mb-8 shadow-lg shadow-primary/5">
                 <Network className="h-4 w-4" />
-                Rede de Empresários Multisetorial
+                {hero.badge}
               </div>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-8 leading-[1.1]">
-                Conectando{" "}
+                {hero.titulo.split(" ").slice(0, 1).join(" ")}{" "}
                 <span className="text-accent relative">
-                  Empresários
+                  {hero.titulo.split(" ").slice(1, 2).join(" ")}
                   <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 300 12" fill="none">
                     <path d="M2 10C50 4 150 2 298 6" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="text-accent/30"/>
                   </svg>
                 </span>{" "}
-                para o Sucesso
+                {hero.titulo.split(" ").slice(2).join(" ")}
               </h1>
               
               <p className="text-xl text-muted-foreground mb-10 leading-relaxed max-w-xl">
-                Uma comunidade exclusiva de líderes empresariais comprometidos com o crescimento mútuo, 
-                networking estratégico e excelência nos negócios.
+                {hero.subtitulo}
               </p>
               
               <div className="flex flex-col sm:flex-row items-start gap-5">
@@ -118,7 +185,7 @@ const Index = () => {
                   asChild
                 >
                   <Link to="/empresas">
-                    Explorar Oportunidades
+                    {hero.botao_primario}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
@@ -129,7 +196,7 @@ const Index = () => {
                   asChild
                 >
                   <Link to="/sobre">
-                    Conheça o Núcleo
+                    {hero.botao_secundario}
                   </Link>
                 </Button>
               </div>
@@ -148,7 +215,7 @@ const Index = () => {
               
               <div className="relative rounded-3xl overflow-hidden shadow-image">
                 <img 
-                  src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=1974&auto=format&fit=crop" 
+                  src={hero.imagem_url} 
                   alt="Reunião de empresários"
                   className="w-full h-auto aspect-[4/3] object-cover"
                 />
@@ -166,8 +233,8 @@ const Index = () => {
                     <Users className="h-6 w-6 text-accent" />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-foreground">50+</div>
-                    <div className="text-sm text-muted-foreground">Empresários</div>
+                    <div className="text-2xl font-bold text-foreground">{hero.estatistica_numero}</div>
+                    <div className="text-sm text-muted-foreground">{hero.estatistica_label}</div>
                   </div>
                 </div>
               </motion.div>
@@ -191,7 +258,7 @@ const Index = () => {
                 <div className="absolute -top-10 -left-10 w-40 h-40 bg-primary/20 rounded-full blur-2xl" />
                 
                 <img 
-                  src="https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2069&auto=format&fit=crop" 
+                  src={confianca.imagem_url} 
                   alt="Handshake entre empresários"
                   className="rounded-3xl shadow-image w-full relative z-10"
                 />
@@ -201,25 +268,27 @@ const Index = () => {
             <FadeIn direction="left" delay={0.2}>
               <div className="h-1.5 w-20 bg-accent rounded-full mb-8" />
               <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-8 leading-tight">
-                Fundado em Confiança e Credibilidade
+                {confianca.titulo}
               </h2>
               <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
-                O Núcleo do Empresário nasceu da necessidade de criar um ambiente onde líderes 
-                empresariais pudessem se conectar de forma genuína e gerar oportunidades reais.
+                {confianca.descricao}
               </p>
               
               <div className="space-y-8">
-                {trustFeatures.map((feature, index) => (
-                  <div key={index} className="flex items-start gap-5">
-                    <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 shadow-lg">
-                      <feature.icon className="h-7 w-7 text-primary" />
+                {confianca.features.map((feature, index) => {
+                  const IconComponent = getIcon(feature.icon);
+                  return (
+                    <div key={index} className="flex items-start gap-5">
+                      <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 shadow-lg">
+                        <IconComponent className="h-7 w-7 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-lg text-foreground mb-1">{feature.titulo}</h3>
+                        <p className="text-muted-foreground">{feature.descricao}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-bold text-lg text-foreground mb-1">{feature.title}</h3>
-                      <p className="text-muted-foreground">{feature.description}</p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </FadeIn>
           </div>
@@ -234,24 +303,27 @@ const Index = () => {
         
         <div className="container relative z-10">
           <SectionTitle 
-            title="Nossos Pilares" 
-            subtitle="Os fundamentos que guiam nossa comunidade de empresários"
+            title={pilares.titulo_secao} 
+            subtitle={pilares.subtitulo_secao}
           />
           
           <StaggerContainer className="grid md:grid-cols-3 gap-10" staggerDelay={0.15}>
-            {pilares.map((item, index) => (
-              <StaggerItem key={index}>
-                <Card className="h-full bg-card shadow-elevated hover:shadow-hero border-0 transition-all duration-500 hover:-translate-y-2">
-                  <CardContent className="p-10">
-                    <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-8 shadow-lg">
-                      <item.icon className="h-8 w-8 text-primary" />
-                    </div>
-                    <h3 className="text-2xl font-bold mb-4 text-foreground">{item.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed text-lg">{item.description}</p>
-                  </CardContent>
-                </Card>
-              </StaggerItem>
-            ))}
+            {pilares.cards.map((item, index) => {
+              const IconComponent = getIcon(item.icon);
+              return (
+                <StaggerItem key={index}>
+                  <Card className="h-full bg-card shadow-elevated hover:shadow-hero border-0 transition-all duration-500 hover:-translate-y-2">
+                    <CardContent className="p-10">
+                      <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-8 shadow-lg">
+                        <IconComponent className="h-8 w-8 text-primary" />
+                      </div>
+                      <h3 className="text-2xl font-bold mb-4 text-foreground">{item.titulo}</h3>
+                      <p className="text-muted-foreground leading-relaxed text-lg">{item.descricao}</p>
+                    </CardContent>
+                  </Card>
+                </StaggerItem>
+              );
+            })}
           </StaggerContainer>
         </div>
       </section>
@@ -267,20 +339,19 @@ const Index = () => {
             <FadeIn direction="right">
               <div className="h-1.5 w-20 bg-accent rounded-full mb-8" />
               <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-8 leading-tight">
-                Crescimento Através da Colaboração
+                {colaboracao.titulo}
               </h2>
               <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
-                Nossos encontros estratégicos e ambiente de confiança proporcionam as condições 
-                ideais para que negócios aconteçam naturalmente entre pessoas comprometidas.
+                {colaboracao.descricao}
               </p>
               
               <div className="space-y-6">
-                {collaborationFeatures.map((feature, index) => (
+                {colaboracao.features.map((feature, index) => (
                   <div key={index} className="flex items-start gap-5">
                     <div className="w-1.5 h-full min-h-[60px] bg-accent rounded-full flex-shrink-0" />
                     <div>
-                      <h3 className="font-bold text-lg text-foreground mb-2">{feature.title}</h3>
-                      <p className="text-muted-foreground">{feature.description}</p>
+                      <h3 className="font-bold text-lg text-foreground mb-2">{feature.titulo}</h3>
+                      <p className="text-muted-foreground">{feature.descricao}</p>
                     </div>
                   </div>
                 ))}
@@ -288,7 +359,7 @@ const Index = () => {
               
               <Button size="lg" className="mt-10 h-14 px-10 text-lg bg-primary hover:bg-primary/90 shadow-hero shadow-primary/20" asChild>
                 <Link to="/seja-nucleado">
-                  Junte-se ao NCE
+                  {colaboracao.botao_texto}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
@@ -301,7 +372,7 @@ const Index = () => {
                 <div className="absolute -top-6 -right-6 w-32 h-32 bg-accent/30 rounded-full blur-xl" />
                 
                 <img 
-                  src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop" 
+                  src={colaboracao.imagem_url} 
                   alt="Equipe colaborando"
                   className="rounded-3xl shadow-image w-full relative z-10"
                 />
@@ -320,8 +391,8 @@ const Index = () => {
           
           <div className="container relative z-10">
             <SectionTitle 
-              title="Empresas do Núcleo" 
-              subtitle="Conheça algumas das empresas que fazem parte da nossa comunidade"
+              title={secaoEmpresas.titulo} 
+              subtitle={secaoEmpresas.subtitulo}
             />
             
             <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8" staggerDelay={0.1}>
@@ -359,8 +430,8 @@ const Index = () => {
           
           <div className="container relative z-10">
             <SectionTitle 
-              title="Nucleados" 
-              subtitle="Empresários de destaque que fazem parte do nosso núcleo"
+              title={secaoMembros.titulo} 
+              subtitle={secaoMembros.subtitulo}
             />
             
             <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8" staggerDelay={0.1}>
@@ -398,8 +469,8 @@ const Index = () => {
           
           <div className="container relative z-10">
             <SectionTitle 
-              title="Notícias e Ações" 
-              subtitle="Acompanhe as novidades e acontecimentos do NCE"
+              title={secaoNoticias.titulo} 
+              subtitle={secaoNoticias.subtitulo}
             />
             
             <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-10" staggerDelay={0.1}>
@@ -444,7 +515,7 @@ const Index = () => {
                 <div className="absolute -top-6 -left-6 w-32 h-32 bg-primary/20 rounded-full blur-xl" />
                 
                 <img 
-                  src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070&auto=format&fit=crop" 
+                  src={comunidade.imagem_url} 
                   alt="Comunidade de empresários"
                   className="rounded-3xl shadow-image w-full relative z-10"
                 />
@@ -454,15 +525,14 @@ const Index = () => {
             <FadeIn direction="left" delay={0.2}>
               <div className="h-1.5 w-20 bg-accent rounded-full mb-8" />
               <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-8 leading-tight">
-                A Força de Uma Comunidade Unida
+                {comunidade.titulo}
               </h2>
               <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
-                Fazer parte do NCE significa ter acesso a uma rede de empresários comprometidos 
-                com o crescimento mútuo e a excelência nos negócios.
+                {comunidade.descricao}
               </p>
               
               <ul className="space-y-5 mb-10">
-                {communityBenefits.map((benefit, index) => (
+                {comunidade.beneficios.map((benefit, index) => (
                   <li key={index} className="flex items-start gap-4">
                     <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <CheckCircle className="h-4 w-4 text-primary" />
@@ -474,7 +544,7 @@ const Index = () => {
               
               <Button size="lg" className="h-14 px-10 text-lg bg-primary hover:bg-primary/90 shadow-hero shadow-primary/20" asChild>
                 <Link to="/seja-nucleado">
-                  Junte-se ao NCE
+                  {comunidade.botao_texto}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
@@ -492,11 +562,10 @@ const Index = () => {
         <div className="container relative z-10">
           <FadeIn className="text-center max-w-4xl mx-auto">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight">
-              Pronto para fazer parte da elite empresarial?
+              {cta.titulo}
             </h2>
             <p className="text-xl md:text-2xl text-white/70 mb-12 leading-relaxed">
-              Candidate-se agora e descubra como o NCE pode transformar sua rede de contatos 
-              e impulsionar seu negócio.
+              {cta.subtitulo}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
               <Button 
@@ -505,7 +574,7 @@ const Index = () => {
                 asChild
               >
                 <Link to="/seja-nucleado">
-                  Candidate-se Agora
+                  {cta.botao_primario}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
@@ -516,7 +585,7 @@ const Index = () => {
                 asChild
               >
                 <Link to="/sobre">
-                  Saiba Mais
+                  {cta.botao_secundario}
                 </Link>
               </Button>
             </div>
