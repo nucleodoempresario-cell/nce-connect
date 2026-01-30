@@ -1,12 +1,13 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AdminLayout } from '@/components/layout/AdminLayout';
-import { Home, Info, Star, Building2, Settings } from 'lucide-react';
+import { Home, Info, Star, Building2, Settings, LayoutGrid } from 'lucide-react';
 import { HomeContentEditor } from '@/components/admin/content/HomeContentEditor';
 import { AboutContentEditor } from '@/components/admin/content/AboutContentEditor';
 import { BecomeContentEditor } from '@/components/admin/content/BecomeContentEditor';
 import { ListingPagesEditor } from '@/components/admin/content/ListingPagesEditor';
 import { GlobalSettingsEditor } from '@/components/admin/content/GlobalSettingsEditor';
+import { PageBuilder } from '@/components/pagebuilder';
 
 export default function AdminContentPage() {
   return (
@@ -19,8 +20,12 @@ export default function AdminContentPage() {
           </p>
         </div>
 
-        <Tabs defaultValue="home" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
+        <Tabs defaultValue="pagebuilder" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-6 lg:w-auto lg:inline-grid">
+            <TabsTrigger value="pagebuilder" className="flex items-center gap-2">
+              <LayoutGrid className="h-4 w-4" />
+              <span className="hidden sm:inline">Page Builder</span>
+            </TabsTrigger>
             <TabsTrigger value="home" className="flex items-center gap-2">
               <Home className="h-4 w-4" />
               <span className="hidden sm:inline">Home</span>
@@ -43,15 +48,32 @@ export default function AdminContentPage() {
             </TabsTrigger>
           </TabsList>
 
+          <TabsContent value="pagebuilder">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <LayoutGrid className="h-5 w-5 text-primary" />
+                  Page Builder
+                </CardTitle>
+                <CardDescription>
+                  Arraste, edite e organize os blocos de conteúdo de cada página. Sistema completo de edição visual.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PageBuilder />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           <TabsContent value="home">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Home className="h-5 w-5 text-primary" />
-                  Página Inicial
+                  Página Inicial (Legado)
                 </CardTitle>
                 <CardDescription>
-                  Edite todas as seções da página inicial do site.
+                  Editor antigo - use o Page Builder para maior flexibilidade.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -65,10 +87,10 @@ export default function AdminContentPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Info className="h-5 w-5 text-primary" />
-                  Página Sobre
+                  Página Sobre (Legado)
                 </CardTitle>
                 <CardDescription>
-                  Edite as informações institucionais do NCE.
+                  Editor antigo - use o Page Builder para maior flexibilidade.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -82,10 +104,10 @@ export default function AdminContentPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Star className="h-5 w-5 text-primary" />
-                  Página Seja Nucleado
+                  Página Seja Nucleado (Legado)
                 </CardTitle>
                 <CardDescription>
-                  Edite o conteúdo da página de candidatura.
+                  Editor antigo - use o Page Builder para maior flexibilidade.
                 </CardDescription>
               </CardHeader>
               <CardContent>
