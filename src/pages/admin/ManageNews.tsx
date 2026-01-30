@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { RichTextEditor } from '@/components/RichTextEditor';
+import { AdminLayout } from '@/components/layout/AdminLayout';
 import { useAllNews, useCreateNews, useUpdateNews, useDeleteNews, useNewsItem } from '@/hooks/useNews';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -143,5 +144,9 @@ export function NewsForm({ newsId }: { newsId?: string }) {
 
 export function NewsFormPage() {
   const { id } = useParams();
-  return <NewsForm newsId={id} />;
+  return (
+    <AdminLayout>
+      <NewsForm newsId={id} />
+    </AdminLayout>
+  );
 }
