@@ -29,6 +29,7 @@ import AdminPanel from "./pages/AdminPanel";
 import AdminUsersPage from "./pages/AdminUsersPage";
 import AdminCompaniesPage from "./pages/AdminCompaniesPage";
 import AdminNewsPage from "./pages/AdminNewsPage";
+import { NewsFormPage } from "./pages/admin/ManageNews";
 import AdminFormPage from "./pages/AdminFormPage";
 import AdminApplicationsPage from "./pages/AdminApplicationsPage";
 import AdminReportsPage from "./pages/AdminReportsPage";
@@ -69,6 +70,8 @@ const App = () => (
             <Route path="/admin/usuarios" element={<ProtectedRoute requireAdmin><AdminUsersPage /></ProtectedRoute>} />
             <Route path="/admin/empresas" element={<ProtectedRoute requireAdmin><AdminCompaniesPage /></ProtectedRoute>} />
             <Route path="/admin/noticias" element={<ProtectedRoute requireAdmin><AdminNewsPage /></ProtectedRoute>} />
+            <Route path="/admin/noticias/nova" element={<ProtectedRoute requireAdmin><NewsFormPage /></ProtectedRoute>} />
+            <Route path="/admin/noticias/editar/:id" element={<ProtectedRoute requireAdmin><NewsFormPage /></ProtectedRoute>} />
             <Route path="/admin/formulario" element={<ProtectedRoute requireAdmin><AdminFormPage /></ProtectedRoute>} />
             <Route path="/admin/inscricoes" element={<ProtectedRoute requireAdmin><AdminApplicationsPage /></ProtectedRoute>} />
             <Route path="/admin/relatorios" element={<ProtectedRoute requireAdmin><AdminReportsPage /></ProtectedRoute>} />
