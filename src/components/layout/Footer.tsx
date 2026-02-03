@@ -12,7 +12,7 @@ export function Footer() {
   const descricao = config?.footer_descricao || 
     'Uma comunidade exclusiva de empresários de alto nível, unidos pelo compromisso com a excelência e o crescimento mútuo. Networking estratégico que gera resultados reais.';
   
-  const instagramUrl = config?.footer_instagram || 'https://instagram.com';
+  const instagramUrl = config?.footer_instagram || 'https://www.instagram.com/nce.pb/';
 
   return (
     <footer className="bg-slate-900 text-white">
