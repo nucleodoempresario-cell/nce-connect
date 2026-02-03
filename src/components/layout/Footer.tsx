@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom';
-import { Instagram } from 'lucide-react';
+import { Instagram, LogIn, User } from 'lucide-react';
 import logoNce from '@/assets/logo-nce.png';
 import { useGlobalConfig } from '@/hooks/useGlobalConfig';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
   const { data: config } = useGlobalConfig();
+  const { user } = useAuth();
 
   const descricao = config?.footer_descricao || 
     'Uma comunidade exclusiva de empresários de alto nível, unidos pelo compromisso com a excelência e o crescimento mútuo. Networking estratégico que gera resultados reais.';
@@ -68,9 +70,21 @@ export function Footer() {
       <div className="border-t border-white/10">
         <div className="container py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/50">
           <p>© {currentYear} NCE - Núcleo do Empresário. Todos os direitos reservados.</p>
-          <div className="flex gap-6">
+          <div className="flex items-center gap-6">
             <Link to="#" className="hover:text-primary transition-colors">Privacidade</Link>
             <Link to="#" className="hover:text-primary transition-colors">Termos</Link>
+            <span className="w-px h-4 bg-white/20" />
+            {user ? (
+              <Link to="/painel" className="hover:text-primary transition-colors flex items-center gap-1.5">
+                <User className="h-3.5 w-3.5" />
+                Meu Painel
+              </Link>
+            ) : (
+              <Link to="/auth" className="hover:text-primary transition-colors flex items-center gap-1.5">
+                <LogIn className="h-3.5 w-3.5" />
+                Área do Membro
+              </Link>
+            )}
           </div>
         </div>
       </div>
