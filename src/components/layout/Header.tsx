@@ -120,26 +120,13 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="h-11 px-5 rounded-full text-muted-foreground hover:text-foreground"
-                asChild
-              >
-                <Link to="/auth">
-                  <LogIn className="h-4 w-4 mr-2" />
-                  Entrar
-                </Link>
-              </Button>
-              <Button 
-                size="sm" 
-                className="h-11 px-6 rounded-full bg-primary hover:bg-primary/90 font-semibold shadow-lg shadow-primary/20"
-                asChild
-              >
-                <Link to="/seja-nucleado">Seja Nucleado</Link>
-              </Button>
-            </>
+            <Button 
+              size="sm" 
+              className="h-11 px-6 rounded-full bg-primary hover:bg-primary/90 font-semibold shadow-lg shadow-primary/20"
+              asChild
+            >
+              <Link to="/seja-nucleado">Seja Nucleado</Link>
+            </Button>
           )}
         </div>
 
@@ -203,23 +190,15 @@ export function Header() {
                   </Button>
                 </>
               ) : (
-                <>
-                  <Button variant="ghost" size="sm" asChild className="justify-start h-12 rounded-xl text-muted-foreground">
-                    <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
-                      <LogIn className="h-4 w-4 mr-2" />
-                      Entrar
-                    </Link>
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    className="h-12 rounded-xl bg-primary hover:bg-primary/90 font-semibold"
-                    asChild
-                  >
-                    <Link to="/seja-nucleado" onClick={() => setIsMenuOpen(false)}>
-                      Seja Nucleado
-                    </Link>
-                  </Button>
-                </>
+                <Button 
+                  size="sm" 
+                  className="h-12 rounded-xl bg-primary hover:bg-primary/90 font-semibold"
+                  asChild
+                >
+                  <Link to="/seja-nucleado" onClick={() => setIsMenuOpen(false)}>
+                    Seja Nucleado
+                  </Link>
+                </Button>
               )}
             </div>
           </nav>
