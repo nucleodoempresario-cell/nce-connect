@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Check, X, Loader2, ChevronDown, ChevronRight, UserCog, ShieldCheck, Power, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useAllProfiles, useUpdateProfile } from '@/hooks/useProfiles';
 import { useAllCompanies } from '@/hooks/useCompanies';
 import { useAdmins, useAddAdmin, useRemoveAdmin } from '@/hooks/useUserRoles';
@@ -95,26 +95,24 @@ export default function ManageUsers() {
     const isAdmin = isUserAdmin(profile.user_id);
 
     return (
-      <Collapsible key={profile.id} open={isExpanded} onOpenChange={() => setExpandedId(isExpanded ? null : profile.id)}>
-        <TableRow className="cursor-pointer hover:bg-muted/50">
+      <React.Fragment key={profile.id}>
+        <TableRow className="cursor-pointer hover:bg-muted/50" onClick={() => setExpandedId(isExpanded ? null : profile.id)}>
           <TableCell>
-            <CollapsibleTrigger asChild>
-              <div className="flex items-center gap-3">
-                {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={profile.foto_url || undefined} />
-                  <AvatarFallback>{profile.nome?.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <span className="font-medium">{profile.nome}</span>
-                  {isAdmin && (
-                    <Badge variant="outline" className="ml-2 text-xs">
-                      <ShieldCheck className="h-3 w-3 mr-1" />Admin
-                    </Badge>
-                  )}
-                </div>
+            <div className="flex items-center gap-3">
+              {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={profile.foto_url || undefined} />
+                <AvatarFallback>{profile.nome?.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <div>
+                <span className="font-medium">{profile.nome}</span>
+                {isAdmin && (
+                  <Badge variant="outline" className="ml-2 text-xs">
+                    <ShieldCheck className="h-3 w-3 mr-1" />Admin
+                  </Badge>
+                )}
               </div>
-            </CollapsibleTrigger>
+            </div>
           </TableCell>
           <TableCell>{profile.email}</TableCell>
           <TableCell>
@@ -156,21 +154,31 @@ export default function ManageUsers() {
             )}
           </TableCell>
         </TableRow>
-        <TableRow>
-          <TableCell colSpan={5} className="p-0 border-0">
-            <CollapsibleContent>
-              <div className="p-4 bg-muted/30">
-                <UserDetailPanel 
-                  profile={profile} 
-                  isAdmin={isAdmin}
-                  onToggleAdmin={() => handleToggleAdmin(profile)}
-                  canToggleAdmin={profile.status === 'ativo'}
-                />
-              </div>
-            </CollapsibleContent>
-          </TableCell>
-        </TableRow>
-      </Collapsible>
+        <AnimatePresence>
+          {isExpanded && (
+            <TableRow>
+              <TableCell colSpan={5} className="p-0 border-0">
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden"
+                >
+                  <div className="p-4 bg-muted/30">
+                    <UserDetailPanel 
+                      profile={profile} 
+                      isAdmin={isAdmin}
+                      onToggleAdmin={() => handleToggleAdmin(profile)}
+                      canToggleAdmin={profile.status === 'ativo'}
+                    />
+                  </div>
+                </motion.div>
+              </TableCell>
+            </TableRow>
+          )}
+        </AnimatePresence>
+      </React.Fragment>
     );
   };
 
