@@ -109,7 +109,7 @@ export default function Auth() {
     } else {
       toast({
         title: 'Cadastro realizado!',
-        description: 'Verifique seu email para confirmar a conta.',
+        description: 'Sua conta foi criada com sucesso. Aguarde a aprovação de um administrador para acessar o sistema.',
       });
     }
   };
