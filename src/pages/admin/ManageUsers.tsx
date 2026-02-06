@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Check, X, Loader2, ChevronDown, ChevronRight, UserCog, ShieldCheck, Power, Building2 } from 'lucide-react';
+import { Check, X, Loader2, ChevronDown, ChevronRight, UserCog, ShieldCheck, Power, Building2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAllProfiles, useUpdateProfile } from '@/hooks/useProfiles';
 import { useAllCompanies } from '@/hooks/useCompanies';
@@ -14,6 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { UserDetailPanel } from '@/components/admin/UserDetailPanel';
+import { useQueryClient } from '@tanstack/react-query';
 import type { Database } from '@/integrations/supabase/types';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
@@ -26,8 +28,10 @@ export default function ManageUsers() {
   const addAdmin = useAddAdmin();
   const removeAdmin = useRemoveAdmin();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('pendentes');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const getAdminUserIds = () => admins?.map(a => a.user_id) || [];
   const isUserAdmin = (userId: string) => getAdminUserIds().includes(userId);
@@ -43,7 +47,6 @@ export default function ManageUsers() {
 
   const handleReject = async (profile: Profile) => {
     await updateProfile.mutateAsync({ id: profile.id, updates: { status: 'inativo' } });
-    // Cascade: deactivate company
     const company = getUserCompany(profile.id);
     if (company) {
       await supabase.from('companies').update({ status: 'rejeitado' }).eq('id', company.id);
@@ -59,13 +62,41 @@ export default function ManageUsers() {
 
   const handleDeactivate = async (profile: Profile) => {
     await updateProfile.mutateAsync({ id: profile.id, updates: { status: 'inativo' } });
-    // Cascade: deactivate company
     const company = getUserCompany(profile.id);
     if (company) {
       await supabase.from('companies').update({ status: 'rejeitado' }).eq('id', company.id);
     }
     toast({ title: 'Usuário desativado e empresa desativada' });
     refetch();
+  };
+
+  const handleDeleteUser = async (profile: Profile) => {
+    setDeletingId(profile.id);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const response = await supabase.functions.invoke('delete-user', {
+        body: { user_id: profile.user_id },
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message || 'Erro ao excluir usuário');
+      }
+
+      const result = response.data;
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+
+      queryClient.invalidateQueries({ queryKey: ['profiles'] });
+      queryClient.invalidateQueries({ queryKey: ['companies'] });
+      queryClient.invalidateQueries({ queryKey: ['admins'] });
+      toast({ title: 'Usuário excluído permanentemente!' });
+      setExpandedId(null);
+    } catch (error: any) {
+      toast({ title: 'Erro ao excluir usuário', description: error.message, variant: 'destructive' });
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const handleToggleAdmin = async (profile: Profile) => {
@@ -93,6 +124,7 @@ export default function ManageUsers() {
     const isExpanded = expandedId === profile.id;
     const userCompany = getUserCompany(profile.id);
     const isAdmin = isUserAdmin(profile.user_id);
+    const isDeleting = deletingId === profile.id;
 
     return (
       <React.Fragment key={profile.id}>
@@ -126,32 +158,59 @@ export default function ManageUsers() {
             )}
           </TableCell>
           <TableCell>{format(new Date(profile.created_at), 'dd/MM/yyyy')}</TableCell>
-          <TableCell className="text-right space-x-2">
+          <TableCell className="text-right space-x-2" onClick={(e) => e.stopPropagation()}>
             {showActions === 'approve' && (
               <>
-                <Button size="sm" onClick={(e) => { e.stopPropagation(); handleApprove(profile); }}>
+                <Button size="sm" onClick={() => handleApprove(profile)}>
                   <Check className="h-4 w-4 mr-1" /> Aprovar
                 </Button>
-                <Button size="sm" variant="destructive" onClick={(e) => { e.stopPropagation(); handleReject(profile); }}>
+                <Button size="sm" variant="destructive" onClick={() => handleReject(profile)}>
                   <X className="h-4 w-4 mr-1" /> Rejeitar
                 </Button>
               </>
             )}
             {showActions === 'activate' && (
-              <Button size="sm" onClick={(e) => { e.stopPropagation(); handleActivate(profile); }}>
+              <Button size="sm" onClick={() => handleActivate(profile)}>
                 <Power className="h-4 w-4 mr-1" /> Ativar
               </Button>
             )}
             {showActions === 'deactivate' && (
-              <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleDeactivate(profile); }}>
+              <Button size="sm" variant="outline" onClick={() => handleDeactivate(profile)}>
                 <Power className="h-4 w-4 mr-1" /> Desativar
               </Button>
             )}
             {showActions === 'admin' && isAdmin && (
-              <Button size="sm" variant="destructive" onClick={(e) => { e.stopPropagation(); handleToggleAdmin(profile); }}>
+              <Button size="sm" variant="destructive" onClick={() => handleToggleAdmin(profile)}>
                 <ShieldCheck className="h-4 w-4 mr-1" /> Remover Admin
               </Button>
             )}
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Excluir usuário permanentemente?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Esta ação não pode ser desfeita. O usuário <strong>{profile.nome}</strong> será removido permanentemente, 
+                    junto com seu perfil, empresa vinculada e todas as permissões.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    onClick={() => handleDeleteUser(profile)}
+                    disabled={isDeleting}
+                  >
+                    {isDeleting ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Trash2 className="h-4 w-4 mr-1" />}
+                    Excluir
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </TableCell>
         </TableRow>
         <AnimatePresence>

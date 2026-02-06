@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Check, X, Loader2, ChevronDown, ChevronRight, Building2, ShieldCheck, Power, User } from 'lucide-react';
+import { Check, X, Loader2, ChevronDown, ChevronRight, Building2, ShieldCheck, Power, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useAllCompanies } from '@/hooks/useCompanies';
 import { useToast } from '@/hooks/use-toast';
@@ -43,6 +44,7 @@ export default function ManageCompanies() {
   const queryClient = useQueryClient();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('pendentes');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleApprove = async (id: string) => {
     await supabase.from('companies').update({ status: 'publicado' }).eq('id', id);
@@ -68,6 +70,21 @@ export default function ManageCompanies() {
     toast({ title: 'Empresa desativada' });
   };
 
+  const handleDeleteCompany = async (company: CompanyData) => {
+    setDeletingId(company.id);
+    try {
+      const { error } = await supabase.from('companies').delete().eq('id', company.id);
+      if (error) throw error;
+      queryClient.invalidateQueries({ queryKey: ['companies'] });
+      toast({ title: 'Empresa excluída permanentemente!' });
+      setExpandedId(null);
+    } catch (error: any) {
+      toast({ title: 'Erro ao excluir empresa', description: error.message, variant: 'destructive' });
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   if (isLoading) return <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin" /></div>;
 
   const allCompanies = (companies || []).map(c => ({
@@ -81,6 +98,7 @@ export default function ManageCompanies() {
 
   const renderCompanyRow = (company: CompanyData, showActions: 'approve' | 'activate' | 'deactivate') => {
     const isExpanded = expandedId === company.id;
+    const isDeleting = deletingId === company.id;
 
     return (
       <Collapsible key={company.id} open={isExpanded} onOpenChange={() => setExpandedId(isExpanded ? null : company.id)}>
@@ -125,27 +143,53 @@ export default function ManageCompanies() {
               ? `${company.cidade}/${company.estado}` 
               : '-'}
           </TableCell>
-          <TableCell className="text-right space-x-2">
+          <TableCell className="text-right space-x-2" onClick={(e) => e.stopPropagation()}>
             {showActions === 'approve' && (
               <>
-                <Button size="sm" onClick={(e) => { e.stopPropagation(); handleApprove(company.id); }}>
+                <Button size="sm" onClick={() => handleApprove(company.id)}>
                   <Check className="h-4 w-4 mr-1" /> Aprovar
                 </Button>
-                <Button size="sm" variant="destructive" onClick={(e) => { e.stopPropagation(); handleReject(company.id); }}>
+                <Button size="sm" variant="destructive" onClick={() => handleReject(company.id)}>
                   <X className="h-4 w-4 mr-1" /> Rejeitar
                 </Button>
               </>
             )}
             {showActions === 'activate' && (
-              <Button size="sm" onClick={(e) => { e.stopPropagation(); handleActivate(company.id); }}>
+              <Button size="sm" onClick={() => handleActivate(company.id)}>
                 <Power className="h-4 w-4 mr-1" /> Ativar
               </Button>
             )}
             {showActions === 'deactivate' && (
-              <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleDeactivate(company.id); }}>
+              <Button size="sm" variant="outline" onClick={() => handleDeactivate(company.id)}>
                 <Power className="h-4 w-4 mr-1" /> Desativar
               </Button>
             )}
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Excluir empresa permanentemente?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Esta ação não pode ser desfeita. A empresa <strong>{company.nome}</strong> será removida permanentemente do sistema.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    onClick={() => handleDeleteCompany(company)}
+                    disabled={isDeleting}
+                  >
+                    {isDeleting ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Trash2 className="h-4 w-4 mr-1" />}
+                    Excluir
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </TableCell>
         </TableRow>
         <TableRow>
