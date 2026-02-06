@@ -63,11 +63,22 @@ export default function Auth() {
     setIsLoading(false);
 
     if (error) {
+      let description = 'Ocorreu um erro inesperado. Tente novamente.';
+      const msg = error.message?.toLowerCase() || '';
+      if (msg.includes('invalid login credentials')) {
+        description = 'Email ou senha incorretos. Verifique seus dados e tente novamente.';
+      } else if (msg.includes('email not confirmed')) {
+        description = 'Seu email ainda não foi confirmado. Verifique sua caixa de entrada (e spam) e clique no link de confirmação.';
+      } else if (msg.includes('too many requests') || msg.includes('rate limit')) {
+        description = 'Muitas tentativas de login. Aguarde alguns minutos e tente novamente.';
+      } else if (msg.includes('network') || msg.includes('fetch')) {
+        description = 'Erro de conexão. Verifique sua internet e tente novamente.';
+      } else if (msg.includes('user not found')) {
+        description = 'Nenhuma conta encontrada com este email.';
+      }
       toast({
-        title: 'Erro ao entrar',
-        description: error.message === 'Invalid login credentials' 
-          ? 'Email ou senha incorretos' 
-          : error.message,
+        title: 'Não foi possível entrar',
+        description,
         variant: 'destructive',
       });
     }
@@ -79,12 +90,20 @@ export default function Auth() {
     setIsLoading(false);
 
     if (error) {
-      const message = error.message.includes('already registered')
-        ? 'Este email já está cadastrado'
-        : error.message;
+      let description = 'Ocorreu um erro inesperado. Tente novamente.';
+      const msg = error.message?.toLowerCase() || '';
+      if (msg.includes('already registered') || msg.includes('already been registered')) {
+        description = 'Este email já está cadastrado. Tente fazer login ou use outro email.';
+      } else if (msg.includes('password') && msg.includes('weak')) {
+        description = 'A senha é muito fraca. Use pelo menos 6 caracteres com letras e números.';
+      } else if (msg.includes('valid email') || msg.includes('invalid email')) {
+        description = 'Por favor, insira um email válido.';
+      } else if (msg.includes('rate limit') || msg.includes('too many')) {
+        description = 'Muitas tentativas. Aguarde alguns minutos e tente novamente.';
+      }
       toast({
-        title: 'Erro ao cadastrar',
-        description: message,
+        title: 'Não foi possível cadastrar',
+        description,
         variant: 'destructive',
       });
     } else {
