@@ -1,81 +1,48 @@
 
-# Plano: Correção de Botões Brancos em Fundos Escuros
+# Sistema de Keep-Alive Multi-Camada
 
-## Problema Identificado
+O projeto ja possui um sistema de heartbeat via `pg_cron` que funciona bem (ultimo ping hoje as 8h). Vamos adicionar camadas extras de seguranca para garantir que o Supabase nunca pause.
 
-Alguns botões com `variant="outline"` estão aparecendo totalmente brancos em seções com fundo escuro. O problema está nas páginas de detalhe de Empresa e Membro, que possuem seções de CTA com fundo escuro (`bg-foreground`) onde o botão secundário usa a variante `outline`.
+## O que sera feito
 
-A variante `outline` padrão aplica `bg-background` (branco), o que cria o problema de visibilidade.
+### Camada 1 - Edge Function `keep-alive`
+Criar uma Edge Function que insere registros na tabela `system_heartbeat` existente (nao precisa criar `activity_logs` pois ja temos a tabela funcionando). A funcao aceita `source` no body para identificar a origem.
 
-## Arquivos Afetados
+### Camada 2 - Hook `useKeepAlive`
+Hook React que verifica via `localStorage` se ja fez heartbeat nas ultimas 24h. Se nao, chama a Edge Function com `source: "website_visit"`. Sera integrado no `App.tsx`.
 
-1. **`src/pages/CompanyDetail.tsx`** (linha 371)
-   - Seção CTA com fundo escuro (`bg-foreground`)
-   - Botão usando `variant="outline"` com classes customizadas
-
-2. **`src/pages/MemberDetail.tsx`** (linha 262)
-   - Seção CTA com fundo escuro (`bg-foreground`)
-   - Botão usando `variant="outline"` com classes customizadas
-
-3. **`src/components/blocks/CtaBlock.tsx`** (linhas 94-105)
-   - Versão "clara" do CTA (fundo `bg-primary`) 
-   - Botão secundário usando `variant="outline"` com override de classes
-
-## Solução
-
-Substituir `variant="outline"` por `variant="outlineDark"` nos locais onde o botão aparece em fundo escuro. A variante `outlineDark` já existe no sistema:
-
-```tsx
-outlineDark: "border-2 border-white/40 bg-transparent text-white hover:bg-white hover:text-slate-900"
-```
-
-### Alterações Específicas
-
-**1. CompanyDetail.tsx (linha 371)**
-```tsx
-// De:
-<Button asChild size="lg" variant="outline" className="border-background text-background hover:bg-background hover:text-foreground">
-
-// Para:
-<Button asChild size="lg" variant="outlineDark">
-```
-
-**2. MemberDetail.tsx (linha 262)**
-```tsx
-// De:
-<Button asChild size="lg" variant="outline" className="border-background text-background hover:bg-background hover:text-foreground">
-
-// Para:
-<Button asChild size="lg" variant="outlineDark">
-```
-
-**3. CtaBlock.tsx (linhas 94-105)** - Versão clara
-```tsx
-// De:
-<Button 
-  size="lg" 
-  variant="outline" 
-  className="h-12 px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
-  asChild
->
-
-// Para:
-<Button 
-  size="lg" 
-  variant="outlineDark" 
-  className="h-12 px-8"
-  asChild
->
-```
+### Camada 3 - GitHub Actions
+Workflow com cron a cada 4 dias que chama a Edge Function via curl. Inclui `workflow_dispatch` para testes manuais e verificacao de status code.
 
 ---
 
-## Resumo
+## Detalhes tecnicos
 
-| Arquivo | Linha | Ação |
-|---------|-------|------|
-| CompanyDetail.tsx | 371 | Trocar `variant="outline"` por `variant="outlineDark"` e remover classes redundantes |
-| MemberDetail.tsx | 262 | Trocar `variant="outline"` por `variant="outlineDark"` e remover classes redundantes |
-| CtaBlock.tsx | 94-105 | Trocar para `variant="outlineDark"` na versão clara do CTA |
+### 1. Edge Function `supabase/functions/keep-alive/index.ts`
+- Usa `SUPABASE_SERVICE_ROLE_KEY` para bypass de RLS
+- Insere na tabela `system_heartbeat` existente (campos: `tipo`, `detalhes`)
+- Aceita `source` no body (default: `"unknown"`)
+- CORS habilitado
+- `verify_jwt = false` no config.toml
 
-Estas alterações garantem que todos os botões em fundos escuros do sistema usem a variante apropriada, eliminando o problema de botões brancos de forma definitiva.
+### 2. Hook `src/hooks/useKeepAlive.ts`
+- No `useEffect` ao montar, verifica `localStorage` key `lastKeepAlive`
+- Se diferenca > 24h, chama `supabase.functions.invoke('keep-alive', { body: { source: 'website_visit' } })`
+- Atualiza `localStorage` com timestamp atual
+- Silencioso (sem feedback visual, apenas log no console)
+
+### 3. Integracao no `App.tsx`
+- Adicionar `useKeepAlive()` dentro do componente App
+
+### 4. Arquivo `.github/workflows/keep-alive.yml`
+- Cron: `0 6 */4 * *`
+- `workflow_dispatch` para teste manual
+- Curl para a Edge Function com anon key publica
+- `source: "github_actions"`
+- Verificacao do status code (falha se nao for 200)
+
+### 5. Atualizar `supabase/config.toml`
+- Adicionar `[functions.keep-alive]` com `verify_jwt = false`
+
+### 6. Atualizar `HeartbeatWidget`
+- Ajustar para considerar os novos sources no calculo de proximo heartbeat
