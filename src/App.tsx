@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { useKeepAlive } from "@/hooks/useKeepAlive";
 
 // Public Pages
 import Index from "./pages/Index";
@@ -38,7 +39,9 @@ import AdminContentPage from "./pages/AdminContentPage";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+  useKeepAlive();
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
@@ -85,6 +88,7 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;

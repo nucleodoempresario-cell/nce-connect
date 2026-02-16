@@ -1,0 +1,24 @@
+name: Supabase Keep-Alive
+
+on:
+  schedule:
+    - cron: '0 6 */4 * *'
+  workflow_dispatch:
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping keep-alive Edge Function
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST \
+            -H "Content-Type: application/json" \
+            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpZHV4YW1tZHNjYWNhZ2hmenVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxOTUzMzcsImV4cCI6MjA4NDc3MTMzN30.2vaeqpSbd7gbqM8I9PZ4po43zVuP00T-hbMENSaqrNI" \
+            -d '{"source": "github_actions"}' \
+            "https://hiduxammdscacaghfzuj.supabase.co/functions/v1/keep-alive")
+          echo "Status: $STATUS"
+          if [ "$STATUS" -ne 200 ]; then
+            echo "Keep-alive failed with status $STATUS"
+            exit 1
+          fi
