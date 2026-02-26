@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import React from 'react';
 import { useAllCompanies } from '@/hooks/useCompanies';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -101,28 +101,26 @@ export default function ManageCompanies() {
     const isDeleting = deletingId === company.id;
 
     return (
-      <Collapsible key={company.id} open={isExpanded} onOpenChange={() => setExpandedId(isExpanded ? null : company.id)}>
-        <TableRow className="cursor-pointer hover:bg-muted/50">
+      <React.Fragment key={company.id}>
+        <TableRow className="cursor-pointer hover:bg-muted/50" onClick={() => setExpandedId(isExpanded ? null : company.id)}>
           <TableCell>
-            <CollapsibleTrigger asChild>
-              <div className="flex items-center gap-3">
-                {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                <Avatar className="h-10 w-10 rounded-lg">
-                  <AvatarImage src={company.logo_url || undefined} className="object-cover" />
-                  <AvatarFallback className="rounded-lg">
-                    <Building2 className="h-5 w-5" />
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <span className="font-medium">{company.nome}</span>
-                  {company.auto_aprovacao && (
-                    <Badge variant="outline" className="ml-2 text-xs text-primary">
-                      <ShieldCheck className="h-3 w-3 mr-1" />Auto
-                    </Badge>
-                  )}
-                </div>
+            <div className="flex items-center gap-3">
+              {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+              <Avatar className="h-10 w-10 rounded-lg">
+                <AvatarImage src={company.logo_url || undefined} className="object-cover" />
+                <AvatarFallback className="rounded-lg">
+                  <Building2 className="h-5 w-5" />
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <span className="font-medium">{company.nome}</span>
+                {company.auto_aprovacao && (
+                  <Badge variant="outline" className="ml-2 text-xs text-primary">
+                    <ShieldCheck className="h-3 w-3 mr-1" />Auto
+                  </Badge>
+                )}
               </div>
-            </CollapsibleTrigger>
+            </div>
           </TableCell>
           <TableCell>{company.segmento || '-'}</TableCell>
           <TableCell>
@@ -192,16 +190,16 @@ export default function ManageCompanies() {
             </AlertDialog>
           </TableCell>
         </TableRow>
-        <TableRow>
-          <TableCell colSpan={5} className="p-0 border-0">
-            <CollapsibleContent>
+        {isExpanded && (
+          <TableRow>
+            <TableCell colSpan={5} className="p-0 border-0">
               <div className="p-4 bg-muted/30">
                 <CompanyDetailPanel company={company} />
               </div>
-            </CollapsibleContent>
-          </TableCell>
-        </TableRow>
-      </Collapsible>
+            </TableCell>
+          </TableRow>
+        )}
+      </React.Fragment>
     );
   };
 
