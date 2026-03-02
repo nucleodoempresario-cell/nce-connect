@@ -196,7 +196,6 @@
 ::selection {
   @apply bg-primary/20 text-foreground;
 }
-PROMPT:
 
 a[href*="lovable.dev"],
 iframe[src*="lovable.dev"],
