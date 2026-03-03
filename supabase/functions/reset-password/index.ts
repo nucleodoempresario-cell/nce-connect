@@ -11,10 +11,10 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-    )
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+
+    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey)
 
     // Verify caller is admin
     const authHeader = req.headers.get('Authorization')
@@ -59,16 +59,26 @@ Deno.serve(async (req) => {
       })
     }
 
-    const { error } = await supabaseAdmin.auth.admin.updateUser(user_id, {
-      password: new_password,
+    // Use the Supabase Auth Admin API directly via REST
+    const response = await fetch(`${supabaseUrl}/auth/v1/admin/users/${user_id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${serviceRoleKey}`,
+        'apikey': serviceRoleKey,
+      },
+      body: JSON.stringify({ password: new_password }),
     })
 
-    if (error) {
-      return new Response(JSON.stringify({ error: error.message }), {
+    if (!response.ok) {
+      const errorData = await response.json()
+      return new Response(JSON.stringify({ error: errorData.message || 'Erro ao redefinir senha' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
+
+    await response.json()
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
