@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Loader2, Upload, User, Calendar, Globe, Eye } from 'lucide-react';
+import { Loader2, Upload, User, Calendar, Globe, Eye, KeyRound, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { MaskedInput } from '@/components/ui/masked-input';
 import { SocialInput } from '@/components/ui/social-input';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { useUpdateProfile } from '@/hooks/useProfiles';
 import { uploadFile } from '@/lib/uploadFile';
 import { optimizeAvatar } from '@/lib/imageOptimizer';
@@ -322,6 +323,11 @@ export default function EditProfile() {
               </div>
             </div>
 
+            <Separator />
+
+            {/* Alterar Senha */}
+            <ChangePasswordSection />
+
             <div className="flex justify-end pt-4">
               <Button type="submit" size="lg" disabled={isLoading}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -331,6 +337,113 @@ export default function EditProfile() {
           </form>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+function ChangePasswordSection() {
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPasswords, setShowPasswords] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+  const { user } = useAuth();
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword.length < 6) {
+      toast({ title: 'A nova senha deve ter pelo menos 6 caracteres', variant: 'destructive' });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast({ title: 'As senhas não coincidem', variant: 'destructive' });
+      return;
+    }
+    setIsLoading(true);
+    try {
+      // Verify current password by re-signing in
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user?.email || '',
+        password: currentPassword,
+      });
+      if (signInError) {
+        toast({ title: 'Senha atual incorreta', variant: 'destructive' });
+        setIsLoading(false);
+        return;
+      }
+
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      toast({ title: 'Senha alterada com sucesso!' });
+    } catch (error: any) {
+      toast({ title: 'Erro ao alterar senha', description: error.message, variant: 'destructive' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-lg font-semibold flex items-center gap-2">
+        <KeyRound className="h-4 w-4 text-primary" />
+        Alterar Senha
+      </h3>
+      <div className="grid md:grid-cols-3 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="current-password">Senha atual</Label>
+          <div className="relative">
+            <Input
+              id="current-password"
+              type={showPasswords ? 'text' : 'password'}
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="new-password">Nova senha</Label>
+          <Input
+            id="new-password"
+            type={showPasswords ? 'text' : 'password'}
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="confirm-password">Confirmar nova senha</Label>
+          <Input
+            id="confirm-password"
+            type={showPasswords ? 'text' : 'password'}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+        </div>
+      </div>
+      <div className="flex items-center gap-4">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowPasswords(!showPasswords)}
+        >
+          {showPasswords ? <EyeOff className="h-4 w-4 mr-1" /> : <Eye className="h-4 w-4 mr-1" />}
+          {showPasswords ? 'Ocultar' : 'Mostrar'} senhas
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          onClick={handleChangePassword}
+          disabled={isLoading || !currentPassword || !newPassword || !confirmPassword}
+        >
+          {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <KeyRound className="h-4 w-4 mr-1" />}
+          Alterar Senha
+        </Button>
+      </div>
     </div>
   );
 }
