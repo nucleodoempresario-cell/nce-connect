@@ -203,7 +203,7 @@ export function UserDetailPanel({
               ) : (
                 <p className="text-sm">
                   {profile.data_nascimento 
-                    ? format(new Date(profile.data_nascimento), 'dd/MM/yyyy') 
+                    ? format(new Date(profile.data_nascimento + 'T00:00:00'), 'dd/MM/yyyy') 
                     : '-'}
                 </p>
               )}
