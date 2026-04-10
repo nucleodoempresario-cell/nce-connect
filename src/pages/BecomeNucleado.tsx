@@ -173,10 +173,11 @@ export default function BecomeNucleado() {
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="telefone" className="text-foreground">Telefone</Label>
-                        <Input 
+                        <MaskedInput 
                           id="telefone" 
+                          mask="phone"
                           value={formData.telefone} 
-                          onChange={(e) => setFormData({...formData, telefone: e.target.value})} 
+                          onChange={(value) => setFormData({...formData, telefone: value})} 
                           className="h-12"
                           placeholder="(00) 00000-0000"
                         />
@@ -197,14 +198,44 @@ export default function BecomeNucleado() {
                         <Label className="text-foreground">
                           {q.texto_pergunta} {q.obrigatoria && <span className="text-destructive">*</span>}
                         </Label>
-                        {q.tipo === 'texto_curto' && (
-                          <Input 
-                            value={(answers[q.id] as string) || ''} 
-                            onChange={(e) => setAnswers({...answers, [q.id]: e.target.value})} 
-                            required={q.obrigatoria}
-                            className="h-12"
-                          />
-                        )}
+                        {q.tipo === 'texto_curto' && (() => {
+                          const label = q.texto_pergunta.toLowerCase();
+                          const isCnpj = label.includes('cnpj');
+                          const isPhone = label.includes('telefone') || label.includes('celular') || label.includes('whatsapp');
+                          
+                          if (isCnpj) {
+                            return (
+                              <MaskedInput
+                                mask="cnpj"
+                                value={(answers[q.id] as string) || ''}
+                                onChange={(value) => setAnswers({...answers, [q.id]: value})}
+                                required={q.obrigatoria}
+                                className="h-12"
+                                placeholder="00.000.000/0000-00"
+                              />
+                            );
+                          }
+                          if (isPhone) {
+                            return (
+                              <MaskedInput
+                                mask="phone"
+                                value={(answers[q.id] as string) || ''}
+                                onChange={(value) => setAnswers({...answers, [q.id]: value})}
+                                required={q.obrigatoria}
+                                className="h-12"
+                                placeholder="(00) 00000-0000"
+                              />
+                            );
+                          }
+                          return (
+                            <Input 
+                              value={(answers[q.id] as string) || ''} 
+                              onChange={(e) => setAnswers({...answers, [q.id]: e.target.value})} 
+                              required={q.obrigatoria}
+                              className="h-12"
+                            />
+                          );
+                        })()}
                         {q.tipo === 'texto_longo' && (
                           <Textarea 
                             value={(answers[q.id] as string) || ''} 
