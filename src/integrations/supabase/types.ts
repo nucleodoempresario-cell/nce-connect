@@ -492,6 +492,7 @@ export type Database = {
         | "texto_longo"
         | "checkbox"
         | "multipla_escolha"
+        | "selecao_multipla"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -647,6 +648,7 @@ export const Constants = {
         "texto_longo",
         "checkbox",
         "multipla_escolha",
+        "selecao_multipla",
       ],
     },
   },
