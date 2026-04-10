@@ -12,6 +12,7 @@ const navItems = [
 
 export default function MemberPanel() {
   const location = useLocation();
+  const { role } = useAuth();
 
   return (
     <div className="min-h-screen bg-muted">
