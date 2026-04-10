@@ -213,13 +213,20 @@ export default function BecomeNucleado() {
                           />
                         )}
                         {q.tipo === 'checkbox' && (
-                          <div className="flex items-center gap-3 py-2">
-                            <Checkbox 
-                              checked={!!answers[q.id]} 
-                              onCheckedChange={(checked) => setAnswers({...answers, [q.id]: !!checked})} 
-                            />
-                            <span className="text-muted-foreground">Sim</span>
-                          </div>
+                          <RadioGroup 
+                            value={answers[q.id] === true ? 'sim' : answers[q.id] === false ? 'nao' : ''} 
+                            onValueChange={(val) => setAnswers({...answers, [q.id]: val === 'sim'})} 
+                            className="flex items-center gap-6 pt-2"
+                          >
+                            <div className="flex items-center gap-2">
+                              <RadioGroupItem value="sim" id={`${q.id}-sim`} />
+                              <Label htmlFor={`${q.id}-sim`} className="font-normal text-foreground cursor-pointer">Sim</Label>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <RadioGroupItem value="nao" id={`${q.id}-nao`} />
+                              <Label htmlFor={`${q.id}-nao`} className="font-normal text-foreground cursor-pointer">Não</Label>
+                            </div>
+                          </RadioGroup>
                         )}
                         {q.tipo === 'multipla_escolha' && (
                           <RadioGroup 
