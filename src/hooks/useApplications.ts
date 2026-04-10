@@ -31,14 +31,11 @@ export function useCreateApplication() {
         ? JSON.parse(JSON.stringify(application.respostas)) 
         : {};
       
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('applications')
-        .insert({ ...application, respostas, status: 'novo' })
-        .select()
-        .single();
+        .insert({ ...application, respostas, status: 'novo' as const });
       
       if (error) throw error;
-      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['applications'] });
