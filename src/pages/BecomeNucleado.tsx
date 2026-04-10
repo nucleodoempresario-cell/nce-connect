@@ -35,17 +35,26 @@ export default function BecomeNucleado() {
     e.preventDefault();
     
     try {
+      // Clean respostas: convert all values to JSON-safe types
+      const cleanRespostas: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(answers)) {
+        if (value !== undefined && value !== null && value !== '') {
+          cleanRespostas[key] = value;
+        }
+      }
+
       await createApplication.mutateAsync({
         nome_candidato: formData.nome,
         email: formData.email,
-        telefone: formData.telefone,
-        empresa_nome: formData.empresa,
-        respostas: answers,
+        telefone: formData.telefone || null,
+        empresa_nome: formData.empresa || null,
+        respostas: cleanRespostas as any,
       });
       setSubmitted(true);
       toast({ title: 'Candidatura enviada!', description: 'Entraremos em contato em breve.' });
-    } catch {
-      toast({ title: 'Erro ao enviar', description: 'Tente novamente.', variant: 'destructive' });
+    } catch (err: any) {
+      console.error('Application submit error:', err);
+      toast({ title: 'Erro ao enviar', description: err?.message || 'Tente novamente.', variant: 'destructive' });
     }
   };
 

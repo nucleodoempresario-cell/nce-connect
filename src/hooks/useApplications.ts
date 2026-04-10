@@ -26,9 +26,14 @@ export function useCreateApplication() {
 
   return useMutation({
     mutationFn: async (application: Omit<ApplicationInsert, 'status'>) => {
+      // Ensure respostas is a plain JSON-serializable object
+      const respostas = application.respostas 
+        ? JSON.parse(JSON.stringify(application.respostas)) 
+        : {};
+      
       const { data, error } = await supabase
         .from('applications')
-        .insert({ ...application, status: 'novo' })
+        .insert({ ...application, respostas, status: 'novo' })
         .select()
         .single();
       
