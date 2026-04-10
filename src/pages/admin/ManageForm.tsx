@@ -21,7 +21,8 @@ const typeLabels: Record<QuestionType, string> = {
   texto_curto: 'Texto curto',
   texto_longo: 'Texto longo',
   checkbox: 'Checkbox (Sim/Não)',
-  multipla_escolha: 'Múltipla escolha',
+  multipla_escolha: 'Múltipla escolha (única)',
+  selecao_multipla: 'Seleção múltipla (várias + Outro)',
 };
 
 interface SortableQuestionProps {
@@ -51,7 +52,7 @@ function SortableQuestion({ question, index, onEdit, onDelete }: SortableQuestio
           <span>{typeLabels[question.tipo]}</span>
           {question.obrigatoria && <span className="text-primary">• Obrigatória</span>}
           {!question.ativo && <span className="text-yellow-600">• Inativa</span>}
-          {question.tipo === 'multipla_escolha' && question.opcoes && (
+          {(question.tipo === 'multipla_escolha' || question.tipo === 'selecao_multipla') && question.opcoes && (
             <span className="text-xs">• {(question.opcoes as string[]).length} opções</span>
           )}
         </div>
@@ -99,7 +100,7 @@ export default function ManageForm() {
   const handleAdd = async () => {
     if (!newQuestion.texto_pergunta) return;
     
-    const opcoes = newQuestion.tipo === 'multipla_escolha' 
+    const opcoes = (newQuestion.tipo === 'multipla_escolha' || newQuestion.tipo === 'selecao_multipla')
       ? newQuestion.opcoes.split(',').map(o => o.trim()).filter(Boolean)
       : [];
 
@@ -120,7 +121,7 @@ export default function ManageForm() {
     setEditForm({
       texto_pergunta: question.texto_pergunta,
       tipo: question.tipo,
-      opcoes: question.tipo === 'multipla_escolha' && question.opcoes 
+      opcoes: (question.tipo === 'multipla_escolha' || question.tipo === 'selecao_multipla') && question.opcoes 
         ? (question.opcoes as string[]).join(', ') 
         : '',
       obrigatoria: question.obrigatoria,
@@ -131,7 +132,7 @@ export default function ManageForm() {
   const handleSaveEdit = async () => {
     if (!editingQuestion || !editForm.texto_pergunta) return;
     
-    const opcoes = editForm.tipo === 'multipla_escolha' 
+    const opcoes = (editForm.tipo === 'multipla_escolha' || editForm.tipo === 'selecao_multipla')
       ? editForm.opcoes.split(',').map(o => o.trim()).filter(Boolean)
       : [];
 
@@ -216,7 +217,7 @@ export default function ManageForm() {
               <Label>Obrigatória</Label>
             </div>
           </div>
-          {newQuestion.tipo === 'multipla_escolha' && (
+          {(newQuestion.tipo === 'multipla_escolha' || newQuestion.tipo === 'selecao_multipla') && (
             <div>
               <Label>Opções (separadas por vírgula)</Label>
               <Input 
@@ -224,6 +225,9 @@ export default function ManageForm() {
                 onChange={(e) => setNewQuestion({...newQuestion, opcoes: e.target.value})} 
                 placeholder="Opção 1, Opção 2, Opção 3" 
               />
+              {newQuestion.tipo === 'selecao_multipla' && (
+                <p className="text-xs text-muted-foreground mt-1">Uma opção "Outro" com campo de texto será adicionada automaticamente</p>
+              )}
             </div>
           )}
           <Button onClick={handleAdd} disabled={!newQuestion.texto_pergunta || createQuestion.isPending}>
@@ -286,7 +290,7 @@ export default function ManageForm() {
                 </SelectContent>
               </Select>
             </div>
-            {editForm.tipo === 'multipla_escolha' && (
+            {(editForm.tipo === 'multipla_escolha' || editForm.tipo === 'selecao_multipla') && (
               <div>
                 <Label>Opções (separadas por vírgula)</Label>
                 <Input 
@@ -294,6 +298,9 @@ export default function ManageForm() {
                   onChange={(e) => setEditForm({...editForm, opcoes: e.target.value})} 
                   placeholder="Opção 1, Opção 2, Opção 3" 
                 />
+                {editForm.tipo === 'selecao_multipla' && (
+                  <p className="text-xs text-muted-foreground mt-1">Uma opção "Outro" com campo de texto será adicionada automaticamente</p>
+                )}
               </div>
             )}
             <div className="flex items-center gap-4">
