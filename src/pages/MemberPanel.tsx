@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
-import { User, Building2, ArrowLeft } from 'lucide-react';
+import { User, Building2, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import EditProfile from './member/EditProfile';
