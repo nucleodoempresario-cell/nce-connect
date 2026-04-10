@@ -27,7 +27,7 @@ export default function BecomeNucleado() {
     telefone: '',
     empresa: '',
   });
-  const [answers, setAnswers] = useState<Record<string, string | boolean>>({});
+  const [answers, setAnswers] = useState<Record<string, string | boolean | string[]>>({});
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -244,6 +244,55 @@ export default function BecomeNucleado() {
                             ))}
                           </RadioGroup>
                         )}
+                        {q.tipo === 'selecao_multipla' && (() => {
+                          const selected = (answers[q.id] as string[] | undefined) || [];
+                          const outroKey = `${q.id}__outro_text`;
+                          const hasOutro = selected.includes('__outro__');
+                          const opcoes = (q.opcoes as string[]) || [];
+                          
+                          const toggleOption = (opt: string) => {
+                            const current = [...selected];
+                            const idx = current.indexOf(opt);
+                            if (idx >= 0) current.splice(idx, 1);
+                            else current.push(opt);
+                            setAnswers({...answers, [q.id]: current});
+                          };
+
+                          return (
+                            <div className="space-y-2 pt-2">
+                              {opcoes.map((opt) => (
+                                <div key={opt} className="flex items-center gap-3">
+                                  <Checkbox 
+                                    checked={selected.includes(opt)} 
+                                    onCheckedChange={() => toggleOption(opt)}
+                                    id={`${q.id}-${opt}`}
+                                  />
+                                  <Label htmlFor={`${q.id}-${opt}`} className="font-normal text-foreground cursor-pointer">
+                                    {opt}
+                                  </Label>
+                                </div>
+                              ))}
+                              <div className="flex items-center gap-3">
+                                <Checkbox 
+                                  checked={hasOutro} 
+                                  onCheckedChange={() => toggleOption('__outro__')}
+                                  id={`${q.id}-outro`}
+                                />
+                                <Label htmlFor={`${q.id}-outro`} className="font-normal text-foreground cursor-pointer">
+                                  Outro
+                                </Label>
+                              </div>
+                              {hasOutro && (
+                                <Input 
+                                  value={(answers[outroKey] as string) || ''} 
+                                  onChange={(e) => setAnswers({...answers, [outroKey]: e.target.value})} 
+                                  placeholder="Especifique..." 
+                                  className="h-10 ml-7"
+                                />
+                              )}
+                            </div>
+                          );
+                        })()}
                       </div>
                     ))}
 
