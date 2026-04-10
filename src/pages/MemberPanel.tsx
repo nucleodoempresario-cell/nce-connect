@@ -18,12 +18,17 @@ export default function MemberPanel() {
     <div className="min-h-screen bg-muted">
       <header className="bg-card border-b sticky top-0 z-40">
         <div className="container flex items-center justify-between h-16">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/"><ArrowLeft className="h-4 w-4 mr-2" /> Voltar ao site</Link>
-            </Button>
-            <span className="font-semibold">Painel do Membro</span>
-          </div>
+           <div className="flex items-center gap-4">
+             <Button variant="ghost" size="sm" asChild>
+               <Link to="/"><ArrowLeft className="h-4 w-4 mr-2" /> Voltar ao site</Link>
+             </Button>
+             <span className="font-semibold">Painel do Membro</span>
+           </div>
+           {role === 'admin' && (
+             <Button variant="outline" size="sm" asChild>
+               <Link to="/admin"><ShieldCheck className="h-4 w-4 mr-2" /> Painel Admin</Link>
+             </Button>
+           )}
         </div>
       </header>
 
