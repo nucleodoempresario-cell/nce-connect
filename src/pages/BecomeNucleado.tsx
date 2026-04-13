@@ -34,6 +34,26 @@ export default function BecomeNucleado() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validate required questions that HTML can't validate (checkbox/radio)
+    if (questions) {
+      for (const q of questions) {
+        if (!q.obrigatoria) continue;
+        const val = answers[q.id];
+        if (q.tipo === 'checkbox' && val === undefined) {
+          toast({ title: 'Campo obrigatório', description: `Responda: "${q.texto_pergunta}"`, variant: 'destructive' });
+          return;
+        }
+        if (q.tipo === 'multipla_escolha' && (!val || val === '')) {
+          toast({ title: 'Campo obrigatório', description: `Responda: "${q.texto_pergunta}"`, variant: 'destructive' });
+          return;
+        }
+        if (q.tipo === 'selecao_multipla' && (!Array.isArray(val) || val.length === 0)) {
+          toast({ title: 'Campo obrigatório', description: `Responda: "${q.texto_pergunta}"`, variant: 'destructive' });
+          return;
+        }
+      }
+    }
+
     try {
       // Clean respostas: convert all values to JSON-safe types
       const cleanRespostas: Record<string, unknown> = {};
